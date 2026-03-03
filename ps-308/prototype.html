@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PatSol — 특허 검색</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, sans-serif; font-size: 14px; color: #1a1a1a; background: #f5f5f5; }
+
+/* GNB */
+.gnb { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 0 24px; display: flex; align-items: center; height: 52px; gap: 24px; position: sticky; top: 0; z-index: 100; }
+.gnb .logo { font-weight: 700; font-size: 16px; color: #1a56db; margin-right: 8px; }
+.gnb a { color: #555; text-decoration: none; font-size: 13px; }
+.gnb a.active { color: #1a56db; font-weight: 600; border-bottom: 2px solid #1a56db; padding-bottom: 2px; }
+.gnb .right { margin-left: auto; display: flex; gap: 16px; align-items: center; color: #555; font-size: 13px; }
+
+/* Layout */
+.page { max-width: 960px; margin: 32px auto; padding: 0 24px; display: flex; flex-direction: column; gap: 24px; }
+.section { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 24px; }
+h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.subtitle { color: #666; font-size: 13px; margin-bottom: 20px; }
+h2 { font-size: 13px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 12px; }
+
+/* Import Cards */
+.import-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+.import-card { border: 2px dashed #d0d0d0; border-radius: 8px; padding: 16px 12px; text-align: center; cursor: pointer; transition: border-color .15s, background .15s; }
+.import-card:hover { border-color: #1a56db; background: #f0f4ff; }
+.import-card .icon { font-size: 24px; margin-bottom: 8px; }
+.import-card .name { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+.import-card .desc { font-size: 11px; color: #888; line-height: 1.4; }
+.divider { text-align: center; color: #999; font-size: 12px; margin: 4px 0 16px; }
+
+/* Search Input */
+.search-guide { background: #f8f9ff; border: 1px solid #c7d2fe; border-radius: 6px; padding: 10px 14px; font-size: 12px; color: #4338ca; margin-bottom: 10px; }
+.search-guide span { color: #666; }
+textarea { width: 100%; border: 1px solid #d0d0d0; border-radius: 6px; padding: 12px; font-size: 14px; resize: vertical; min-height: 80px; font-family: inherit; outline: none; }
+textarea:focus { border-color: #1a56db; box-shadow: 0 0 0 3px #dbeafe; }
+.search-row { display: flex; justify-content: flex-end; margin-top: 8px; gap: 8px; }
+.btn { padding: 8px 20px; border-radius: 6px; font-size: 14px; cursor: pointer; border: none; font-weight: 500; }
+.btn-primary { background: #1a56db; color: #fff; }
+.btn-primary:hover { background: #1e40af; }
+.btn-outline { background: #fff; color: #555; border: 1px solid #d0d0d0; }
+.btn-outline:hover { background: #f5f5f5; }
+
+/* Flow */
+.flow-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.flow-card { border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px; }
+.flow-card .tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; margin-bottom: 10px; }
+.tag-es { background: #fef3c7; color: #92400e; }
+.tag-a { background: #d1fae5; color: #065f46; }
+.tag-b { background: #ede9fe; color: #5b21b6; }
+.flow-card ol { padding-left: 16px; font-size: 13px; color: #444; line-height: 1.8; }
+
+/* Results */
+.results-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.results-header .count { font-size: 18px; font-weight: 700; }
+.chip { display: inline-flex; align-items: center; gap: 4px; background: #e0e7ff; color: #3730a3; border-radius: 16px; padding: 3px 10px; font-size: 12px; }
+.chip button { background: none; border: none; cursor: pointer; color: #3730a3; font-size: 13px; line-height: 1; padding: 0; }
+.btn-sm { padding: 5px 12px; font-size: 12px; margin-left: auto; }
+
+.topic-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+.topic-card { border: 1px solid #e0e7ff; border-radius: 6px; padding: 10px 12px; cursor: pointer; transition: background .15s; }
+.topic-card:hover { background: #e0e7ff; }
+.topic-card .topic-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+.topic-card .topic-count { font-size: 12px; color: #888; }
+
+.patent-card { border: 1px solid #e0e0e0; border-radius: 6px; padding: 14px 16px; margin-bottom: 10px; }
+.patent-card .title { font-weight: 600; font-size: 14px; margin-bottom: 4px; display: flex; justify-content: space-between; }
+.patent-card .title .score { color: #1a56db; font-size: 13px; font-weight: 700; }
+.patent-card .meta { font-size: 12px; color: #888; margin-bottom: 6px; }
+.patent-card .abstract { font-size: 13px; color: #444; margin-bottom: 8px; }
+.patent-card .tags span { display: inline-block; background: #f3f4f6; color: #555; font-size: 11px; padding: 2px 8px; border-radius: 4px; margin-right: 4px; }
+.more-link { color: #1a56db; font-size: 13px; cursor: pointer; }
+
+/* Hidden */
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<!-- GNB -->
+<nav class="gnb">
+  <span class="logo">PatSol</span>
+  <a href="#" class="active">특허검색</a>
+  <a href="#">AI명세서</a>
+  <a href="#">특허분석</a>
+  <a href="#">검색히스토리</a>
+  <a href="#">명세서히스토리</a>
+  <div class="right">
+    <span>명세서작성 0건</span>
+    <a href="#">마이페이지</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- Page Body -->
+  <div class="section">
+    <h1>특허 검색</h1>
+    <p class="subtitle">문서를 업로드하거나 발명 내용을 입력하세요</p>
+
+    <h2>문서 Import</h2>
+    <div class="import-cards">
+      <div class="import-card"><div class="icon">📄</div><div class="name">직무발명신고서</div><div class="desc">AI가 텍스트 + 이미지 추출 후 변환</div></div>
+      <div class="import-card"><div class="icon">📐</div><div class="name">도면</div><div class="desc">AI가 텍스트 + 이미지 추출 후 변환</div></div>
+      <div class="import-card"><div class="icon">📝</div><div class="name">클라이언트 회의록</div><div class="desc">AI가 텍스트 + 이미지 추출 후 변환</div></div>
+      <div class="import-card"><div class="icon">📁</div><div class="name">기타 발명문서</div><div class="desc">AI가 텍스트 + 이미지 추출 후 변환</div></div>
+    </div>
+    <p class="divider">── 또는 직접 입력 ──</p>
+
+    <h2>검색 입력</h2>
+    <div class="search-guide">자연어로 발명을 설명하거나, Boolean / CPC 검색식을 직접 입력하세요<br><span>자연어 예) 리튬이온 배터리 급속충전 시 발열을 억제하는 열관리 알고리즘</span><br><span>검색식 예) (배터리 AND 열관리) AND CPC:H01M10/613</span></div>
+    <textarea id="searchInput" placeholder="발명 내용 또는 검색식을 입력하세요..."></textarea>
+    <div class="search-row">
+      <button class="btn btn-outline" onclick="document.getElementById('searchInput').value=''">초기화</button>
+      <button class="btn btn-primary" onclick="runSearch()">검색 →</button>
+    </div>
+  </div>
+
+  <!-- Search Flow (shown after search) -->
+  <div class="section hidden" id="flowSection">
+    <h2>검색 실행 흐름</h2>
+    <div class="flow-cards">
+      <div class="flow-card">
+        <span class="tag tag-es">검색식 입력</span>
+        <ol><li>상세 검색식 입력<br><small>Boolean / CPC 코드</small></li><li>Elastic Search 실행</li><li>결과 섹션 이동 ↓</li></ol>
+      </div>
+      <div class="flow-card" id="pathA">
+        <span class="tag tag-a">자연어 — 경로 A</span>
+        <ol><li>AI 충분도 판단<br>→ <strong>"충분"</strong>으로 판정</li><li>Vector DB 검색<br>Top 50 즉시 실행</li><li>결과 섹션 이동 ↓</li></ol>
+      </div>
+      <div class="flow-card" id="pathB">
+        <span class="tag tag-b">자연어 — 경로 B</span>
+        <ol><li>AI 충분도 판단<br>→ <strong>"불충분"</strong>으로 판정</li><li>VectorDB 클러스터링<br>→ 상위 토픽 자동 생성</li><li>토픽 Q&A 폼 생성</li><li>의도 구체화 → VectorDB Top 50</li></ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="section hidden" id="resultsSection">
+    <h2>검색 결과</h2>
+    <div class="results-header">
+      <span class="count">42건</span>
+      <span class="chip">열관리 시스템 <button>×</button></span>
+      <span class="chip">BMS 제어 <button>×</button></span>
+      <button class="btn btn-outline btn-sm" onclick="resetSearch()">다시 검색</button>
+    </div>
+
+    <h2>AI 추천 토픽 카드</h2>
+    <div class="topic-cards">
+      <div class="topic-card"><div class="topic-name">열관리 시스템</div><div class="topic-count">18건</div></div>
+      <div class="topic-card"><div class="topic-name">BMS 제어 알고리즘</div><div class="topic-count">14건</div></div>
+      <div class="topic-card"><div class="topic-name">셀 구조 최적화</div><div class="topic-count">7건</div></div>
+      <div class="topic-card"><div class="topic-name">전해질 안정화</div><div class="topic-count">3건</div></div>
+    </div>
+
+    <h2>특허 결과</h2>
+    <div class="patent-card">
+      <div class="title"><span>급속충전 시 배터리 셀 온도 균일화를 위한 열관리 제어 시스템</span><span class="score">98%</span></div>
+      <div class="meta">KR10-2023-0147821 · 삼성SDI · 2023.10.24 · H01M</div>
+      <div class="abstract">리튬이온 배터리 급속충전 과정에서 발생하는 셀 간 온도 불균형을...</div>
+      <div class="tags"><span>급속충전</span><span>열관리</span><span>온도제어</span></div>
+    </div>
+    <div class="patent-card">
+      <div class="title"><span>배터리 관리 시스템의 충전 전류 동적 제어 방법 및 장치</span><span class="score">91%</span></div>
+      <div class="meta">KR10-2022-0089341 · LG에너지솔루션 · 2022.07.19 · H02J</div>
+      <div class="abstract">충전 중 셀 온도 및 SOC를 실시간으로 모니터링하여 전류를...</div>
+      <div class="tags"><span>BMS</span><span>전류제어</span><span>SOC</span></div>
+    </div>
+    <p class="more-link">… 40건 더 보기</p>
+  </div>
+
+</div>
+
+<script>
+function runSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (!q) return;
+  document.getElementById('flowSection').classList.remove('hidden');
+  document.getElementById('resultsSection').classList.remove('hidden');
+  document.getElementById('flowSection').scrollIntoView({ behavior: 'smooth' });
+}
+function resetSearch() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('flowSection').classList.add('hidden');
+  document.getElementById('resultsSection').classList.add('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
