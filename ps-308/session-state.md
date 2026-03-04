@@ -1,6 +1,6 @@
 # 세션 상태
 
-최종 수정: 2026-03-03
+최종 수정: 2026-03-04
 
 ---
 
@@ -18,7 +18,7 @@
 |---|---|---|---|
 | `frd-v0.1.md` | v0.1 | 초안 | OQ 전부 결정 완료 |
 | `ia_spec-v0.1.md` | v0.1 | 초안 | OQ 전부 결정 완료, 2.3 섹션 추가 |
-| `wireframe-ascii.txt` | v0.2 | 초안 | 3가지 경로 + 2.3 상세 화면 포함 |
+| `wireframe-ascii.txt` | v0.3 | 초안 | B-1 채팅형 재설계 + 검색 시작 화면 히스토리 추가 |
 | `flowchart-ia-search.md` | v0.1 | 초안 | Mermaid 흐름도, OQ 반영 완료 |
 | `user-journey-search-intent.md` | - | 초안 | 변리사 검색 유저 저니 분석 |
 | `llm-routing-guardrails-spec.md` | - | 초안 | LLM 라우팅 가드레일 명세 |
@@ -58,6 +58,14 @@
 
 ---
 
+## wireframe-ascii.txt v0.3 변경 내역 (2026-03-04)
+
+- **경로 B-1 재설계**: 별도 Q&A 폼 화면 → 검색결과 레이아웃 우측 채팅창에서 순차 질문으로 변경
+- **검색 시작 화면 최근 검색 추가**: 입력창 하단에 최근 5건 리스트 (자연어/검색식 배지 + 건수 + 날짜)
+- **히스토리 행 클릭 동작 확정**: 저장된 결과 세션으로 바로 이동 (재검색 X, 캐시 활용)
+
+---
+
 ## 다음 세션 작업 후보
 
 - [ ] spec 미반영 항목 처리 (`ia_spec-v0.1.md` 하단 참고)
@@ -65,5 +73,5 @@
   - 선행기술로 저장 (분석 대상 추가와 별개 동작 여부)
   - 검색 결과 내보내기 (Excel/CSV)
   - Breadcrumb 탐색 바
-- [ ] `wireframe-ascii.txt` v0.2 → 검색식 입력 드롭다운 UI 상세화
+- [ ] `wireframe-ascii.txt` v0.3 → 검색식 입력 드롭다운 UI 상세화
 - [ ] `llm-routing-guardrails-spec.md` 내용 검토 및 ia_spec 연결
