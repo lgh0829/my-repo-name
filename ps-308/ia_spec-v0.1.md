@@ -12,6 +12,7 @@ tags:
   - "[[wireframe-ascii]]"
   - "[[user-journey-search-intent]]"
   - "[[llm-routing-guardrails-spec]]"
+  - "[[spec-chat-workflow-control]]"
 상위문서: "[[frd-v0.1]]"
 ---
 # PatSol IA + 기능명세 — 특허 검색 (v0.1)
@@ -246,5 +247,6 @@ Claude.ai
 | 선행기술로 저장 | 와이어프레임에 반영됨, spec 항목 없음. "분석 대상 추가"와 별개 동작 여부 확인 필요 | 높음 |
 | 검색 결과 내보내기 (Excel/CSV) | 조사 이력 보고서 작성 시 필요 | 중간 |
 | Breadcrumb 탐색 바 | FRD 3.5에 정의됨, IA spec 항목 없음 | 중간 |
+| 채팅-워크플로우 연동 에이전트 | AI 채팅이 좌측 패널 상태를 읽고 필터·정렬 등 UI 액션을 제안·실행. 공유 상태 Store + Tool-use 아키텍처 필요. 상세 기술 검토: [[spec-chat-workflow-control]] | 높음 |
 
 
