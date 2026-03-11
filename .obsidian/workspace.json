@@ -8,31 +8,17 @@
         "type": "tabs",
         "children": [
           {
-            "id": "b156a74fc2237667",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "ps-308/flowchart-ia-search.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "flowchart-ia-search"
-            }
-          },
-          {
             "id": "608cae8030ccf47e",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ps-308/user-journey-search-intent.md",
+                "file": "roadmap/VoC-분석.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "user-journey-search-intent"
+              "title": "VoC-분석"
             }
           },
           {
@@ -41,15 +27,44 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ps-308/today.md",
+                "file": "roadmap/2026-OKR.md",
                 "mode": "source",
-                "source": true
+                "source": false
               },
               "icon": "lucide-file",
-              "title": "today"
+              "title": "2026-OKR"
+            }
+          },
+          {
+            "id": "6b2d224c94d419a6",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "article/voc-automation-guide.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "voc-automation-guide"
+            }
+          },
+          {
+            "id": "ce259e1f7aae7e83",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "article/voc-automation-guide.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "voc-automation-guide"
             }
           }
-        ]
+        ],
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -81,7 +96,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "tag:loadmap",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -114,13 +129,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ps-308/flowchart-ia-search.md",
+                "file": "article/voc-automation-guide.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "flowchart-ia-search 의 개요"
+              "title": "voc-automation-guide 의 개요"
             }
           }
         ]
@@ -143,7 +158,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "ps-308/flowchart-ia-search.md",
+                "file": "article/voc-automation-guide.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -153,7 +168,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "flowchart-ia-search 의 백링크"
+              "title": "voc-automation-guide 의 백링크"
             }
           },
           {
@@ -162,12 +177,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "ps-308/flowchart-ia-search.md",
+                "file": "article/voc-automation-guide.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "flowchart-ia-search 의 나가는 링크"
+              "title": "voc-automation-guide 의 나가는 링크"
             }
           },
           {
@@ -205,10 +220,10 @@
             "state": {
               "type": "file-properties",
               "state": {
-                "file": "ps-308/flowchart-ia-search.md"
+                "file": "article/voc-automation-guide.md"
               },
               "icon": "lucide-info",
-              "title": "flowchart-ia-search 의 파일 속성"
+              "title": "voc-automation-guide 의 파일 속성"
             }
           }
         ],
@@ -231,22 +246,44 @@
       "templater-obsidian:Templater": false
     }
   },
-  "active": "b156a74fc2237667",
+  "active": "ce259e1f7aae7e83",
   "lastOpenFiles": [
-    "wireframe-ascii.md",
-    "ps-308/flowchart-ia-search.md",
-    "ps-308/user-journey-search-intent.md",
-    "ps-308/llm-routing-guardrails-spec.md",
-    "ps-308/ia_spec-v0.1.md",
-    "ps-308/frd-v0.1.md",
-    "ps-308/CLAUDE.md",
+    "article/slack-notion-jira-voc-automation.md",
+    "article/index.md",
+    "article/img/n8n_워크플로우.png",
+    "article/img/워크플로우 빌더로 폼 생성한 양식.png",
+    "article/voc-automation-guide.md",
+    "roadmap/VoC-분석.md",
+    "roadmap/2026-OKR.md",
     "ps-308/today.md",
-    "무제.md",
     "Template/무제.md",
+    "mettings/2026-03-09_특허검색-기획안-검토-UI.md",
+    "meetings/2026-OKR.md",
+    "meetings/2026-03-09_특허검색-기획안-검토-UI.md",
+    "meetings",
+    "mettings/2026-OKR.md",
+    "roadmap",
+    "article/img/스크린샷 2026-03-10 오전 9.52.31.png",
+    "ps-308/user-journey-search-intent.md",
+    "Template/meeting.md",
+    "mettings",
+    "ps-308/llm-routing-guardrails-spec.md",
+    "ps-308/spec-chat-workflow-control.md",
+    "ps-308/ia_spec-v0.1.md",
+    "article/img/스크린샷 2026-03-06 오후 1.11.41.png",
+    "article/img",
+    "Template/article.md",
+    "article/CLAUDE.md",
+    "article",
+    "ps-308/session-state.md",
+    "ps-308/CLAUDE.md",
+    "ps-308/flowchart-ia-search.md",
+    "wireframe-ascii.md",
+    "ps-308/frd-v0.1.md",
+    "무제.md",
     "2026-02-28.md",
     "Template",
     "무제.canvas",
-    "무제.base",
-    "ps-308/Untitled.md"
+    "무제.base"
   ]
 }
