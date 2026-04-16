@@ -10,7 +10,7 @@ tags:
 관련문서:
   - "[[ia_spec-v0.1]]"
   - "[[wireframe-ascii]]"
-  - "[[user-journey-search-intent]]"
+  - "[[user-journey]]"
   - "[[llm-routing-guardrails-spec]]"
 상위문서: ""
 ---

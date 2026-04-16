@@ -10,7 +10,7 @@ tags:
   - wip
 관련문서:
   - "[[wireframe-ascii]]"
-  - "[[user-journey-search-intent]]"
+  - "[[user-journey]]"
   - "[[llm-routing-guardrails-spec]]"
   - "[[spec-chat-workflow-control]]"
 상위문서: "[[frd-v0.1]]"
