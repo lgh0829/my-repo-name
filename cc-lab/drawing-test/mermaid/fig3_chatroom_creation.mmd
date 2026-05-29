@@ -1,0 +1,29 @@
+sequenceDiagram
+    participant OT as 운영자 단말(310)
+    participant SV as 서버(330)
+
+    Note over OT: 동작(301)<br/>채팅방 운영 신청서 획득
+
+    OT->>SV: 동작(303) 채팅방 운영 신청서 전송
+
+    Note over SV: 동작(305)<br/>채팅방 운영 신청서<br/>승인 여부 결정 [승인]
+
+    SV->>OT: 동작(307) 승인 안내 메시지 표시 명령 전송
+
+    Note over OT: 동작(309)<br/>채팅방 운영 신청서<br/>승인 안내 메시지 표시
+
+    Note over OT: 동작(311)<br/>지급 정보 획득
+
+    OT->>SV: 단계(313) 지급 정보 전송
+
+    Note over SV: 단계(315)<br/>지급 정보 등록
+
+    SV->>OT: 단계(317) 지급 정보 등록 안내 메시지 표시 명령 전송
+
+    Note over OT: 단계(319)<br/>지급 정보 등록<br/>안내 메시지 표시
+
+    Note over OT: 단계(321)<br/>채팅방 설정 획득
+
+    OT->>SV: 단계(323) 채팅방 설정 전송
+
+    Note over SV: 단계(325)<br/>채팅방 생성

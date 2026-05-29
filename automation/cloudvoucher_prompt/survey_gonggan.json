@@ -1,0 +1,22 @@
+{
+  "company_name": "특허법인 공간",
+  "main_work": "중소기업 및 스타트업 대상 특허 출원·관리 업무 전담. 선행기술조사부터 청구항 설계, 명세서 작성까지 전 과정 담당.",
+  "strengths": "주요 기술분야, 소규모 전문 인력, 중소기업 특화 이력, 신속한 의사결정",
+  "employees_patent": 8,
+  "employees_non_patent": 4,
+  "pain_points_rank": { "first": "수작업_많음", "second": "시스템_분산" },
+  "goal_rank": { "first": "업무_효율화", "second": "경쟁력_강화" },
+  "cloud_current_state": "일부_사용중",
+  "cloud_purpose": "전문서비스_SaaS",
+  "cloud_readiness": "도입_검토중",
+  "cloud_method": "퍼블릭_클라우드",
+  "cloud_timeline": "단기_3~6개월",
+  "it_staff": "없음",
+  "data_management": "개인PC",
+  "it_asset_scale": "소형_PC복합기중심",
+  "key_customers": "중소기업_중심",
+  "cloud_budget": "500~1000만",
+  "revenue_scale": "5~50억",
+  "current_tools": "ChatGPT, KIPRIS, 한컴오피스",
+  "specific_concerns": "기존 HWP 문서와의 호환성, 직원 교육 부담"
+}

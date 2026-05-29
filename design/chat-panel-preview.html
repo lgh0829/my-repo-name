@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PatSol — 채팅 패널 디자인 시스템 Preview</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <style>
+    /* ============================================================
+       PatSol Design Tokens
+       Source: design-token-schema.draft.json
+    ============================================================ */
+    :root {
+      /* --- Primitive: Color --- */
+      --color-white:          #ffffff;
+
+      --color-primary-100:    #d8def5;
+      --color-primary-200:    #b1beeb;
+      --color-primary-300:    #899de1;
+      --color-primary-400:    #627dd7;
+      --color-primary-500:    #3b5ccd;
+      --color-primary-600:    #2f4aa4;
+      --color-primary-700:    #23377b;
+      --color-primary-800:    #182552;
+      --color-primary-900:    #0c1229;
+
+      --color-black-100:      #d5d5d5;
+      --color-black-200:      #aaaaaa;
+      --color-black-300:      #808080;
+      --color-black-400:      #555555;
+      --color-black-500:      #2b2b2b;
+      --color-black-600:      #222222;
+      --color-black-700:      #1a1a1a;
+      --color-black-800:      #111111;
+      --color-black-900:      #090909;
+
+      --color-gray-100:       #fafafa;
+      --color-gray-200:       #e6e7e8;
+      --color-gray-300:       #eeeeee;
+      --color-gray-400:       #e8e8e8;
+      --color-gray-500:       #dddddd;
+      --color-gray-600:       #b1b1b1;
+      --color-gray-700:       #757575;
+      --color-gray-800:       #585858;
+      --color-gray-900:       #1a1a1a;
+
+      --color-line-100:       #fafafa;
+      --color-line-200:       #f5f5f6;
+      --color-line-300:       #f0f1f1;
+      --color-line-400:       #ebeced;
+      --color-line-500:       #e6e7e8;
+      --color-line-600:       #b8b9ba;
+
+      --color-success-500:    #06c270;
+      --color-info-500:       #0869fc;
+      --color-error-500:      #ff4a4a;
+      --color-yellow-500:     #ffcf49;
+      --color-point-500:      #6657ec;
+
+      /* --- Semantic: Text --- */
+      --text-primary:         var(--color-black-900);
+      --text-secondary:       var(--color-black-500);
+      --text-subtle:          var(--color-gray-700);
+      --text-disabled:        var(--color-gray-600);
+      --text-inverse:         var(--color-white);
+      --text-accent:          var(--color-primary-500);
+      --text-danger:          var(--color-error-500);
+
+      /* --- Semantic: Background --- */
+      --bg-canvas:            var(--color-white);
+      --bg-surface:           var(--color-gray-100);
+      --bg-accent:            var(--color-primary-100);
+
+      /* --- Semantic: Border --- */
+      --border-default:       var(--color-line-500);
+      --border-subtle:        var(--color-line-300);
+      --border-accent:        var(--color-primary-500);
+      --border-danger:        var(--color-error-500);
+
+      /* --- Semantic: Status --- */
+      --status-success:       var(--color-success-500);
+      --status-info:          var(--color-info-500);
+      --status-warning:       var(--color-yellow-500);
+      --status-danger:        var(--color-error-500);
+
+      /* --- Chat Panel Extensions (derived from token schema) --- */
+      --chat-error-bg:        #fff5f5;   /* error-500 @ 5% on white */
+      --chat-warn-bg:         #fffdf0;   /* yellow-500 @ 6% on white */
+      --chat-info-bg:         #f0f5ff;   /* primary-100 lightened */
+      --chat-cite-bg:         var(--color-line-200);
+
+      /* --- Typography --- */
+      --font:                 'Pretendard', -apple-system, sans-serif;
+      --font-xs:              14px;
+      --font-sm:              16px;
+      --font-md:              20px;
+      --font-lg:              24px;
+      --font-xl:              32px;
+
+      /* --- Spacing --- */
+      --sp-xs:   4px;
+      --sp-sm:   8px;
+      --sp-md:  12px;
+      --sp-lg:  16px;
+      --sp-xl:  24px;
+
+      /* --- Radius --- */
+      --r-sm:    8px;
+      --r-md:   10px;
+      --r-lg:   12px;
+      --r-pill: 100px;
+    }
+
+    /* ============================================================
+       Base
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      font-size: var(--font-xs);
+      color: var(--text-primary);
+      background: #f2f4f8;
+      line-height: 1.6;
+    }
+
+    /* ============================================================
+       Page Layout
+    ============================================================ */
+    .page-header {
+      background: var(--color-primary-900);
+      color: var(--text-inverse);
+      padding: var(--sp-lg) var(--sp-xl);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-md);
+    }
+    .page-header .badge {
+      font-size: 11px;
+      background: var(--color-primary-500);
+      color: white;
+      padding: 2px 8px;
+      border-radius: var(--r-pill);
+      font-weight: 500;
+    }
+    .page-header h1 { font-size: var(--font-sm); font-weight: 600; }
+    .page-header p  { font-size: 12px; color: var(--color-primary-200); margin-top: 2px; }
+
+    .page-body {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: var(--sp-xl);
+      padding: var(--sp-xl);
+      max-width: 1280px;
+      margin: 0 auto;
+      align-items: start;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-subtle);
+      margin-bottom: var(--sp-md);
+    }
+
+    /* ============================================================
+       LEFT — Chat Panel
+    ============================================================ */
+    .chat-panel {
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-default);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      position: sticky;
+      top: var(--sp-xl);
+    }
+
+    /* Header */
+    .chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-md) var(--sp-lg);
+      border-bottom: 1px solid var(--border-default);
+      background: var(--bg-canvas);
+    }
+    .chat-header-title {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-sm);
+      font-size: var(--font-xs);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .chat-header-title .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--status-success);
+    }
+    .chat-header-action {
+      font-size: 12px;
+      color: var(--text-subtle);
+      cursor: pointer;
+      padding: var(--sp-xs) var(--sp-sm);
+      border-radius: var(--r-sm);
+    }
+    .chat-header-action:hover { background: var(--bg-surface); }
+
+    /* Messages */
+    .chat-messages {
+      padding: var(--sp-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-lg);
+      max-height: 680px;
+      overflow-y: auto;
+    }
+
+    /* Timestamp */
+    .chat-timestamp {
+      font-size: 11px;
+      color: var(--text-subtle);
+      text-align: center;
+      position: relative;
+    }
+    .chat-timestamp::before,
+    .chat-timestamp::after {
+      content: '';
+      display: inline-block;
+      width: 40px;
+      height: 1px;
+      background: var(--border-subtle);
+      vertical-align: middle;
+      margin: 0 8px;
+    }
+
+    /* User message */
+    .msg-user {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .msg-user .bubble {
+      background: var(--color-primary-500);
+      color: var(--text-inverse);
+      padding: var(--sp-sm) var(--sp-md);
+      border-radius: var(--r-lg) var(--r-lg) 4px var(--r-lg);
+      font-size: var(--font-xs);
+      max-width: 82%;
+      line-height: 1.55;
+    }
+
+    /* AI message */
+    .msg-ai {
+      display: flex;
+      gap: var(--sp-sm);
+      align-items: flex-start;
+    }
+    .msg-ai .avatar {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: var(--bg-accent);
+      border: 1px solid var(--border-accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-accent);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .msg-ai .content {
+      flex: 1;
+      font-size: var(--font-xs);
+      color: var(--text-primary);
+      line-height: 1.65;
+    }
+
+    /* ============================================================
+       Layer 1 — Markdown Elements (inside .md-body)
+    ============================================================ */
+    .md-body { display: flex; flex-direction: column; gap: 10px; }
+
+    .md-body h2 {
+      font-size: var(--font-xs);
+      font-weight: 700;
+      color: var(--text-primary);
+      padding-bottom: var(--sp-xs);
+      border-bottom: 1px solid var(--border-default);
+      margin-top: 4px;
+    }
+
+    .md-body p {
+      font-size: var(--font-xs);
+      line-height: 1.65;
+      color: var(--text-primary);
+    }
+
+    .md-body strong {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .md-body ul, .md-body ol {
+      padding-left: var(--sp-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-xs);
+    }
+    .md-body li {
+      font-size: var(--font-xs);
+      line-height: 1.6;
+    }
+
+    .md-body code {
+      font-family: 'SFMono-Regular', 'Consolas', monospace;
+      font-size: 12px;
+      background: var(--color-gray-300);
+      color: var(--color-black-700);
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+
+    .md-body pre {
+      background: var(--bg-surface);
+      border-left: 3px solid var(--border-accent);
+      border-radius: 0 var(--r-sm) var(--r-sm) 0;
+      padding: var(--sp-md);
+      overflow-x: auto;
+    }
+    .md-body pre code {
+      background: none;
+      padding: 0;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .md-body blockquote {
+      background: var(--chat-cite-bg);
+      border-left: 3px solid var(--border-accent);
+      border-radius: 0 var(--r-sm) var(--r-sm) 0;
+      padding: var(--sp-sm) var(--sp-md);
+      color: var(--text-secondary);
+      font-size: 12px;
+    }
+
+    .md-body table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .md-body th {
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      font-weight: 600;
+      padding: var(--sp-xs) var(--sp-sm);
+      text-align: left;
+      border-bottom: 1px solid var(--border-default);
+    }
+    .md-body td {
+      padding: var(--sp-xs) var(--sp-sm);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .md-body hr {
+      border: none;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    /* ============================================================
+       Layer 2 — Semantic Components
+    ============================================================ */
+
+    /* Verification Result Card */
+    .verif-card {
+      border-radius: var(--r-sm);
+      padding: var(--sp-md);
+      border-left: 3px solid;
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-xs);
+    }
+    .verif-card.error {
+      background: var(--chat-error-bg);
+      border-color: var(--status-danger);
+    }
+    .verif-card.warn {
+      background: var(--chat-warn-bg);
+      border-color: var(--status-warning);
+    }
+    .verif-card.info {
+      background: var(--chat-info-bg);
+      border-color: var(--status-info);
+    }
+    .verif-card-header {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-xs);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .verif-card.error .verif-card-header { color: var(--status-danger); }
+    .verif-card.warn  .verif-card-header { color: #c97a00; }
+    .verif-card.info  .verif-card-header { color: var(--status-info); }
+
+    .verif-card-title {
+      font-size: var(--font-xs);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .verif-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: var(--r-pill);
+      letter-spacing: 0.04em;
+    }
+    .verif-badge.error { background: var(--status-danger); color: #fff; }
+    .verif-badge.warn  { background: var(--status-warning); color: #7a4c00; }
+    .verif-badge.info  { background: var(--status-info);    color: #fff; }
+
+    .verif-meta {
+      font-size: 12px;
+      color: var(--text-subtle);
+    }
+    .verif-body {
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .verif-suggest {
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      padding-top: var(--sp-xs);
+      border-top: 1px solid rgba(0,0,0,0.06);
+    }
+    .verif-suggest strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* Legal Citation Block */
+    .legal-cite {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-xs);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--r-sm);
+      padding: 3px var(--sp-sm);
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-family: 'SFMono-Regular', monospace;
+    }
+    .legal-cite .icon { color: var(--text-accent); font-style: normal; font-weight: 600; }
+
+    /* Action Prompt */
+    .action-prompt {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--r-sm);
+      padding: var(--sp-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-sm);
+    }
+    .action-prompt p {
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+    }
+    .action-prompt-buttons {
+      display: flex;
+      gap: var(--sp-sm);
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-xs);
+      padding: 5px var(--sp-md);
+      border-radius: var(--r-sm);
+      font-size: 12px;
+      font-weight: 600;
+      font-family: var(--font);
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: opacity .15s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-primary {
+      background: var(--color-primary-500);
+      color: #fff;
+    }
+    .btn-outlined {
+      background: var(--bg-canvas);
+      color: var(--color-primary-500);
+      border-color: var(--color-primary-500);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-subtle);
+      border-color: transparent;
+    }
+
+    /* Claim Reference Chip */
+    .claim-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: var(--bg-accent);
+      color: var(--color-primary-700);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 1px 7px;
+      border-radius: var(--r-pill);
+      border: 1px solid var(--color-primary-200);
+      cursor: pointer;
+    }
+    .claim-chip:hover { background: var(--color-primary-200); }
+
+    /* Chat Input */
+    .chat-input-area {
+      border-top: 1px solid var(--border-default);
+      padding: var(--sp-md);
+    }
+    .chat-input-wrap {
+      display: flex;
+      align-items: flex-end;
+      gap: var(--sp-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--r-lg);
+      padding: var(--sp-sm) var(--sp-sm) var(--sp-sm) var(--sp-md);
+    }
+    .chat-input-wrap:focus-within {
+      border-color: var(--border-accent);
+      background: var(--bg-canvas);
+    }
+    .chat-input-wrap textarea {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: var(--font);
+      font-size: var(--font-xs);
+      resize: none;
+      height: 36px;
+      line-height: 1.5;
+      color: var(--text-primary);
+    }
+    .chat-input-wrap textarea::placeholder { color: var(--text-disabled); }
+    .chat-send-btn {
+      width: 28px; height: 28px;
+      border-radius: var(--r-sm);
+      background: var(--color-primary-500);
+      border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .chat-send-btn svg { color: white; }
+
+    /* ============================================================
+       RIGHT — Component Catalog
+    ============================================================ */
+    .catalog { display: flex; flex-direction: column; gap: var(--sp-xl); }
+
+    .catalog-block {
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-default);
+      border-radius: var(--r-lg);
+      padding: var(--sp-xl);
+    }
+    .catalog-block h3 {
+      font-size: var(--font-xs);
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: var(--sp-lg);
+      padding-bottom: var(--sp-sm);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .catalog-block .sub-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-subtle);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: var(--sp-sm);
+      margin-top: var(--sp-md);
+    }
+    .catalog-block .sub-label:first-of-type { margin-top: 0; }
+
+    /* Color swatches */
+    .swatch-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--sp-sm);
+    }
+    .swatch {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .swatch-color {
+      width: 40px; height: 40px;
+      border-radius: var(--r-sm);
+      border: 1px solid rgba(0,0,0,0.08);
+    }
+    .swatch-name {
+      font-size: 10px;
+      color: var(--text-subtle);
+      text-align: center;
+      max-width: 48px;
+    }
+
+    /* Type scale */
+    .type-row {
+      display: flex;
+      align-items: baseline;
+      gap: var(--sp-md);
+      padding: var(--sp-sm) 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .type-row:last-child { border-bottom: none; }
+    .type-meta {
+      width: 80px;
+      flex-shrink: 0;
+      font-size: 11px;
+      color: var(--text-subtle);
+      font-family: monospace;
+    }
+    .type-sample { color: var(--text-primary); }
+
+    /* Spacing strip */
+    .space-row {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-md);
+      margin-bottom: var(--sp-sm);
+    }
+    .space-label { width: 40px; font-size: 11px; color: var(--text-subtle); font-family: monospace; }
+    .space-bar { height: 12px; background: var(--color-primary-200); border-radius: 3px; }
+    .space-value { font-size: 11px; color: var(--text-subtle); font-family: monospace; }
+
+    /* Markdown spec table */
+    .spec-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .spec-table th { background: var(--bg-surface); padding: 6px 10px; text-align: left; font-weight: 600; color: var(--text-secondary); border-bottom: 1px solid var(--border-default); }
+    .spec-table td { padding: 7px 10px; border-bottom: 1px solid var(--border-subtle); vertical-align: top; }
+    .spec-table tr:last-child td { border-bottom: none; }
+    .token-ref { font-family: monospace; font-size: 11px; color: var(--color-primary-600); background: var(--bg-accent); padding: 1px 5px; border-radius: 4px; }
+
+    /* Component demo grid */
+    .demo-grid { display: flex; flex-direction: column; gap: var(--sp-md); }
+
+    /* Do / Don't */
+    .rule-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-md); }
+    .rule-box { border-radius: var(--r-sm); padding: var(--sp-md); }
+    .rule-box.do   { background: #f0fdf8; border: 1px solid var(--status-success); }
+    .rule-box.dont { background: var(--chat-error-bg); border: 1px solid var(--status-danger); }
+    .rule-box .rule-header { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; margin-bottom: var(--sp-sm); }
+    .rule-box.do   .rule-header { color: var(--status-success); }
+    .rule-box.dont .rule-header { color: var(--status-danger); }
+    .rule-box ul { padding-left: 16px; }
+    .rule-box li { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; line-height: 1.5; }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     Page Header
+============================================================ -->
+<div class="page-header">
+  <div>
+    <h1>PatSol — 채팅 패널 디자인 시스템</h1>
+    <p>Chat Panel Message Design · design-token-schema.draft.json 기반 · 2026-05-08</p>
+  </div>
+  <span class="badge">Draft</span>
+</div>
+
+<div class="page-body">
+
+  <!-- ===========================================================
+       LEFT — Live Chat Panel Preview
+  =========================================================== -->
+  <div>
+    <div class="section-label">Live Preview — 채팅 패널</div>
+    <div class="chat-panel">
+
+      <!-- Header -->
+      <div class="chat-header">
+        <div class="chat-header-title">
+          <div class="dot"></div>
+          AI 기재요건 검토
+        </div>
+        <div class="chat-header-action">초기화</div>
+      </div>
+
+      <!-- Messages -->
+      <div class="chat-messages">
+
+        <div class="chat-timestamp">오늘 오전 10:24</div>
+
+        <!-- User message -->
+        <div class="msg-user">
+          <div class="bubble">청구항 기재요건 검토를 시작해주세요.</div>
+        </div>
+
+        <!-- AI: summary -->
+        <div class="msg-ai">
+          <div class="avatar">AI</div>
+          <div class="content">
+            <div class="md-body">
+              <h2>검토 결과 요약</h2>
+              <p>전체 <strong>14개 청구항</strong>을 분석했습니다. 총 <strong>3건의 기재불비</strong>가 발견되었습니다.</p>
+              <ul>
+                <li><strong>거절이유 1건</strong> — 즉시 수정 필요</li>
+                <li><strong>주의 1건</strong> — 수정 권장</li>
+                <li><strong>참고 1건</strong> — 참고 사항</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI: 거절이유 card -->
+        <div class="msg-ai">
+          <div class="avatar">AI</div>
+          <div class="content">
+            <div class="md-body">
+              <div class="verif-card error">
+                <div class="verif-card-header">
+                  <span class="verif-badge error">✕ 거절이유</span>
+                  다중인용항 재인용 금지 위반
+                </div>
+                <div class="verif-meta">
+                  <span class="claim-chip">#5</span>&nbsp;
+                  <span class="legal-cite"><i class="icon">§</i> 특허법시행령 제5조제6항</span>
+                </div>
+                <div class="verif-body">
+                  청구항 5가 다중인용항인 청구항 3을 재인용하고 있습니다. 다중인용항은 다른 다중인용항의 인용 대상이 될 수 없습니다.
+                </div>
+                <div class="verif-suggest">
+                  <strong>수정 제안:</strong> 청구항 3의 인용을 단일 항으로 분리하거나, 청구항 5의 인용 구조를 청구항 1 또는 청구항 2로 변경하세요.
+                </div>
+              </div>
+              <div class="action-prompt">
+                <p>수정 제안을 청구항에 반영하시겠습니까?</p>
+                <div class="action-prompt-buttons">
+                  <button class="btn btn-primary">반영</button>
+                  <button class="btn btn-outlined">무시</button>
+                  <button class="btn btn-ghost">상세 보기</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI: 주의 card -->
+        <div class="msg-ai">
+          <div class="avatar">AI</div>
+          <div class="content">
+            <div class="md-body">
+              <div class="verif-card warn">
+                <div class="verif-card-header">
+                  <span class="verif-badge warn">△ 주의</span>
+                  임의부가적 표현 사용
+                </div>
+                <div class="verif-meta">
+                  <span class="claim-chip">#14</span>&nbsp;
+                  <span class="legal-cite"><i class="icon">§</i> 특허법 제42조제4항제2호</span>
+                </div>
+                <div class="verif-body">
+                  청구항 14에서 <code>「필요에 따라」</code> 표현이 발견되었습니다. 발명의 설명으로 뒷받침되지 않을 경우 구성요소 범위가 불명확해집니다.
+                </div>
+                <div class="verif-suggest">
+                  <strong>수정 제안:</strong> 해당 표현을 삭제하거나, 발명의 설명에 선택적 첨가 근거를 명확히 보완하세요.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI: 참고 card -->
+        <div class="msg-ai">
+          <div class="avatar">AI</div>
+          <div class="content">
+            <div class="md-body">
+              <div class="verif-card info">
+                <div class="verif-card-header">
+                  <span class="verif-badge info">ℹ 참고</span>
+                  명확성 목적 동시인용
+                </div>
+                <div class="verif-meta">
+                  <span class="claim-chip">#6</span>&nbsp;
+                  <span class="legal-cite"><i class="icon">§</i> 시행령 제5조제5항1호②</span>
+                </div>
+                <div class="verif-body">
+                  거절이유에 해당하지 않으나, 청구항 6에서 명확성 목적의 동시인용이 확인되었습니다.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI: legal citation blockquote + table -->
+        <div class="msg-ai">
+          <div class="avatar">AI</div>
+          <div class="content">
+            <div class="md-body">
+              <p>심사기준 원문 근거는 아래와 같습니다.</p>
+              <blockquote>
+                2이상의 청구항을 동시에 인용하는 종속항(다중인용항)은, 다른 다중인용항의 인용 대상이 될 수 없다.<br>
+                <strong>— 특허법시행령 제5조제6항1호</strong>
+              </blockquote>
+              <table>
+                <tr><th>청구항</th><th>인용 대상</th><th>상태</th></tr>
+                <tr><td><span class="claim-chip">#3</span></td><td>#1, #2 (다중인용)</td><td>✓ 정상</td></tr>
+                <tr><td><span class="claim-chip">#5</span></td><td>#3 (다중인용항 재인용)</td><td style="color:var(--status-danger);font-weight:600;">✕ 위반</td></tr>
+              </table>
+              <hr>
+              <p>Regex 탐지 패턴 참고:</p>
+              <pre><code># 다중인용항 탐지 — parent_items M2M 순회
+from.to_count > 1 AND any(to.to_count > 1)</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- User follow-up -->
+        <div class="msg-user">
+          <div class="bubble">청구항 5의 수정 초안을 보여줘.</div>
+        </div>
+
+        <!-- AI: suggestion -->
+        <div class="msg-ai">
+          <div class="avatar">AI</div>
+          <div class="content">
+            <div class="md-body">
+              <h2>수정 초안 — 청구항 5</h2>
+              <p>인용 대상을 단일 항으로 변경했습니다.</p>
+              <pre><code>【청구항 5】
+청구항 1에 있어서,
+상기 폴리머 조성물은 점도가 100~500 mPa·s인
+것을 특징으로 하는 발광 소자.</code></pre>
+              <div class="action-prompt">
+                <p>이 수정안을 청구항 5에 반영하시겠습니까?</p>
+                <div class="action-prompt-buttons">
+                  <button class="btn btn-primary">반영</button>
+                  <button class="btn btn-outlined">수정 후 반영</button>
+                  <button class="btn btn-ghost">무시</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /chat-messages -->
+
+      <!-- Input -->
+      <div class="chat-input-area">
+        <div class="chat-input-wrap">
+          <textarea placeholder="AI에게 메시지를 입력하세요…"></textarea>
+          <button class="chat-send-btn">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2L2 8l4.5 2 7.5-8z"/>
+              <path d="M6.5 10l1 4 3-5.5"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /chat-panel -->
+  </div>
+
+  <!-- ===========================================================
+       RIGHT — Component Catalog
+  =========================================================== -->
+  <div class="catalog">
+
+    <!-- Color Tokens -->
+    <div class="catalog-block">
+      <h3>Color Tokens</h3>
+
+      <div class="sub-label">Primary</div>
+      <div class="swatch-grid">
+        <div class="swatch"><div class="swatch-color" style="background:#d8def5"></div><div class="swatch-name">100</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#b1beeb"></div><div class="swatch-name">200</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#899de1"></div><div class="swatch-name">300</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#627dd7"></div><div class="swatch-name">400</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#3b5ccd"></div><div class="swatch-name">500 ★</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#2f4aa4"></div><div class="swatch-name">600</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#23377b"></div><div class="swatch-name">700</div></div>
+      </div>
+
+      <div class="sub-label">Status</div>
+      <div class="swatch-grid">
+        <div class="swatch"><div class="swatch-color" style="background:#06c270"></div><div class="swatch-name">Success</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#0869fc"></div><div class="swatch-name">Info</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#ffcf49"></div><div class="swatch-name">Warning</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#ff4a4a"></div><div class="swatch-name">Error</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#6657ec"></div><div class="swatch-name">Point</div></div>
+      </div>
+
+      <div class="sub-label">Semantic — Text</div>
+      <div class="swatch-grid">
+        <div class="swatch"><div class="swatch-color" style="background:#090909"></div><div class="swatch-name">Primary</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#2b2b2b"></div><div class="swatch-name">Secondary</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#757575"></div><div class="swatch-name">Subtle</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#b1b1b1"></div><div class="swatch-name">Disabled</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#ff4a4a"></div><div class="swatch-name">Danger</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#3b5ccd"></div><div class="swatch-name">Accent</div></div>
+      </div>
+
+      <div class="sub-label">Semantic — Background</div>
+      <div class="swatch-grid">
+        <div class="swatch"><div class="swatch-color" style="background:#ffffff;border:1px solid #e6e7e8"></div><div class="swatch-name">Canvas</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#fafafa"></div><div class="swatch-name">Surface</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#d8def5"></div><div class="swatch-name">Accent</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#fff5f5"></div><div class="swatch-name">Error bg</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#fffdf0"></div><div class="swatch-name">Warn bg</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#f0f5ff"></div><div class="swatch-name">Info bg</div></div>
+      </div>
+    </div>
+
+    <!-- Typography -->
+    <div class="catalog-block">
+      <h3>Typography — Pretendard</h3>
+      <div class="type-row">
+        <div class="type-meta">xs / 14px</div>
+        <div class="type-sample" style="font-size:14px;">본문 기본 텍스트 — 청구항 내용 표시</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta">sm / 16px</div>
+        <div class="type-sample" style="font-size:16px;">보조 텍스트 — 패널 헤더, 레이블</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta">md / 20px</div>
+        <div class="type-sample" style="font-size:20px;">섹션 제목</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta">lg / 24px</div>
+        <div class="type-sample" style="font-size:24px;">페이지 제목</div>
+      </div>
+      <div class="type-row" style="border-bottom:none">
+        <div class="type-meta">mono / 12px</div>
+        <div class="type-sample" style="font-size:12px; font-family:monospace;background:#fafafa;padding:2px 6px;border-radius:4px;">regex / §조항 / 청구항번호</div>
+      </div>
+    </div>
+
+    <!-- Spacing -->
+    <div class="catalog-block">
+      <h3>Spacing</h3>
+      <div class="space-row"><div class="space-label">xs / 4</div><div class="space-bar" style="width:4px"></div><div class="space-value">4px</div></div>
+      <div class="space-row"><div class="space-label">sm / 8</div><div class="space-bar" style="width:8px"></div><div class="space-value">8px</div></div>
+      <div class="space-row"><div class="space-label">md / 12</div><div class="space-bar" style="width:12px"></div><div class="space-value">12px</div></div>
+      <div class="space-row"><div class="space-label">lg / 16</div><div class="space-bar" style="width:16px"></div><div class="space-value">16px</div></div>
+      <div class="space-row"><div class="space-label">xl / 24</div><div class="space-bar" style="width:24px"></div><div class="space-value">24px</div></div>
+    </div>
+
+    <!-- Layer 1: Markdown Spec -->
+    <div class="catalog-block">
+      <h3>Layer 1 — Markdown 렌더링 스펙</h3>
+      <table class="spec-table">
+        <tr>
+          <th>요소</th>
+          <th>적용 토큰</th>
+          <th>용도</th>
+          <th>비고</th>
+        </tr>
+        <tr>
+          <td><code>## h2</code></td>
+          <td><span class="token-ref">font-xs</span> 700 + <span class="token-ref">border-subtle</span></td>
+          <td>결과 섹션 구분</td>
+          <td>h1 사용 금지</td>
+        </tr>
+        <tr>
+          <td><code>**bold**</code></td>
+          <td><span class="token-ref">text-primary</span> 600</td>
+          <td>법적 용어, 수치 강조</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><code>- ul</code></td>
+          <td><span class="token-ref">space-lg</span> indent</td>
+          <td>구성요소 나열</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><code>1. ol</code></td>
+          <td>동일</td>
+          <td>순서 있는 목록 (단계, 우선순위 등 범용)</td>
+          <td>청구항 번호 나열 용도로 사용 금지</td>
+        </tr>
+        <tr>
+          <td><code>`inline code`</code></td>
+          <td><span class="token-ref">gray-300</span> bg</td>
+          <td>조문 표기, 키워드, 표현식</td>
+          <td>청구항 번호 참조에 사용 금지 — <code>#N</code> 칩 사용</td>
+        </tr>
+        <tr>
+          <td><code>```block```</code></td>
+          <td><span class="token-ref">bg-surface</span> + <span class="token-ref">border-accent</span> 3px</td>
+          <td>Regex 패턴, 청구항 수정 초안</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><code>&gt; blockquote</code></td>
+          <td><span class="token-ref">line-200</span> bg + <span class="token-ref">border-accent</span></td>
+          <td>심사기준 원문 인용</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><code>| table |</code></td>
+          <td><span class="token-ref">bg-surface</span> th + <span class="token-ref">border-subtle</span></td>
+          <td>검증 항목 비교, 청구항 목록</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><code>---</code></td>
+          <td><span class="token-ref">border-subtle</span></td>
+          <td>섹션 구분선</td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Layer 2: Components -->
+    <div class="catalog-block">
+      <h3>Layer 2 — 시맨틱 컴포넌트</h3>
+
+      <div class="sub-label">VerificationResult Card</div>
+      <div class="demo-grid">
+        <div class="verif-card error">
+          <div class="verif-card-header"><span class="verif-badge error">✕ 거절이유</span> 항목명</div>
+          <div class="verif-meta"><span class="claim-chip">#N</span>&nbsp;<span class="legal-cite"><i class="icon">§</i> §조항</span></div>
+          <div class="verif-body">탐지 내용 기술. 거절이유에 해당합니다.</div>
+          <div class="verif-suggest"><strong>수정 제안:</strong> 구체적인 수정 방향</div>
+        </div>
+        <div class="verif-card warn">
+          <div class="verif-card-header"><span class="verif-badge warn">△ 주의</span> 항목명</div>
+          <div class="verif-meta"><span class="claim-chip">#N</span>&nbsp;<span class="legal-cite"><i class="icon">§</i> §조항</span></div>
+          <div class="verif-body">수정을 권장하는 사항입니다.</div>
+          <div class="verif-suggest"><strong>수정 제안:</strong> 구체적인 수정 방향</div>
+        </div>
+        <div class="verif-card info">
+          <div class="verif-card-header"><span class="verif-badge info">ℹ 참고</span> 항목명</div>
+          <div class="verif-meta"><span class="claim-chip">#N</span>&nbsp;<span class="legal-cite"><i class="icon">§</i> §조항</span></div>
+          <div class="verif-body">참고 사항입니다. 거절이유에 해당하지 않습니다.</div>
+        </div>
+      </div>
+
+      <div class="sub-label">ActionPrompt</div>
+      <div class="action-prompt">
+        <p>수정 제안을 청구항에 반영하시겠습니까?</p>
+        <div class="action-prompt-buttons">
+          <button class="btn btn-primary">반영</button>
+          <button class="btn btn-outlined">수정 후 반영</button>
+          <button class="btn btn-ghost">무시</button>
+        </div>
+      </div>
+
+      <div class="sub-label">LegalCitation</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <span class="legal-cite"><i class="icon">§</i> 특허법 제42조제4항제2호</span>
+        <span class="legal-cite"><i class="icon">§</i> 시행령 제5조제6항</span>
+        <span class="legal-cite"><i class="icon">§</i> 특허법 제42조제3항제1호</span>
+      </div>
+
+      <div class="sub-label">ClaimRef Chip</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+        <span class="claim-chip">#1</span>
+        <span class="claim-chip">#5</span>
+        <span class="claim-chip">#14</span>
+        <span style="font-size:12px;color:var(--text-subtle)">← 클릭 시 해당 청구항으로 포커스 이동</span>
+      </div>
+
+      <div class="sub-label">Button Variants</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <button class="btn btn-primary">반영</button>
+        <button class="btn btn-outlined">수정 후 반영</button>
+        <button class="btn btn-ghost">무시</button>
+      </div>
+    </div>
+
+    <!-- Do / Don't -->
+    <div class="catalog-block">
+      <h3>AI 출력 규약 — Do / Don't</h3>
+      <div class="rule-grid">
+        <div class="rule-box do">
+          <div class="rule-header">✓ DO</div>
+          <ul>
+            <li><code>[거절이유]</code> / <code>[주의]</code> / <code>[참고]</code> 태그로 검토 등급 명시</li>
+            <li>법령은 <code>§</code> 접두사로 시작</li>
+            <li>청구항 번호는 <code>#N</code> 형식</li>
+            <li><code>## h2</code>로 섹션 구분</li>
+            <li>수정 제안은 <strong>수정 제안:</strong> 접두사 사용</li>
+            <li>액션 버튼은 <code>[반영]</code> 대괄호 형식</li>
+          </ul>
+        </div>
+        <div class="rule-box dont">
+          <div class="rule-header">✕ DON'T</div>
+          <ul>
+            <li><code># h1</code> 사용 — 위계 혼란</li>
+            <li>HTML 태그 직접 삽입</li>
+            <li>연속 빈 줄 2개 이상</li>
+            <li>이미지 마크다운 <code>![]()</code></li>
+            <li>법적 확정 표현 ("등록 가능합니다")</li>
+            <li>수정 내용 동의 없이 자동 적용</li>
+            <li><code>1. ol</code>로 청구항 번호 나열 — <code>#N</code> 칩 사용</li>
+            <li><code>`인라인 코드`</code>로 청구항 번호 참조 — <code>#N</code> 칩 사용</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message Schema -->
+    <div class="catalog-block">
+      <h3>메시지 스키마 — 백엔드 → 프론트엔드</h3>
+
+      <div class="sub-label">구조 원칙</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-md);margin-bottom:var(--sp-md);">
+        <div style="background:var(--bg-surface);border-radius:var(--r-sm);padding:var(--sp-md);">
+          <div style="font-size:11px;font-weight:700;color:var(--text-accent);margin-bottom:var(--sp-sm);">검증 시스템 결과</div>
+          <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">백엔드가 <strong>Typed JSON</strong>으로 전달<br>→ 프론트엔드가 컴포넌트 직접 렌더링</div>
+        </div>
+        <div style="background:var(--bg-surface);border-radius:var(--r-sm);padding:var(--sp-md);">
+          <div style="font-size:11px;font-weight:700;color:var(--color-point-500);margin-bottom:var(--sp-sm);">LLM 대화 응답</div>
+          <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">AI가 <strong>마크다운</strong>으로 출력<br>→ 인라인 패턴만 파서가 업그레이드</div>
+        </div>
+      </div>
+
+      <div class="sub-label">MessageBlock 타입 목록</div>
+      <table class="spec-table">
+        <tr>
+          <th>type</th>
+          <th>렌더링 컴포넌트</th>
+          <th>생성 주체</th>
+          <th>핵심 필드</th>
+        </tr>
+        <tr>
+          <td><code>text</code></td>
+          <td>MarkdownBlock</td>
+          <td>LLM</td>
+          <td><code>content: string</code></td>
+        </tr>
+        <tr>
+          <td><code>verif_result</code></td>
+          <td>VerifCard (error/warn/info)</td>
+          <td>검증 시스템</td>
+          <td><code>severity, rule_id, claim_ref[], legal_basis, body, suggestion</code></td>
+        </tr>
+        <tr>
+          <td><code>action_prompt</code></td>
+          <td>ActionPrompt</td>
+          <td>백엔드</td>
+          <td><code>question, actions[{label, variant, action_id}]</code></td>
+        </tr>
+        <tr>
+          <td><code>legal_cite</code></td>
+          <td>LegalCiteBlock</td>
+          <td>검증 시스템</td>
+          <td><code>statute, excerpt</code></td>
+        </tr>
+      </table>
+
+      <div class="sub-label">MessageBlock → 렌더러 (의사코드)</div>
+      <pre style="background:var(--bg-surface);border-left:3px solid var(--border-accent);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:var(--sp-md);overflow-x:auto;"><code style="font-family:monospace;font-size:12px;color:var(--text-secondary);">function MessageBlockRenderer({ block }) {
+  switch (block.type) {
+    case "text":         return &lt;MarkdownBlock content={block.content} /&gt;;
+    case "verif_result": return &lt;VerifCard {...block} /&gt;;
+    case "action_prompt":return &lt;ActionPrompt {...block} onAction={handleAction} /&gt;;
+    case "legal_cite":   return &lt;LegalCiteBlock {...block} /&gt;;
+  }
+}</code></pre>
+
+      <div class="sub-label">마크다운 인라인 패턴 — LLM 텍스트 자동 업그레이드</div>
+      <table class="spec-table">
+        <tr><th>패턴</th><th>변환 컴포넌트</th><th>예시</th></tr>
+        <tr><td><code>#N</code></td><td>ClaimRef Chip</td><td><span class="claim-chip">#5</span></td></tr>
+        <tr><td><code>§조항...</code></td><td>LegalCite Chip (인라인)</td><td><span class="legal-cite"><i class="icon">§</i> 제42조제4항</span></td></tr>
+        <tr><td><code>[버튼명]</code> (action_prompt 내)</td><td>Button</td><td><button class="btn btn-primary" style="font-size:11px;padding:3px 10px;">반영</button></td></tr>
+      </table>
+
+      <div class="sub-label">미결 사항</div>
+      <ul style="padding-left:16px;display:flex;flex-direction:column;gap:6px;">
+        <li style="font-size:12px;color:var(--text-secondary);">action_id 콜백 처리 — REST vs WebSocket vs SSE 결정 필요</li>
+        <li style="font-size:12px;color:var(--text-secondary);">스트리밍 시 블록 단위 청크 전송 방식 (TextBlock 스트리밍 / VerifResultBlock 완성 후 전송)</li>
+        <li style="font-size:12px;color:var(--text-secondary);">claim_ref 클릭 → 청구항 패널 포커스 이동 이벤트 버스 설계</li>
+        <li style="font-size:12px;color:var(--text-secondary);">검증 재실행 시 기존 verif_result 블록 업데이트 vs 새 메시지 추가 정책</li>
+      </ul>
+    </div>
+
+  </div><!-- /catalog -->
+</div><!-- /page-body -->
+
+</body>
+</html>

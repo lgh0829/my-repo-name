@@ -1,0 +1,82 @@
+{
+  "id": "T06",
+  "name": "업무효율 AS-IS/TO-BE 대응형",
+  "emphasis": "업무효율",
+  "style": "구조형",
+  "frame": "AS-IS/TO-BE",
+  "structure_ga": "가-α",
+  "structure_na": "나-δ",
+  "description": "가. 기본형 구조에 AS-IS/TO-BE 프레임 적용. 나. 세부계획은 한계점-기능 1:1 매핑 구조.",
+
+  "ga_sections": [
+    {
+      "order": 1,
+      "title_pool": ["이용목적", "서비스 활용 목적", "도입 목적"],
+      "emphasis": "업무 효율화 — 현재 AS-IS 비효율 → TO-BE 개선 목적으로 도입 목적 서술",
+      "tone": "AS-IS 현황 언급 후 TO-BE 목적 전환 구조"
+    },
+    {
+      "order": 2,
+      "title_pool": ["현 업무 방식의 한계점", "현행 운영의 문제점", "기존 업무 방식의 한계"],
+      "emphasis": "pain_points_rank 1·2순위를 첫 두 ㅇ 항목에 배치, AS-IS 현황 중심",
+      "tone": "구체적 현상 항목 나열, 정량 표현 활용"
+    },
+    {
+      "order": 3,
+      "title_pool": ["클라우드 서비스 도입 필요성", "서비스 도입의 필요성", "클라우드 전환 필요성"],
+      "emphasis": "각 한계점에 대한 PatSol TO-BE 개선 효과를 대응 서술",
+      "tone": "한계→해결 1:1 대응 구조형 나열"
+    },
+    {
+      "order": 4,
+      "title_pool": ["공공 지원 필요 배경", "정부 지원의 필요성", "자체 도입의 한계 및 지원 필요성"],
+      "emphasis": "보안·기술·범용AI 3개 논거 항목 나열",
+      "tone": "구조형, 각 항목 2~3문장"
+    }
+  ],
+
+  "na_sections": [
+    {
+      "order": 1,
+      "mapping_source": "분산 DB 수작업 취합",
+      "title": "DB 분산 문제 해결 — 특허 DB 통합 검색 활용",
+      "emphasis": "AS-IS: KIPRIS·USPTO·EPO 개별 접속 수작업 → TO-BE: 단일 플랫폼 통합 + 벡터 검색"
+    },
+    {
+      "order": 2,
+      "mapping_source": "조사-설계 도구 단절",
+      "title": "워크플로우 단절 해결 — 선행기술조사-청구항 설계 연계 활용",
+      "emphasis": "AS-IS: 결과 재입력 + 정보 단절 → TO-BE: 직결 연동 + 실시간 참조"
+    },
+    {
+      "order": 3,
+      "mapping_source": "수작업 비교발명 분석",
+      "title": "분석 수작업 해결 — 비교발명 분석 및 공백기술 탐색 활용",
+      "emphasis": "AS-IS: 수작업 대조 + 누락 위험 → TO-BE: OS 매트릭스 자동 시각화"
+    },
+    {
+      "order": 4,
+      "mapping_source": "명세서 수작업 작성 부담",
+      "title": "작성 부담 해결 — 명세서 초안 작성 지원 활용",
+      "emphasis": "AS-IS: 전 과정 수작업 + 기재불비 위험 → TO-BE: 초안 보조 + 변리사 최종 확정"
+    },
+    {
+      "order": 5,
+      "mapping_source": "분산 사건 이력 관리",
+      "title": "이력 분산 해결 — 고객 IP 데이터 중앙집중형 관리 활용",
+      "emphasis": "AS-IS: 분산 저장 + 인수인계 오류 → TO-BE: 중앙집중형 관리 + 업무 연속성"
+    }
+  ],
+
+  "writing_instructions": {
+    "paragraph_style": "구조형 항목 나열 (ㅇ + - 계층 구조 + AS-IS/TO-BE 대비 표현 활용)",
+    "title_variation": "title_pool에서 문서 전체에 걸쳐 서로 다른 표현을 선택",
+    "forbidden_expressions": ["AI 명세서 자동작성", "명세서 자동완성", "AI가 명세서를 작성", "자동 생성"],
+    "required_elements": [
+      "나. 세부계획 각 ㅇ 항목 제목에 '~문제 해결' 또는 '~개선' 표현으로 한계→해결 대응 명시",
+      "pain_points_rank 1·2순위를 가. 한계점 첫 두 ㅇ 항목에 반영",
+      "AI 기반 유사도 검색 표현 나. 세부계획에 명시",
+      "업무 처리 속도 25% 향상 수치를 가. 도입 필요성 또는 나. 세부계획에 포함"
+    ]
+  }
+}

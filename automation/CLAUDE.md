@@ -111,6 +111,14 @@ mode: automation | prompt-engineering | both
 
 ---
 
+## Verifying External Data
+
+- NEVER present fetched/inferred data (employee counts, company members, API model names) as confirmed facts
+- If a fetch fails (SSL, SPA rendering, 529), explicitly say so and mark downstream claims as unverified
+- For API/model availability, run a discovery call (e.g., curl list-models) before suggesting specific identifiers
+
+---
+
 ## 참고 컨텍스트
 
 - 회사: Wand / 제품: PatSol (특허 검색 및 명세서 작성 지원 B2B SaaS)

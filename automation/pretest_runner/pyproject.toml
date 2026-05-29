@@ -1,0 +1,12 @@
+[project]
+name = "pretest-runner"
+version = "0.1.0"
+description = "PatSol Prompt Monitor 자동화 테스트 러너"
+requires-python = ">=3.9"
+dependencies = [
+    "playwright>=1.44.0",
+    "pandas>=2.0.0",
+]
+
+[tool.uv]
+package = false

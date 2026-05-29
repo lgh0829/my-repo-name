@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 검토 카드 — PatSol 프로토타입</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:        #3361BE;
+      --primary-light:  #EBF0FA;
+      --primary-muted:  #A3BCE8;
+      --danger:         #FF3232;
+      --danger-light:   #FFF1F0;
+      --warning:        #FFAB03;
+      --warning-light:  #FFF8E1;
+      --success:        #22C55E;
+      --success-light:  #F0FDF4;
+      --gray50:  #FAFAFA;
+      --gray100: #F5F5F5;
+      --gray200: #EDEDED;
+      --gray300: #E0E0E0;
+      --gray400: #D9D9D9;
+      --gray500: #BDBDBD;
+      --gray600: #757575;
+      --gray700: #616161;
+      --gray800: #424242;
+      --gray900: #1E1E1E;
+    }
+
+    body {
+      font-family: -apple-system, 'Apple SD Gothic Neo', 'Pretendard', sans-serif;
+      background: #ECEEF2;
+      color: var(--gray900);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      height: 48px; background: white;
+      border-bottom: 1px solid var(--gray200);
+      display: flex; align-items: center;
+      padding: 0 20px; gap: 10px; flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .topbar-logo { font-size: 15px; font-weight: 800; color: var(--primary); }
+    .topbar-sep  { width: 1px; height: 16px; background: var(--gray300); }
+    .topbar-page { font-size: 12px; color: var(--gray600); font-weight: 500; }
+
+    /* ── Layout ── */
+    .app { display: flex; flex: 1; overflow: hidden; }
+
+    /* ── Chat Panel ── */
+    .chat-panel {
+      width: 496px; flex-shrink: 0;
+      background: #ECEEF2;
+      display: flex; flex-direction: column;
+      border-right: 1px solid var(--gray300);
+    }
+    .chat-panel-header {
+      padding: 11px 16px;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: .8px; text-transform: uppercase;
+      color: var(--gray600); background: white;
+      border-bottom: 1px solid var(--gray200);
+    }
+    .chat-body {
+      flex: 1; overflow-y: auto;
+      padding: 16px 14px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+
+    /* AI message bubble */
+    .ai-row { display: flex; gap: 8px; align-items: flex-start; }
+    .ai-avatar {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--primary); color: white;
+      font-size: 10px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .ai-bubble {
+      background: white; border: 1px solid var(--gray200);
+      border-radius: 4px 12px 12px 12px;
+      padding: 10px 13px; font-size: 13px;
+      line-height: 1.65; color: var(--gray800); max-width: 400px;
+    }
+
+    /* ── Review Card ── */
+    .review-card {
+      background: white; border: 1px solid var(--gray300);
+      border-radius: 12px; overflow: hidden;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+    }
+
+    /* Header — normal state */
+    .rc-header {
+      padding: 12px 16px; border-bottom: 1px solid var(--gray200);
+      display: flex; align-items: center; gap: 10px;
+      transition: background .3s, border-color .3s;
+    }
+    .rc-header.done {
+      background: var(--success-light);
+      border-bottom-color: #BBF7D0;
+    }
+
+    /* Normal header content */
+    #rc-normal { display: flex; align-items: center; gap: 10px; flex: 1; }
+    /* Done header content */
+    #rc-done   { display: none; align-items: center; gap: 10px; flex: 1; }
+
+    .rc-title { font-size: 13px; font-weight: 700; color: var(--gray900); margin-bottom: 5px; }
+    .badge-row { display: flex; gap: 5px; }
+    .badge {
+      font-size: 10px; font-weight: 700;
+      padding: 2px 8px; border-radius: 20px;
+    }
+    .badge-n    { background: var(--gray100); color: var(--gray700); }
+    .badge-high { background: var(--danger-light); color: var(--danger); }
+    .badge-med  { background: var(--warning-light); color: #7A4F00; }
+    .badge-done { background: var(--success-light); color: #166534; }
+
+    .rc-header-right { margin-left: auto; display: flex; gap: 6px; }
+
+    /* ── Section label ── */
+    .section-label {
+      padding: 12px 16px 6px;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: .7px; text-transform: uppercase;
+      color: var(--gray500);
+    }
+
+    /* ── Claim Diff Card ── */
+    .diff-list { padding: 0 12px 12px; display: flex; flex-direction: column; gap: 8px; }
+
+    .diff-card {
+      border: 1px solid var(--gray200); border-radius: 8px;
+      overflow: hidden; transition: border-color .2s, box-shadow .2s;
+    }
+    .diff-card:hover { box-shadow: 0 1px 6px rgba(0,0,0,0.07); }
+    .diff-card.accepted { border-color: var(--success); }
+    .diff-card.rejected { border-color: var(--gray300); }
+
+    /* ── Collapsed summary row ── */
+    .diff-card-summary {
+      display: none;
+      padding: 9px 12px;
+      align-items: center; gap: 8px;
+      background: var(--gray50);
+    }
+    .diff-card.collapsed .diff-card-summary { display: flex; }
+    .diff-card.accepted .diff-card-summary  { background: var(--success-light); }
+    .diff-card.rejected .diff-card-summary  { background: var(--gray50); }
+
+    .summary-badge {
+      font-size: 11px; font-weight: 700;
+      padding: 2px 8px; border-radius: 4px;
+      display: none;
+    }
+    .diff-card.accepted .accepted-sb { display: inline-block; background: #DCFCE7; color: #166534; }
+    .diff-card.rejected .rejected-sb { display: inline-block; background: var(--gray100); color: var(--gray600); }
+    .diff-card.stale    .stale-sb    { display: inline-block; background: #FEF3C7; color: #92400E; }
+
+    /* ── Stale state ── */
+    .diff-card.stale { border-color: var(--warning); }
+    .diff-card.stale .diff-card-summary { background: #FFFBEB; }
+
+    .stale-strip {
+      display: none;
+      padding: 7px 12px; gap: 6px; align-items: center;
+      background: #FFFBEB; border-bottom: 1px solid #FDE68A;
+      font-size: 11px; color: #92400E; font-weight: 500;
+    }
+    .diff-card.stale:not(.collapsed) .stale-strip { display: flex; }
+
+    .diff-card.stale .diff-card-head { background: #FFFBEB; border-bottom-color: #FDE68A; }
+    .diff-card.stale .diff-card-detail { opacity: 0.45; }
+
+    .foot-stale { display: none; gap: 6px; align-items: center; width: 100%; justify-content: flex-end; }
+    .diff-card.stale:not(.decided):not(.collapsed) .foot-stale  { display: flex; }
+    .diff-card.stale:not(.decided):not(.collapsed) .foot-pending { display: none; }
+
+    .btn-rereview       { background: var(--primary); color: white; }
+    .btn-rereview:hover { background: #2451A8; }
+    .btn-dismiss        { background: var(--gray100); color: var(--gray700); border: 1px solid var(--gray300); }
+    .btn-dismiss:hover  { background: var(--gray200); }
+
+    /* ── Demo bar ── */
+    .demo-bar {
+      background: #1E1E1E; padding: 5px 20px;
+      display: flex; align-items: center; gap: 8px;
+      font-size: 11px; flex-shrink: 0;
+    }
+    .demo-label { color: #666; font-weight: 700; letter-spacing: .5px; margin-right: 4px; }
+    .demo-btn {
+      padding: 3px 10px; border-radius: 4px;
+      background: #2A2A2A; color: #AAA; border: 1px solid #3A3A3A;
+      font-size: 11px; cursor: pointer; transition: background .15s;
+    }
+    .demo-btn:hover  { background: #383838; color: #DDD; }
+    .demo-btn.active { background: #7A4F00; color: #FFF; border-color: #B06000; }
+    .demo-sep { width: 1px; height: 14px; background: #333; margin: 0 4px; }
+
+    /* ── Detail (expandable section) ── */
+    .diff-card-detail {
+      overflow: hidden;
+      max-height: 700px;
+      transition: max-height 0.28s cubic-bezier(0.4,0,0.2,1),
+                  opacity 0.2s ease;
+    }
+    .diff-card.collapsed .diff-card-detail { max-height: 0; }
+    .diff-card.rejected .diff-card-detail  { opacity: 0.55; }
+
+    /* ── Diff card inner ── */
+    .diff-card-head {
+      padding: 8px 12px; background: var(--gray50);
+      border-bottom: 1px solid var(--gray200);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .diff-card-title { font-size: 12px; font-weight: 700; color: var(--gray800); flex: 1; }
+
+    .issue-chips { display: flex; gap: 3px; }
+    .issue-chip {
+      font-size: 9px; font-weight: 700;
+      padding: 2px 6px; border-radius: 4px;
+      cursor: pointer; transition: opacity .15s, outline .15s;
+      user-select: none;
+    }
+    .issue-chip.high   { background: var(--danger-light);  color: var(--danger); }
+    .issue-chip.medium { background: var(--warning-light); color: #7A4F00; }
+    .issue-chip.lit    { outline: 2px solid var(--primary); outline-offset: 1px; }
+
+    .diff-body { padding: 8px 12px; display: flex; flex-direction: column; gap: 1px; }
+
+    .diff-line {
+      display: flex; gap: 8px; padding: 3px 6px; border-radius: 3px;
+      font-size: 12px; line-height: 1.7;
+      transition: background .2s, outline .15s;
+    }
+    .diff-line.ctx { color: var(--gray700); }
+    .diff-line.del { background: #FFF1F0; color: #B91C1C; }
+    .diff-line.del .diff-text { text-decoration: line-through; }
+    .diff-line.add { background: #F0FDF4; color: #166534; }
+    .diff-marker {
+      width: 10px; flex-shrink: 0; font-size: 11px; font-weight: 700;
+      color: inherit; user-select: none; margin-top: 1px;
+    }
+    .diff-line.ctx .diff-marker { color: var(--gray400); }
+    .diff-text { flex: 1; }
+    .diff-line.glow {
+      outline: 2px solid var(--primary); outline-offset: 1px;
+      background: #F0F5FF; color: var(--gray900);
+    }
+    .diff-line.glow .diff-text { text-decoration: none; }
+
+    /* ── Diff card footer ── */
+    .diff-card-foot {
+      padding: 8px 12px; background: var(--gray50);
+      border-top: 1px solid var(--gray200);
+      display: flex; align-items: center; gap: 6px; justify-content: flex-end;
+    }
+
+    /* pending footer (default) */
+    .foot-pending { display: flex; gap: 6px; align-items: center; }
+
+    /* decided footer (shown when expanded after accept/reject) */
+    .foot-decided { display: none; gap: 6px; align-items: center; width: 100%; }
+    .diff-card.decided:not(.collapsed) .foot-decided { display: flex; }
+    .diff-card.decided:not(.collapsed) .foot-pending  { display: none; }
+
+    .decided-label {
+      font-size: 11px; font-weight: 700;
+      display: none; margin-right: auto;
+    }
+    .diff-card.accepted .decided-label.accepted-st { display: block; color: #166534; }
+    .diff-card.rejected .decided-label.rejected-st { display: block; color: var(--gray600); }
+
+    /* ── 변경 사유 ── */
+    .reasons-wrap { border-top: 1px solid var(--gray200); }
+    .reasons-toggle {
+      padding: 10px 16px; display: flex; align-items: center; gap: 8px;
+      cursor: pointer; user-select: none; transition: background .15s;
+    }
+    .reasons-toggle:hover { background: var(--gray50); }
+    .reasons-label {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: .7px; text-transform: uppercase;
+      color: var(--gray500); flex: 1;
+    }
+    .reasons-count { font-size: 10px; color: var(--gray500); font-weight: 600; }
+    .chevron { font-size: 9px; color: var(--gray400); transition: transform .2s; }
+    .chevron.open { transform: rotate(180deg); }
+    .reasons-body { display: none; padding: 2px 10px 10px; }
+    .reasons-body.open { display: block; }
+
+    .issue-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 8px; border-radius: 6px;
+      cursor: pointer; transition: background .15s;
+    }
+    .issue-row:hover { background: var(--gray50); }
+    .issue-row.lit   { background: var(--primary-light); }
+    .issue-sev  { font-size: 12px; width: 14px; flex-shrink: 0; }
+    .issue-id   { font-size: 10px; font-weight: 700; color: var(--gray600); min-width: 24px; }
+    .issue-name { font-size: 12px; font-weight: 600; color: var(--gray800); flex: 1; }
+    .issue-loc  {
+      font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 4px;
+      background: var(--primary-light); color: var(--primary);
+    }
+    .issue-loc.cross { background: #FFF5DB; color: #66531D; }
+
+    /* ── Buttons ── */
+    .btn {
+      padding: 5px 12px; border-radius: 6px;
+      font-size: 11px; font-weight: 700;
+      cursor: pointer; border: none;
+      transition: all .15s; line-height: 1.4;
+    }
+    .btn-accept     { background: var(--success); color: white; }
+    .btn-accept:hover { background: #16A34A; }
+    .btn-reject     { background: var(--gray100); color: var(--gray700); border: 1px solid var(--gray300); }
+    .btn-reject:hover { background: var(--gray200); }
+    .btn-view       { background: none; color: var(--primary); border: 1px solid var(--primary); }
+    .btn-view:hover { background: var(--primary-light); }
+    .btn-accept-all { background: var(--success); color: white; }
+    .btn-accept-all:hover { background: #16A34A; }
+    .btn-reject-all { background: var(--gray100); color: var(--gray700); border: 1px solid var(--gray300); }
+    .btn-reject-all:hover { background: var(--gray200); }
+
+    /* 되돌리기 button */
+    .btn-undo {
+      padding: 4px 10px; border-radius: 5px;
+      font-size: 11px; font-weight: 600;
+      cursor: pointer; background: none;
+      color: var(--primary); border: 1px solid var(--primary-muted);
+      transition: background .15s;
+    }
+    .btn-undo:hover { background: var(--primary-light); }
+
+    /* expand/collapse icon button */
+    .btn-toggle {
+      width: 24px; height: 24px; border-radius: 4px;
+      background: none; border: none; cursor: pointer;
+      color: var(--gray500); font-size: 10px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s, transform .2s;
+      flex-shrink: 0;
+    }
+    .btn-toggle:hover { background: var(--gray200); }
+    .btn-toggle.flipped { transform: rotate(180deg); }
+
+    /* ── Document Panel ── */
+    .doc-panel { flex: 1; background: white; overflow-y: auto; padding: 36px 44px; }
+    .doc-section-label {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--gray500); margin-bottom: 20px;
+      padding-bottom: 10px; border-bottom: 1px solid var(--gray200);
+    }
+
+    .claim-block {
+      display: flex; gap: 0;
+      margin-bottom: 24px; border-radius: 8px;
+      transition: background .3s; padding: 14px 0;
+    }
+    .claim-block.doc-flash-blue    { background: var(--primary-light); }
+    .claim-block.doc-flash-success { background: var(--success-light); }
+
+    .claim-content { flex: 1; padding-right: 10px; }
+    .claim-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--primary); color: white;
+      font-size: 10px; font-weight: 700;
+      margin-right: 6px; vertical-align: middle; flex-shrink: 0;
+    }
+    .claim-text { font-size: 13px; line-height: 1.95; color: var(--gray800); }
+    .claim-text mark { border-radius: 2px; padding: 0 2px; transition: background .2s; }
+    .m-i1 { background: rgba(255, 50,  50,  .13); }
+    .m-i2 { background: rgba(255,171,   3,  .18); }
+    .m-i3 { background: rgba( 59,130, 246,  .13); }
+    .m-i4 { background: rgba(168, 85, 247,  .12); }
+
+    .claim-margin {
+      width: 70px; flex-shrink: 0;
+      display: flex; flex-direction: column;
+      gap: 4px; align-items: flex-start; padding-top: 2px;
+    }
+    .mt {
+      font-size: 9px; font-weight: 700;
+      padding: 2px 6px; border-radius: 4px;
+      cursor: pointer; white-space: nowrap;
+      transition: transform .15s, opacity .15s;
+    }
+    .mt:hover { transform: scale(1.06); opacity: .8; }
+    .mt.high   { background: var(--danger-light);  color: var(--danger);  border: 1px solid #FFBBBB; }
+    .mt.medium { background: var(--warning-light); color: #7A4F00;        border: 1px solid #FFD97A; }
+    .mt.done   { background: var(--success-light); color: #166534; border: 1px solid #BBF7D0; text-decoration: line-through; opacity: .6; }
+  </style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <span class="topbar-logo">PatSol</span>
+  <div class="topbar-sep"></div>
+  <span class="topbar-page">명세서 편집 · AI 검토 카드 프로토타입</span>
+</div>
+
+<!-- Demo controls -->
+<div class="demo-bar">
+  <span class="demo-label">DEMO</span>
+  <button class="demo-btn" id="demo-c1" onclick="setStale('claim1')">청구항 1 → Stale</button>
+  <button class="demo-btn" id="demo-c2" onclick="setStale('claim2')">청구항 2 → Stale</button>
+  <div class="demo-sep"></div>
+  <button class="demo-btn" onclick="clearAllStale()">Stale 초기화</button>
+</div>
+
+<div class="app">
+
+  <!-- ════════════ Chat Panel ════════════ -->
+  <div class="chat-panel">
+    <div class="chat-panel-header">AI 검토</div>
+    <div class="chat-body">
+
+      <div class="ai-row">
+        <div class="ai-avatar">AI</div>
+        <div class="ai-bubble">
+          청구항 1·2에 대한 검토를 완료했습니다.<br>
+          총 <strong>4건</strong>의 검토 사항을 발견했습니다. 아래에서 수정 결과를 확인하고 수락 또는 거절해 주세요.
+        </div>
+      </div>
+
+      <!-- ── Review Card ── -->
+      <div class="review-card">
+
+        <!-- Header -->
+        <div class="rc-header" id="rc-header">
+
+          <!-- Normal state -->
+          <div id="rc-normal">
+            <div style="flex:1">
+              <div class="rc-title">청구항 1 · 2 검토 결과</div>
+              <div class="badge-row">
+                <span class="badge badge-n">4건</span>
+                <span class="badge badge-high">▲ 심각 1건</span>
+                <span class="badge badge-med">△ 보통 3건</span>
+              </div>
+            </div>
+            <div class="rc-header-right">
+              <button class="btn btn-accept-all" onclick="acceptAll()">전체 수락</button>
+              <button class="btn btn-reject-all" onclick="rejectAll()">전체 거절</button>
+            </div>
+          </div>
+
+          <!-- Done state (all cards decided) -->
+          <div id="rc-done">
+            <div style="flex:1">
+              <div class="rc-title">검토 완료</div>
+              <div class="badge-row" id="done-badges"></div>
+            </div>
+            <button class="btn btn-reject-all" onclick="resetAll()">초기화</button>
+          </div>
+
+        </div><!-- rc-header -->
+
+        <!-- 수정 결과 제안 -->
+        <div class="section-label">수정 결과 제안</div>
+        <div class="diff-list">
+
+          <!-- ── 청구항 1 diff ── -->
+          <div class="diff-card" id="dc-claim1">
+
+            <!-- Collapsed summary row -->
+            <div class="diff-card-summary">
+              <span class="diff-card-title">청구항 1</span>
+              <span class="summary-badge accepted-sb">✓ 수락됨</span>
+              <span class="summary-badge rejected-sb">✗ 거절됨</span>
+              <span class="summary-badge stale-sb">⚠ 수정됨</span>
+              <span style="flex:1"></span>
+              <button class="btn-undo" onclick="undoClaim('claim1')">되돌리기</button>
+              <button class="btn-toggle" onclick="expandCard('claim1')" title="펼치기">▼</button>
+            </div>
+
+            <!-- Stale warning strip -->
+            <div class="stale-strip">
+              <span>⚠</span>
+              <span>제안 생성 이후 청구항이 수정되었습니다. 수락·거절 전 재검토를 권장합니다.</span>
+            </div>
+
+            <!-- Expandable detail -->
+            <div class="diff-card-detail">
+              <div class="diff-card-head">
+                <span class="diff-card-title">청구항 1</span>
+                <div class="issue-chips">
+                  <span class="issue-chip high"   data-issue="i1" onclick="litIssue('i1')">▲ I-1</span>
+                  <span class="issue-chip medium" data-issue="i4" onclick="litIssue('i4')">△ I-4</span>
+                </div>
+              </div>
+              <div class="diff-body">
+                <div class="diff-line ctx">
+                  <span class="diff-marker"> </span>
+                  <span class="diff-text">암의 치료에 사용하기 위한,</span>
+                </div>
+                <div class="diff-line del" data-issues="i1 i4">
+                  <span class="diff-marker">−</span>
+                  <span class="diff-text">화학식 (I)의 화합물 또는 그의 제약상 허용되는 염, 및 하나 이상의 항암제 또는 그의 제약상 허용되는 염의 <strong>조합물</strong>로서,</span>
+                </div>
+                <div class="diff-line add" data-issues="i1 i4">
+                  <span class="diff-marker">+</span>
+                  <span class="diff-text">화학식 (I)의 화합물 또는 그의 제약상 허용되는 염, 및 하나 이상의 항암제 또는 그의 제약상 허용되는 염의 <strong>조합물</strong>로서, 상기 조합물은 상기 항암제의 투여를 포함하는 치료에 사용하기 위한 것이고,</span>
+                </div>
+                <div class="diff-line ctx">
+                  <span class="diff-marker"> </span>
+                  <span class="diff-text">여기서 화학식 (I)의 화합물은 펠리티닙, 네라티닙, 라파티닙, 아파티닙, 에를로티닙, 게피티닙으로 이루어진 군으로부터 선택된 것인 조합물.</span>
+                </div>
+              </div>
+              <div class="diff-card-foot">
+                <!-- pending: default -->
+                <div class="foot-pending">
+                  <button class="btn btn-view" onclick="viewInDoc('claim1')">문서에서 보기</button>
+                  <button class="btn btn-reject" onclick="rejectClaim('claim1')">거절</button>
+                  <button class="btn btn-accept" onclick="acceptClaim('claim1')">수락</button>
+                </div>
+                <!-- stale: 수락·거절 대신 무시·재검토 -->
+                <div class="foot-stale">
+                  <button class="btn btn-dismiss" onclick="dismissStale('claim1')">무시</button>
+                  <button class="btn btn-rereview" onclick="rereviewClaim('claim1')">재검토 요청 →</button>
+                </div>
+                <!-- decided + expanded: shown after accept/reject when re-opened -->
+                <div class="foot-decided">
+                  <span class="decided-label accepted-st">✓ 수락됨</span>
+                  <span class="decided-label rejected-st">✗ 거절됨</span>
+                  <span style="flex:1"></span>
+                  <button class="btn-undo" onclick="undoClaim('claim1')">되돌리기</button>
+                  <button class="btn-toggle flipped" onclick="collapseCard('claim1')" title="접기">▼</button>
+                </div>
+              </div>
+            </div><!-- diff-card-detail -->
+
+          </div><!-- dc-claim1 -->
+
+          <!-- ── 청구항 2 diff ── -->
+          <div class="diff-card" id="dc-claim2">
+
+            <!-- Collapsed summary row -->
+            <div class="diff-card-summary">
+              <span class="diff-card-title">청구항 2</span>
+              <span class="summary-badge accepted-sb">✓ 수락됨</span>
+              <span class="summary-badge rejected-sb">✗ 거절됨</span>
+              <span class="summary-badge stale-sb">⚠ 수정됨</span>
+              <span style="flex:1"></span>
+              <button class="btn-undo" onclick="undoClaim('claim2')">되돌리기</button>
+              <button class="btn-toggle" onclick="expandCard('claim2')" title="펼치기">▼</button>
+            </div>
+
+            <!-- Stale warning strip -->
+            <div class="stale-strip">
+              <span>⚠</span>
+              <span>제안 생성 이후 청구항이 수정되었습니다. 수락·거절 전 재검토를 권장합니다.</span>
+            </div>
+
+            <!-- Expandable detail -->
+            <div class="diff-card-detail">
+              <div class="diff-card-head">
+                <span class="diff-card-title">청구항 2</span>
+                <div class="issue-chips">
+                  <span class="issue-chip high"   data-issue="i1" onclick="litIssue('i1')">▲ I-1</span>
+                  <span class="issue-chip medium" data-issue="i2" onclick="litIssue('i2')">△ I-2</span>
+                  <span class="issue-chip medium" data-issue="i3" onclick="litIssue('i3')">△ I-3</span>
+                  <span class="issue-chip medium" data-issue="i4" onclick="litIssue('i4')">△ I-4</span>
+                </div>
+              </div>
+              <div class="diff-body">
+                <div class="diff-line del" data-issues="i1 i2">
+                  <span class="diff-marker">−</span>
+                  <span class="diff-text">암의 치료에 사용하기 위한 <strong>제1항에 따른 화학식 (I)의 화합물</strong> 또는 그의 제약상 허용되는 염으로서,</span>
+                </div>
+                <div class="diff-line add" data-issues="i1 i2">
+                  <span class="diff-marker">+</span>
+                  <span class="diff-text">암의 치료에 사용하기 위한 <strong>제1항에 열거된 화합물로 이루어진 군으로부터 선택되는 화학식 (I)의 화합물</strong> 또는 그의 제약상 허용되는 염으로서,</span>
+                </div>
+                <div class="diff-line ctx">
+                  <span class="diff-marker"> </span>
+                  <span class="diff-text">여기서 치료는 하나 이상의 항암제 또는 그의 제약상 허용되는 염의 투여를 추가로 포함하는 것인,</span>
+                </div>
+                <div class="diff-line del" data-issues="i3">
+                  <span class="diff-marker">−</span>
+                  <span class="diff-text">암의 치료에 사용하기 위한 제1항에 따른 화학식 (I)의 화합물 또는 그의 제약상 허용되는 염.</span>
+                </div>
+                <div class="diff-line add" data-issues="i3">
+                  <span class="diff-marker">+</span>
+                  <span class="diff-text">화합물 또는 염.</span>
+                </div>
+              </div>
+              <div class="diff-card-foot">
+                <div class="foot-pending">
+                  <button class="btn btn-view" onclick="viewInDoc('claim2')">문서에서 보기</button>
+                  <button class="btn btn-reject" onclick="rejectClaim('claim2')">거절</button>
+                  <button class="btn btn-accept" onclick="acceptClaim('claim2')">수락</button>
+                </div>
+                <div class="foot-stale">
+                  <button class="btn btn-dismiss" onclick="dismissStale('claim2')">무시</button>
+                  <button class="btn btn-rereview" onclick="rereviewClaim('claim2')">재검토 요청 →</button>
+                </div>
+                <div class="foot-decided">
+                  <span class="decided-label accepted-st">✓ 수락됨</span>
+                  <span class="decided-label rejected-st">✗ 거절됨</span>
+                  <span style="flex:1"></span>
+                  <button class="btn-undo" onclick="undoClaim('claim2')">되돌리기</button>
+                  <button class="btn-toggle flipped" onclick="collapseCard('claim2')" title="접기">▼</button>
+                </div>
+              </div>
+            </div><!-- diff-card-detail -->
+
+          </div><!-- dc-claim2 -->
+
+        </div><!-- diff-list -->
+
+        <!-- ── 변경 사유 ── -->
+        <div class="reasons-wrap">
+          <div class="reasons-toggle" onclick="toggleReasons()">
+            <span class="reasons-label">변경 사유</span>
+            <span class="reasons-count">4건</span>
+            <span class="chevron" id="chevron">▼</span>
+          </div>
+          <div class="reasons-body" id="reasons-body">
+            <div class="issue-row" id="row-i1" onclick="litIssue('i1')">
+              <span class="issue-sev">▲</span>
+              <span class="issue-id">I-1</span>
+              <span class="issue-name">카테고리 정합성</span>
+              <span class="issue-loc cross">청구항 1 ↔ 2</span>
+            </div>
+            <div class="issue-row" id="row-i2" onclick="litIssue('i2')">
+              <span class="issue-sev">△</span>
+              <span class="issue-id">I-2</span>
+              <span class="issue-name">선행사 기재</span>
+              <span class="issue-loc">청구항 2</span>
+            </div>
+            <div class="issue-row" id="row-i3" onclick="litIssue('i3')">
+              <span class="issue-sev">△</span>
+              <span class="issue-id">I-3</span>
+              <span class="issue-name">문장 구조 중복</span>
+              <span class="issue-loc">청구항 2</span>
+            </div>
+            <div class="issue-row" id="row-i4" onclick="litIssue('i4')">
+              <span class="issue-sev">△</span>
+              <span class="issue-id">I-4</span>
+              <span class="issue-name">단일성 / 청구항 관계</span>
+              <span class="issue-loc cross">청구항 1 ↔ 2</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- review-card -->
+    </div><!-- chat-body -->
+  </div><!-- chat-panel -->
+
+
+  <!-- ════════════ Document Panel ════════════ -->
+  <div class="doc-panel">
+    <div class="doc-section-label">청구범위</div>
+
+    <!-- Claim 1 -->
+    <div class="claim-block" id="doc-claim1">
+      <div class="claim-content">
+        <span class="claim-num">1</span>
+        <span class="claim-text">
+          암의 치료에 사용하기 위한,
+          <mark class="m-i1" data-issues="i1">화학식 (I)의 화합물 또는 그의 제약상 허용되는 염</mark>,
+          및 하나 이상의
+          <mark class="m-i4" data-issues="i4">항암제 또는 그의 제약상 허용되는 염의 조합물</mark>로서,
+          여기서 화학식 (I)의 화합물은 펠리티닙, 네라티닙, 라파티닙,
+          아파티닙, 에를로티닙, 게피티닙으로 이루어진 군으로부터 선택된 것인 조합물.
+        </span>
+      </div>
+      <div class="claim-margin">
+        <span class="mt high"   id="mt-c1-i1" data-claim="claim1" data-issue="i1" onclick="onMtClick('claim1','i1')" title="I-1 카테고리 정합성">▲ I-1</span>
+        <span class="mt medium" id="mt-c1-i4" data-claim="claim1" data-issue="i4" onclick="onMtClick('claim1','i4')" title="I-4 단일성">△ I-4</span>
+      </div>
+    </div>
+
+    <!-- Claim 2 -->
+    <div class="claim-block" id="doc-claim2">
+      <div class="claim-content">
+        <span class="claim-num">2</span>
+        <span class="claim-text">
+          암의 치료에 사용하기 위한
+          <mark class="m-i1 m-i2" data-issues="i1 i2">제1항에 따른 화학식 (I)의 화합물</mark>
+          또는 그의 제약상 허용되는 염으로서,
+          여기서 치료는 하나 이상의 항암제 또는 그의 제약상 허용되는 염의 투여를 추가로 포함하는 것인,
+          <mark class="m-i3" data-issues="i3">암의 치료에 사용하기 위한 제1항에 따른 화학식 (I)의 화합물 또는 그의 제약상 허용되는 염.</mark>
+        </span>
+      </div>
+      <div class="claim-margin">
+        <span class="mt high"   id="mt-c2-i1" data-claim="claim2" data-issue="i1" onclick="onMtClick('claim2','i1')" title="I-1 카테고리 정합성">▲ I-1</span>
+        <span class="mt medium" id="mt-c2-i2" data-claim="claim2" data-issue="i2" onclick="onMtClick('claim2','i2')" title="I-2 선행사 기재">△ I-2</span>
+        <span class="mt medium" id="mt-c2-i3" data-claim="claim2" data-issue="i3" onclick="onMtClick('claim2','i3')" title="I-3 문장 구조">△ I-3</span>
+        <span class="mt medium" id="mt-c2-i4" data-claim="claim2" data-issue="i4" onclick="onMtClick('claim2','i4')" title="I-4 단일성">△ I-4</span>
+      </div>
+    </div>
+
+  </div><!-- doc-panel -->
+
+</div><!-- app -->
+
+<script>
+  /* ── State ── */
+  const cardState = { claim1: 'pending', claim2: 'pending' };
+  let activeIssue = null;
+  let reasonsOpen = false;
+
+  /* ── 변경 사유 toggle ── */
+  function toggleReasons() {
+    reasonsOpen = !reasonsOpen;
+    document.getElementById('reasons-body').classList.toggle('open', reasonsOpen);
+    document.getElementById('chevron').classList.toggle('open', reasonsOpen);
+  }
+
+  /* ── Issue highlight ── */
+  function litIssue(issueId) {
+    if (activeIssue === issueId) { clearLit(); activeIssue = null; return; }
+    activeIssue = issueId;
+    clearLit();
+
+    document.querySelectorAll('.diff-line[data-issues]').forEach(el => {
+      if (el.dataset.issues.split(' ').includes(issueId)) el.classList.add('glow');
+    });
+    document.querySelectorAll('.issue-chip[data-issue]').forEach(el => {
+      el.classList.toggle('lit', el.dataset.issue === issueId);
+    });
+    if (!reasonsOpen) {
+      reasonsOpen = true;
+      document.getElementById('reasons-body').classList.add('open');
+      document.getElementById('chevron').classList.add('open');
+    }
+    document.querySelectorAll('.issue-row').forEach(el => {
+      el.classList.toggle('lit', el.id === 'row-' + issueId);
+    });
+  }
+
+  function clearLit() {
+    document.querySelectorAll('.diff-line.glow').forEach(el => el.classList.remove('glow'));
+    document.querySelectorAll('.issue-chip.lit').forEach(el => el.classList.remove('lit'));
+    document.querySelectorAll('.issue-row.lit').forEach(el => el.classList.remove('lit'));
+  }
+
+  /* ── Accept / Reject ── */
+  function acceptClaim(claimId) { setDecision(claimId, 'accepted'); }
+  function rejectClaim(claimId) { setDecision(claimId, 'rejected'); }
+
+  function setDecision(claimId, decision) {
+    const dc = document.getElementById('dc-' + claimId);
+    dc.classList.remove('accepted', 'rejected', 'decided', 'collapsed');
+    // Force reflow so collapse animation plays from full height
+    void dc.offsetHeight;
+    dc.classList.add(decision, 'decided', 'collapsed');
+    cardState[claimId] = decision;
+
+    if (decision === 'accepted') {
+      flashDoc(claimId, 'doc-flash-success');
+      document.querySelectorAll('.mt[data-claim="' + claimId + '"]')
+        .forEach(mt => mt.classList.add('done'));
+    } else {
+      document.querySelectorAll('.mt[data-claim="' + claimId + '"]')
+        .forEach(mt => mt.classList.remove('done'));
+    }
+    checkAllDone();
+  }
+
+  /* ── Undo (되돌리기) ── */
+  function undoClaim(claimId) {
+    const dc = document.getElementById('dc-' + claimId);
+    dc.classList.remove('accepted', 'rejected', 'decided', 'collapsed');
+    cardState[claimId] = 'pending';
+    document.querySelectorAll('.mt[data-claim="' + claimId + '"]')
+      .forEach(mt => mt.classList.remove('done'));
+    checkAllDone();
+  }
+
+  /* ── Expand / Collapse (펼치기 / 접기) ── */
+  function expandCard(claimId) {
+    document.getElementById('dc-' + claimId).classList.remove('collapsed');
+  }
+  function collapseCard(claimId) {
+    document.getElementById('dc-' + claimId).classList.add('collapsed');
+  }
+
+  /* ── Bulk actions ── */
+  function acceptAll() { acceptClaim('claim1'); acceptClaim('claim2'); }
+  function rejectAll() { rejectClaim('claim1'); rejectClaim('claim2'); }
+  function resetAll()  { undoClaim('claim1');  undoClaim('claim2'); }
+
+  /* ── All-done header ── */
+  function checkAllDone() {
+    const allDone = Object.values(cardState).every(s => s !== 'pending');
+    document.getElementById('rc-normal').style.display = allDone ? 'none' : 'flex';
+    document.getElementById('rc-done').style.display   = allDone ? 'flex' : 'none';
+    document.getElementById('rc-header').classList.toggle('done', allDone);
+
+    if (allDone) {
+      const accepted = Object.values(cardState).filter(s => s === 'accepted').length;
+      const rejected = Object.values(cardState).filter(s => s === 'rejected').length;
+      const badges = document.getElementById('done-badges');
+      badges.innerHTML =
+        (accepted ? `<span class="badge badge-done">✓ 수락 ${accepted}건</span>` : '') +
+        (rejected ? `<span class="badge badge-n">✗ 거절 ${rejected}건</span>` : '');
+    }
+  }
+
+  /* ── 문서에서 보기 ── */
+  function viewInDoc(claimId) {
+    const el = document.getElementById('doc-' + claimId);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    flashDoc(claimId, 'doc-flash-blue');
+  }
+
+  /* ── 마진 태그 클릭 ── */
+  function onMtClick(claimId, issueId) {
+    const dc = document.getElementById('dc-' + claimId);
+    if (dc) dc.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    litIssue(issueId);
+  }
+
+  /* ── Stale ── */
+  function setStale(claimId) {
+    const dc = document.getElementById('dc-' + claimId);
+    if (cardState[claimId] !== 'pending') return; // 결정된 카드는 stale 미적용
+    dc.classList.add('stale');
+    const btnId = claimId === 'claim1' ? 'demo-c1' : 'demo-c2';
+    document.getElementById(btnId).classList.add('active');
+  }
+
+  function clearAllStale() {
+    document.querySelectorAll('.diff-card').forEach(dc => dc.classList.remove('stale'));
+    document.getElementById('demo-c1').classList.remove('active');
+    document.getElementById('demo-c2').classList.remove('active');
+  }
+
+  function dismissStale(claimId) {
+    const dc = document.getElementById('dc-' + claimId);
+    dc.classList.remove('stale');
+    const btnId = claimId === 'claim1' ? 'demo-c1' : 'demo-c2';
+    document.getElementById(btnId).classList.remove('active');
+  }
+
+  function rereviewClaim(claimId) {
+    const dc = document.getElementById('dc-' + claimId);
+    dc.classList.remove('stale');
+    const btnId = claimId === 'claim1' ? 'demo-c1' : 'demo-c2';
+    document.getElementById(btnId).classList.remove('active');
+    // 재검토 요청 피드백: primary 테두리 플래시
+    dc.style.transition = 'border-color .3s';
+    dc.style.borderColor = 'var(--primary)';
+    dc.style.boxShadow = '0 0 0 3px rgba(51,97,190,.15)';
+    setTimeout(() => { dc.style.borderColor = ''; dc.style.boxShadow = ''; }, 1200);
+  }
+
+  /* ── Doc flash helper ── */
+  function flashDoc(claimId, cls) {
+    const el = document.getElementById('doc-' + claimId);
+    if (!el) return;
+    el.classList.add(cls);
+    setTimeout(() => el.classList.remove(cls), 1400);
+  }
+</script>
+
+</body>
+</html>

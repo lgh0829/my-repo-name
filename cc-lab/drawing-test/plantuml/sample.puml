@@ -1,0 +1,44 @@
+@startuml
+
+skinparam backgroundColor white
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 11
+skinparam ArrowColor black
+skinparam ArrowThickness 1.5
+
+skinparam rectangle {
+    BackgroundColor white
+    BorderColor black
+    BorderThickness 1.5
+    FontColor black
+}
+
+skinparam diamond {
+    BackgroundColor white
+    BorderColor black
+}
+
+start
+
+:Operator Terminal (20)\nSends Chat Room Creation\nRequest to Server (10);
+
+:Chat Room Management Module (13)\nof Server (10) Receives Application;
+
+if (Approved?) then (Approved)
+    :Subscription/Payment Management\nModule (14) Requests Payment Info\nfrom Operator Terminal (20);
+
+    :Operator Terminal (20)\nInputs and Registers\nPayment Info with Server (10);
+
+    :Settlement Module (16)\nConfigures Settlement System\nbased on Registered Info;
+
+    :Chat Room Management Module (13)\nApplies Operator-Set\nSubscription Conditions and Settings;
+
+    :Authorization Module (15)\nAssigns Admin Rights to\nOperator Terminal (20) Account;
+
+    stop
+else (Not Approved)
+    :Application Denied;
+    stop
+endif
+
+@enduml

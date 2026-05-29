@@ -1,0 +1,226 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "클라우드바우처 수요기업 설문 스키마",
+  "description": "PatSol 클라우드바우처 이용계획서 자동 초안 생성용 입력 데이터",
+  "type": "object",
+  "required": [
+    "company_name",
+    "main_work",
+    "strengths",
+    "employees_patent",
+    "employees_non_patent",
+    "pain_points_rank",
+    "goal_rank",
+    "cloud_current_state",
+    "cloud_purpose",
+    "cloud_readiness",
+    "cloud_method",
+    "cloud_timeline",
+    "it_staff",
+    "data_management",
+    "it_asset_scale"
+  ],
+  "properties": {
+
+    "_comment_A": "=== A. 기업 기본 정보 (필수) ===",
+
+    "company_name": {
+      "type": "string",
+      "title": "기업명",
+      "description": "수요기업 상호명",
+      "example": "특허법인 공간"
+    },
+
+    "main_work": {
+      "type": "string",
+      "title": "주요 업무",
+      "description": "기업의 핵심 업무를 2~3문장으로 서술",
+      "example": "중소기업 및 스타트업 대상 특허 출원·관리 업무 전담. 선행기술조사부터 청구항 설계, 명세서 작성까지 전 과정 담당."
+    },
+
+    "strengths": {
+      "type": "string",
+      "title": "기업 강점",
+      "description": "기업의 핵심 강점 또는 차별화 요소 (자유 텍스트)",
+      "example": "주요 기술분야, 소규모 전문 인력, 중소기업 특화 이력, 신속한 의사결정"
+    },
+
+    "employees_patent": {
+      "type": "integer",
+      "title": "변리사·보조 인원 수",
+      "description": "변리사 및 변리사 보조(특허청 실무) 인원",
+      "minimum": 1,
+      "example": 8
+    },
+
+    "employees_non_patent": {
+      "type": "integer",
+      "title": "비변리 인원 수",
+      "description": "행정·영업·지원 등 비변리 직원 수",
+      "minimum": 0,
+      "example": 4
+    },
+
+    "_comment_B": "=== B. 도입 목적 및 문제점 (필수) ===",
+
+    "pain_points_rank": {
+      "type": "object",
+      "title": "현업 문제점 우선순위",
+      "description": "가장 심각한 문제점 1순위·2순위 선택",
+      "properties": {
+        "first": {
+          "type": "string",
+          "enum": ["수작업_많음", "시스템_분산", "보안_우려", "인력_부족", "비용_부담"],
+          "title": "1순위"
+        },
+        "second": {
+          "type": "string",
+          "enum": ["수작업_많음", "시스템_분산", "보안_우려", "인력_부족", "비용_부담"],
+          "title": "2순위"
+        }
+      },
+      "required": ["first", "second"],
+      "example": { "first": "수작업_많음", "second": "시스템_분산" }
+    },
+
+    "goal_rank": {
+      "type": "object",
+      "title": "도입 목표 우선순위",
+      "description": "PatSol 도입으로 달성하고 싶은 목표 1순위·2순위 선택",
+      "properties": {
+        "first": {
+          "type": "string",
+          "enum": ["업무_효율화", "보안_강화", "비용_절감", "경쟁력_강화", "성장_잠재력"],
+          "title": "1순위"
+        },
+        "second": {
+          "type": "string",
+          "enum": ["업무_효율화", "보안_강화", "비용_절감", "경쟁력_강화", "성장_잠재력"],
+          "title": "2순위"
+        }
+      },
+      "required": ["first", "second"],
+      "example": { "first": "업무_효율화", "second": "경쟁력_강화" }
+    },
+
+    "_comment_C": "=== C. 클라우드 현황 구조화 입력 (필수) ===",
+
+    "cloud_current_state": {
+      "type": "string",
+      "title": "클라우드 현재 사용 현황",
+      "enum": ["현재_미사용", "일부_사용중", "주요업무에_사용중"],
+      "example": "일부_사용중"
+    },
+
+    "cloud_purpose": {
+      "type": "string",
+      "title": "클라우드 사용 목적 (현재 또는 계획)",
+      "enum": ["파일_스토리지", "업무_협업도구", "전문서비스_SaaS", "자체서버_대체"],
+      "example": "전문서비스_SaaS"
+    },
+
+    "cloud_readiness": {
+      "type": "string",
+      "title": "클라우드 전환 준비도",
+      "enum": ["도입_검토전", "도입_검토중", "도입_결정완료"],
+      "example": "도입_검토중"
+    },
+
+    "cloud_method": {
+      "type": "string",
+      "title": "도입 방식",
+      "enum": ["퍼블릭_클라우드", "프라이빗_클라우드", "하이브리드"],
+      "example": "퍼블릭_클라우드"
+    },
+
+    "cloud_timeline": {
+      "type": "string",
+      "title": "도입 예정 시기",
+      "enum": ["즉시_3개월이내", "단기_3~6개월", "중기_6개월~1년"],
+      "example": "단기_3~6개월"
+    },
+
+    "it_staff": {
+      "type": "string",
+      "title": "IT 담당 인원",
+      "enum": ["없음", "1명", "2~3명", "4명이상"],
+      "example": "없음"
+    },
+
+    "data_management": {
+      "type": "string",
+      "title": "현재 데이터 관리 방식",
+      "enum": ["개인PC", "사내서버", "외부클라우드", "혼용"],
+      "example": "개인PC"
+    },
+
+    "it_asset_scale": {
+      "type": "string",
+      "title": "IT 자산 규모",
+      "enum": ["소형_PC복합기중심", "중형_사내서버보유", "대형_전용인프라운영"],
+      "example": "소형_PC복합기중심"
+    },
+
+    "_comment_D": "=== D. 선택 항목 ===",
+
+    "key_customers": {
+      "type": "string",
+      "title": "주요 고객 유형",
+      "enum": ["중소기업_중심", "대기업_중심", "비슷함"],
+      "example": "중소기업_중심"
+    },
+
+    "cloud_budget": {
+      "type": "string",
+      "title": "클라우드 도입 예산",
+      "enum": ["500만미만", "500~1000만", "1000만이상"],
+      "example": "500~1000만"
+    },
+
+    "revenue_scale": {
+      "type": "string",
+      "title": "연간 매출 규모",
+      "enum": ["5억미만", "5~50억", "50억이상"],
+      "example": "5~50억"
+    },
+
+    "current_tools": {
+      "type": "string",
+      "title": "현재 사용 중인 AI·SaaS 툴",
+      "description": "현재 실무에서 사용 중인 도구 자유 기술",
+      "example": "ChatGPT, 한컴오피스, 윈도우 공유폴더"
+    },
+
+    "specific_concerns": {
+      "type": "string",
+      "title": "기타 우려사항",
+      "description": "PatSol 도입 시 우려되는 점 자유 기술",
+      "example": "기존 문서 형식과의 호환성, 직원 교육 부담"
+    }
+  },
+
+  "examples": [
+    {
+      "company_name": "특허법인 공간",
+      "main_work": "중소기업 및 스타트업 대상 특허 출원·관리 업무 전담. 선행기술조사부터 청구항 설계, 명세서 작성까지 전 과정 담당.",
+      "strengths": "주요 기술분야, 소규모 전문 인력, 중소기업 특화 이력, 신속한 의사결정",
+      "employees_patent": 8,
+      "employees_non_patent": 4,
+      "pain_points_rank": { "first": "수작업_많음", "second": "시스템_분산" },
+      "goal_rank": { "first": "업무_효율화", "second": "경쟁력_강화" },
+      "cloud_current_state": "일부_사용중",
+      "cloud_purpose": "전문서비스_SaaS",
+      "cloud_readiness": "도입_검토중",
+      "cloud_method": "퍼블릭_클라우드",
+      "cloud_timeline": "단기_3~6개월",
+      "it_staff": "없음",
+      "data_management": "개인PC",
+      "it_asset_scale": "소형_PC복합기중심",
+      "key_customers": "중소기업_중심",
+      "cloud_budget": "500~1000만",
+      "revenue_scale": "5~50억",
+      "current_tools": "ChatGPT, KIPRIS, 한컴오피스",
+      "specific_concerns": "기존 HWP 문서와의 호환성, 직원 교육 부담"
+    }
+  ]
+}

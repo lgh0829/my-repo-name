@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PatSol — 필터 B: 드롭다운 오버레이</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; background: #f5f6f8; color: #1a1a2e; font-size: 14px; }
+
+  /* Layout */
+  .layout { display: flex; height: 100vh; overflow: hidden; }
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .chat-panel { width: 320px; background: #fff; border-left: 1px solid #e2e4e9; display: flex; flex-direction: column; }
+
+  /* Header */
+  .header { background: #fff; border-bottom: 1px solid #e2e4e9; padding: 12px 20px; display: flex; align-items: center; gap: 12px; }
+  .logo { font-size: 16px; font-weight: 700; color: #4f46e5; letter-spacing: -0.5px; }
+  .header-meta { font-size: 12px; color: #6b7280; margin-left: auto; }
+
+  /* Filter bar */
+  .filter-bar { background: #fff; border-bottom: 1px solid #e2e4e9; padding: 14px 20px; position: relative; }
+  .result-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .result-count { font-size: 13px; font-weight: 600; color: #111827; }
+  .sort-btn { margin-left: auto; font-size: 12px; color: #6b7280; border: 1px solid #e2e4e9; background: #fff; padding: 4px 10px; border-radius: 6px; cursor: pointer; }
+
+  .filter-group { margin-bottom: 10px; }
+  .filter-group:last-child { margin-bottom: 0; }
+  .filter-label { font-size: 11px; font-weight: 600; color: #6b7280; letter-spacing: 0.4px; text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; gap-5px; }
+  .filter-label span { margin-right: 4px; }
+
+  .chips-row { display: flex; flex-wrap: nowrap; gap: 6px; align-items: center; overflow: hidden; }
+  .chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; border: 1.5px solid #e2e4e9; background: #f9fafb; color: #374151; cursor: pointer; white-space: nowrap; transition: all 0.15s; user-select: none; }
+  .chip:hover { border-color: #a5b4fc; background: #eef2ff; color: #4f46e5; }
+  .chip.active { border-color: #4f46e5; background: #eef2ff; color: #4f46e5; font-weight: 600; }
+  .chip.null-chip { border-style: dashed; color: #9ca3af; }
+  .chip .count { font-size: 11px; background: #e5e7eb; color: #6b7280; border-radius: 10px; padding: 0 5px; min-width: 18px; text-align: center; }
+  .chip.active .count { background: #c7d2fe; color: #4338ca; }
+
+  .more-btn { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 20px; font-size: 12px; color: #4f46e5; border: 1.5px dashed #a5b4fc; background: transparent; cursor: pointer; white-space: nowrap; transition: all 0.15s; position: relative; }
+  .more-btn:hover { background: #eef2ff; }
+  .more-btn.open { background: #eef2ff; border-style: solid; }
+
+  /* Dropdown overlay */
+  .dropdown { position: absolute; top: calc(100% - 2px); left: 20px; right: 20px; background: #fff; border: 1px solid #c7d2fe; border-radius: 10px; box-shadow: 0 8px 24px rgba(79,70,229,0.12); z-index: 100; padding: 12px 14px; display: none; }
+  .dropdown.visible { display: block; }
+  .dropdown-header { font-size: 11px; font-weight: 600; color: #6b7280; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+  .dropdown-close { font-size: 11px; color: #9ca3af; cursor: pointer; background: none; border: none; }
+  .dropdown-close:hover { color: #4f46e5; }
+  .dropdown-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  /* Active filters */
+  .active-filters { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding-top: 10px; border-top: 1px solid #f3f4f6; margin-top: 10px; }
+  .active-filters:empty { display: none; }
+  .active-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; background: #eef2ff; color: #4f46e5; border: 1.5px solid #4f46e5; }
+  .active-chip .remove { width: 14px; height: 14px; border-radius: 50%; background: #c7d2fe; color: #4338ca; border: none; cursor: pointer; font-size: 10px; display: inline-flex; align-items: center; justify-content: center; line-height: 1; }
+  .active-chip .remove:hover { background: #4f46e5; color: #fff; }
+  .clear-all { font-size: 12px; color: #9ca3af; background: none; border: none; cursor: pointer; margin-left: auto; }
+  .clear-all:hover { color: #ef4444; }
+  .filter-type-tag { font-size: 10px; background: #f3f4f6; color: #6b7280; border-radius: 4px; padding: 0 4px; }
+
+  /* Results */
+  .results { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; }
+  .patent-card { background: #fff; border: 1px solid #e2e4e9; border-radius: 10px; padding: 14px 16px; cursor: pointer; transition: all 0.15s; }
+  .patent-card:hover { border-color: #a5b4fc; box-shadow: 0 2px 8px rgba(79,70,229,0.08); }
+  .patent-card.hidden { display: none; }
+  .card-top { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+  .similarity { font-size: 13px; font-weight: 700; color: #4f46e5; min-width: 38px; }
+  .patent-title { font-size: 13px; font-weight: 600; color: #111827; line-height: 1.4; flex: 1; }
+  .card-meta { display: flex; gap: 10px; font-size: 11px; color: #9ca3af; margin-bottom: 8px; }
+  .card-topics { display: flex; gap: 5px; flex-wrap: wrap; }
+  .topic-tag { font-size: 11px; padding: 2px 7px; border-radius: 12px; font-weight: 500; }
+  .topic-obj { background: #fef3c7; color: #92400e; }
+  .topic-sol { background: #d1fae5; color: #065f46; }
+  .topic-null { background: #f3f4f6; color: #9ca3af; }
+
+  /* Chat panel */
+  .chat-header { padding: 12px 16px; border-bottom: 1px solid #e2e4e9; font-size: 13px; font-weight: 600; color: #374151; }
+  .chat-body { flex: 1; padding: 14px 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+  .ai-bubble { background: #f9fafb; border: 1px solid #e2e4e9; border-radius: 10px; padding: 10px 12px; font-size: 12px; color: #374151; line-height: 1.6; }
+  .ai-bubble strong { color: #4f46e5; }
+  .chat-footer { padding: 10px 12px; border-top: 1px solid #e2e4e9; }
+  .chat-input { width: 100%; border: 1px solid #e2e4e9; border-radius: 8px; padding: 8px 10px; font-size: 12px; resize: none; outline: none; color: #374151; }
+  .chat-input:focus { border-color: #a5b4fc; }
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <!-- Main area -->
+  <div class="main">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">PatSol</div>
+      <div style="font-size:12px;color:#6b7280;">전기차 충전 인프라 데이터 수집 및 유지보수 시스템</div>
+      <div class="header-meta">경로 A · VectorDB Top 50</div>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar" id="filterBar">
+      <div class="result-meta">
+        <div class="result-count" id="resultCount">검색 결과 17건</div>
+        <button class="sort-btn">유사도순 ▾</button>
+      </div>
+
+      <!-- Objective topic filter -->
+      <div class="filter-group">
+        <div class="filter-label"><span>🎯</span> 발명 목적</div>
+        <div class="chips-row" id="objChipsRow">
+          <div class="chip" data-type="obj" data-value="통합 유지보수 관리 및 지식관리" onclick="toggleChip(this)">통합 유지보수 관리 <span class="count">3</span></div>
+          <div class="chip" data-type="obj" data-value="알림 전송 신뢰성 및 메시지 처리" onclick="toggleChip(this)">알림 전송 신뢰성 <span class="count">3</span></div>
+          <div class="chip" data-type="obj" data-value="운전 성향·안전성 분석" onclick="toggleChip(this)">운전 성향 분석 <span class="count">2</span></div>
+          <button class="more-btn" id="objMoreBtn" onclick="toggleDropdown('obj')">+ 9개 더 ▾</button>
+        </div>
+        <!-- Dropdown -->
+        <div class="dropdown" id="objDropdown">
+          <div class="dropdown-header">
+            발명 목적 — 전체 13종
+            <button class="dropdown-close" onclick="closeDropdown('obj')">닫기 ✕</button>
+          </div>
+          <div class="dropdown-chips">
+            <div class="chip" data-type="obj" data-value="충전 인프라 연동 및 유지관리" onclick="toggleChip(this)">충전 인프라 연동 <span class="count">1</span></div>
+            <div class="chip" data-type="obj" data-value="플릿 통합 관제 및 다중 차량 운영" onclick="toggleChip(this)">플릿 통합 관제 <span class="count">1</span></div>
+            <div class="chip" data-type="obj" data-value="실시간 이상감지 및 알림" onclick="toggleChip(this)">실시간 이상감지 <span class="count">1</span></div>
+            <div class="chip" data-type="obj" data-value="규정 준수 및 사전 보안 점검" onclick="toggleChip(this)">규정 준수 보안 <span class="count">1</span></div>
+            <div class="chip" data-type="obj" data-value="보안·접근관리 및 위험 판단" onclick="toggleChip(this)">보안·접근관리 <span class="count">1</span></div>
+            <div class="chip" data-type="obj" data-value="고장 진단 및 예지보전" onclick="toggleChip(this)">고장 진단·예지보전 <span class="count">1</span></div>
+            <div class="chip" data-type="obj" data-value="진단데이터 확보·저장 관리" onclick="toggleChip(this)">진단데이터 저장 <span class="count">1</span></div>
+            <div class="chip" data-type="obj" data-value="디바이스·OBD 포함 데이터 수집 및 통합" onclick="toggleChip(this)">OBD 데이터 수집 <span class="count">1</span></div>
+            <div class="chip" data-type="obj" data-value="데이터 볼륨 절감 및 전송 효율화" onclick="toggleChip(this)">데이터 전송 효율화 <span class="count">1</span></div>
+            <div class="chip null-chip" data-type="obj" data-value="null" onclick="toggleChip(this)">미분류 <span class="count">3</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Solution topic filter -->
+      <div class="filter-group">
+        <div class="filter-label"><span>🔧</span> 해결 수단</div>
+        <div class="chips-row" id="solChipsRow">
+          <div class="chip" data-type="sol" data-value="진단·예측 모델링" onclick="toggleChip(this)">진단·예측 모델링 <span class="count">2</span></div>
+          <div class="chip" data-type="sol" data-value="알림·통보·리포팅" onclick="toggleChip(this)">알림·통보·리포팅 <span class="count">2</span></div>
+          <div class="chip" data-type="sol" data-value="사용자·가입자·인증 관리" onclick="toggleChip(this)">사용자·인증 관리 <span class="count">2</span></div>
+          <button class="more-btn" id="solMoreBtn" onclick="toggleDropdown('sol')">+ 12개 더 ▾</button>
+        </div>
+        <!-- Dropdown -->
+        <div class="dropdown" id="solDropdown">
+          <div class="dropdown-header">
+            해결 수단 — 전체 15종
+            <button class="dropdown-close" onclick="closeDropdown('sol')">닫기 ✕</button>
+          </div>
+          <div class="dropdown-chips">
+            <div class="chip" data-type="sol" data-value="상태정보 DB 및 저장 제어" onclick="toggleChip(this)">상태정보 DB 저장 <span class="count">1</span></div>
+            <div class="chip" data-type="sol" data-value="데이터 추출·전처리 모듈" onclick="toggleChip(this)">데이터 추출·전처리 <span class="count">1</span></div>
+            <div class="chip" data-type="sol" data-value="원인분석 및 이슈 모델링" onclick="toggleChip(this)">원인분석·이슈 모델링 <span class="count">1</span></div>
+            <div class="chip" data-type="sol" data-value="데이터 선별·압축 및 이상데이터 수집" onclick="toggleChip(this)">데이터 선별·압축 <span class="count">1</span></div>
+            <div class="chip" data-type="sol" data-value="이벤트·로그 통합 분석" onclick="toggleChip(this)">이벤트·로그 분석 <span class="count">1</span></div>
+            <div class="chip" data-type="sol" data-value="보안·경보 및 규정 가이드" onclick="toggleChip(this)">보안·경보 규정 <span class="count">1</span></div>
+            <div class="chip" data-type="sol" data-value="운전행태 및 유사도 분석" onclick="toggleChip(this)">운전행태 유사도 <span class="count">1</span></div>
+            <div class="chip" data-type="sol" data-value="데이터 수집 전략 및 장치" onclick="toggleChip(this)">데이터 수집 전략 <span class="count">1</span></div>
+            <div class="chip" data-type="sol" data-value="모듈화·아키텍처·저전력 설계" onclick="toggleChip(this)">모듈화·저전력 설계 <span class="count">1</span></div>
+            <div class="chip" data-type="sol" data-value="V2X 및 실시간 메시징·테스트 환경" onclick="toggleChip(this)">V2X·실시간 메시징 <span class="count">1</span></div>
+            <div class="chip" data-type="sol" data-value="태그·메타데이터 기반 인터페이스" onclick="toggleChip(this)">태그·메타데이터 UI <span class="count">1</span></div>
+            <div class="chip null-chip" data-type="sol" data-value="null" onclick="toggleChip(this)">미분류 <span class="count">3</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active filters strip -->
+      <div class="active-filters" id="activeFilters">
+        <!-- populated by JS -->
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="results" id="resultsList">
+      <div class="patent-card" data-obj="통합 유지보수 관리 및 지식관리" data-sol="진단·예측 모델링">
+        <div class="card-top"><div class="similarity">94%</div><div class="patent-title">전기차 충전소 원격 유지보수 관리 시스템 및 방법</div></div>
+        <div class="card-meta"><span>KR1020220161437</span><span>현대자동차(주)</span><span>2022.11.23</span><span>IPC B60L55/00</span></div>
+        <div class="card-topics">
+          <span class="topic-tag topic-obj">통합 유지보수 관리</span>
+          <span class="topic-tag topic-sol">진단·예측 모델링</span>
+        </div>
+      </div>
+      <div class="patent-card" data-obj="알림 전송 신뢰성 및 메시지 처리" data-sol="알림·통보·리포팅">
+        <div class="card-top"><div class="similarity">91%</div><div class="patent-title">충전 인프라 이상 알림 전송 신뢰성 향상 시스템</div></div>
+        <div class="card-meta"><span>KR1020210093821</span><span>LG전자(주)</span><span>2021.07.19</span><span>IPC H04L67/12</span></div>
+        <div class="card-topics">
+          <span class="topic-tag topic-obj">알림 전송 신뢰성</span>
+          <span class="topic-tag topic-sol">알림·통보·리포팅</span>
+        </div>
+      </div>
+      <div class="patent-card" data-obj="운전 성향·안전성 분석" data-sol="운전행태 및 유사도 분석">
+        <div class="card-top"><div class="similarity">88%</div><div class="patent-title">전기차 운전 성향 기반 배터리 안전성 분석 장치</div></div>
+        <div class="card-meta"><span>KR1020200145678</span><span>삼성SDI(주)</span><span>2020.12.01</span><span>IPC G07C5/08</span></div>
+        <div class="card-topics">
+          <span class="topic-tag topic-obj">운전 성향 분석</span>
+          <span class="topic-tag topic-sol">운전행태 유사도</span>
+        </div>
+      </div>
+      <div class="patent-card" data-obj="통합 유지보수 관리 및 지식관리" data-sol="상태정보 DB 및 저장 제어">
+        <div class="card-top"><div class="similarity">86%</div><div class="patent-title">충전소 유지보수 이력 관리 및 지식 데이터베이스 시스템</div></div>
+        <div class="card-meta"><span>KR1020190078234</span><span>LS산전(주)</span><span>2019.06.28</span><span>IPC G06F16/28</span></div>
+        <div class="card-topics">
+          <span class="topic-tag topic-obj">통합 유지보수 관리</span>
+          <span class="topic-tag topic-sol">상태정보 DB 저장</span>
+        </div>
+      </div>
+      <div class="patent-card" data-obj="알림 전송 신뢰성 및 메시지 처리" data-sol="사용자·가입자·인증 관리">
+        <div class="card-top"><div class="similarity">84%</div><div class="patent-title">전기차 충전 알림 서비스 가입자 인증 및 메시지 전달 방법</div></div>
+        <div class="card-meta"><span>KR1020210056390</span><span>KT(주)</span><span>2021.04.30</span><span>IPC H04W4/80</span></div>
+        <div class="card-topics">
+          <span class="topic-tag topic-obj">알림 전송 신뢰성</span>
+          <span class="topic-tag topic-sol">사용자·인증 관리</span>
+        </div>
+      </div>
+      <div class="patent-card" data-obj="충전 인프라 연동 및 유지관리" data-sol="데이터 수집 전략 및 장치">
+        <div class="card-top"><div class="similarity">82%</div><div class="patent-title">전기차 충전 인프라 센서 데이터 수집 및 연동 장치</div></div>
+        <div class="card-meta"><span>KR1020220045912</span><span>포스코ICT(주)</span><span>2022.04.12</span><span>IPC H02J7/00</span></div>
+        <div class="card-topics">
+          <span class="topic-tag topic-obj">충전 인프라 연동</span>
+          <span class="topic-tag topic-sol">데이터 수집 전략</span>
+        </div>
+      </div>
+      <div class="patent-card" data-obj="고장 진단 및 예지보전" data-sol="진단·예측 모델링">
+        <div class="card-top"><div class="similarity">80%</div><div class="patent-title">머신러닝 기반 전기차 충전기 고장 예지보전 시스템</div></div>
+        <div class="card-meta"><span>KR1020230012456</span><span>두산중공업(주)</span><span>2023.01.31</span><span>IPC G01M99/00</span></div>
+        <div class="card-topics">
+          <span class="topic-tag topic-obj">고장 진단·예지보전</span>
+          <span class="topic-tag topic-sol">진단·예측 모델링</span>
+        </div>
+      </div>
+      <div class="patent-card" data-obj="null" data-sol="null">
+        <div class="card-top"><div class="similarity">61%</div><div class="patent-title">엘리베이터 유지보수 관리 시스템 및 사용자 모바일 보고 방법</div></div>
+        <div class="card-meta"><span>KR1020180037969</span><span>오티스엘리베이터(주)</span><span>2018.04.02</span><span>IPC B66B5/00</span></div>
+        <div class="card-topics">
+          <span class="topic-tag topic-null">미분류</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat panel -->
+  <div class="chat-panel">
+    <div class="chat-header">AI 어시스턴트</div>
+    <div class="chat-body">
+      <div class="ai-bubble">
+        검색 결과 <strong>17건</strong>을 가져왔습니다.<br><br>
+        주요 발명 목적은 <strong>통합 유지보수 관리</strong>(3건), <strong>알림 전송 신뢰성</strong>(3건)에 집중되어 있으며, 해결 수단으로는 <strong>진단·예측 모델링</strong>과 <strong>알림·통보</strong> 계열이 두드러집니다.<br><br>
+        위 필터 칩을 클릭하면 관련 결과만 표시됩니다.
+      </div>
+    </div>
+    <div class="chat-footer">
+      <textarea class="chat-input" rows="2" placeholder="이어서 질문하기..."></textarea>
+    </div>
+  </div>
+</div>
+
+<script>
+  const activeFilters = { obj: new Set(), sol: new Set() };
+
+  function toggleChip(el) {
+    const type = el.dataset.type;
+    const value = el.dataset.value;
+
+    // Sync all chips with same value across visible + dropdown
+    const allChips = document.querySelectorAll(`.chip[data-type="${type}"][data-value="${value}"]`);
+    const isActive = el.classList.contains('active');
+
+    allChips.forEach(c => c.classList.toggle('active', !isActive));
+
+    if (isActive) {
+      activeFilters[type].delete(value);
+    } else {
+      activeFilters[type].add(value);
+    }
+
+    renderActiveFilters();
+    filterResults();
+  }
+
+  function renderActiveFilters() {
+    const container = document.getElementById('activeFilters');
+    container.innerHTML = '';
+
+    const allActive = [
+      ...[...activeFilters.obj].map(v => ({ type: 'obj', value: v, label: '목적' })),
+      ...[...activeFilters.sol].map(v => ({ type: 'sol', value: v, label: '수단' })),
+    ];
+
+    if (allActive.length === 0) return;
+
+    allActive.forEach(({ type, value, label }) => {
+      const chip = document.createElement('div');
+      chip.className = 'active-chip';
+      const displayVal = value === 'null' ? '미분류' : value.length > 12 ? value.slice(0,12)+'…' : value;
+      chip.innerHTML = `<span class="filter-type-tag">${label}</span> ${displayVal} <button class="remove" onclick="removeFilter('${type}','${value}')">✕</button>`;
+      container.appendChild(chip);
+    });
+
+    const clearBtn = document.createElement('button');
+    clearBtn.className = 'clear-all';
+    clearBtn.textContent = '필터 초기화';
+    clearBtn.onclick = clearAll;
+    container.appendChild(clearBtn);
+  }
+
+  function removeFilter(type, value) {
+    activeFilters[type].delete(value);
+    document.querySelectorAll(`.chip[data-type="${type}"][data-value="${value}"]`).forEach(c => c.classList.remove('active'));
+    renderActiveFilters();
+    filterResults();
+  }
+
+  function clearAll() {
+    activeFilters.obj.clear();
+    activeFilters.sol.clear();
+    document.querySelectorAll('.chip.active').forEach(c => c.classList.remove('active'));
+    renderActiveFilters();
+    filterResults();
+  }
+
+  function filterResults() {
+    const cards = document.querySelectorAll('.patent-card');
+    let visible = 0;
+
+    cards.forEach(card => {
+      const cardObj = card.dataset.obj;
+      const cardSol = card.dataset.sol;
+
+      const objMatch = activeFilters.obj.size === 0 || activeFilters.obj.has(cardObj);
+      const solMatch = activeFilters.sol.size === 0 || activeFilters.sol.has(cardSol);
+
+      const show = objMatch && solMatch;
+      card.classList.toggle('hidden', !show);
+      if (show) visible++;
+    });
+
+    document.getElementById('resultCount').textContent = `검색 결과 ${visible}건`;
+  }
+
+  // Dropdown
+  function toggleDropdown(group) {
+    const dropdown = document.getElementById(`${group}Dropdown`);
+    const btn = document.getElementById(`${group}MoreBtn`);
+    const isOpen = dropdown.classList.contains('visible');
+
+    // Close all dropdowns first
+    document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('visible'));
+    document.querySelectorAll('.more-btn').forEach(b => b.classList.remove('open'));
+
+    if (!isOpen) {
+      dropdown.classList.add('visible');
+      btn.classList.add('open');
+    }
+  }
+
+  function closeDropdown(group) {
+    document.getElementById(`${group}Dropdown`).classList.remove('visible');
+    document.getElementById(`${group}MoreBtn`).classList.remove('open');
+  }
+
+  // Close on outside click
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.filter-group')) {
+      document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('visible'));
+      document.querySelectorAll('.more-btn').forEach(b => b.classList.remove('open'));
+    }
+  });
+</script>
+</body>
+</html>

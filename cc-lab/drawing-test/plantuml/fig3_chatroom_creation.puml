@@ -1,0 +1,40 @@
+@startuml fig3_chatroom_creation
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Malgun Gothic
+skinparam BoxPadding 10
+
+title 도 3 — 채팅방 생성 동작 (운영자 단말 & 서버)
+
+participant "운영자 단말(310)" as OT
+participant "서버(330)" as SV
+
+rnote over OT : 동작(301)\n채팅방 운영 신청서 획득
+
+OT -> SV : 동작(303) 채팅방 운영 신청서 전송
+
+rnote over SV : 동작(305)\n채팅방 운영 신청서\n승인 여부 결정 [승인]
+
+SV -> OT : 동작(307) 승인 안내 메시지 표시 명령 전송
+
+rnote over OT : 동작(309)\n채팅방 운영 신청서\n승인 안내 메시지 표시
+
+rnote over OT : 동작(311)\n지급 정보 획득
+
+OT -> SV : 단계(313) 지급 정보 전송
+
+rnote over SV : 단계(315)\n지급 정보 등록
+
+SV -> OT : 단계(317) 지급 정보 등록 안내 메시지 표시 명령 전송
+
+rnote over OT : 단계(319)\n지급 정보 등록\n안내 메시지 표시
+
+rnote over OT : 단계(321)\n채팅방 설정 획득
+
+OT -> SV : 단계(323) 채팅방 설정 전송
+
+rnote over SV : 단계(325)\n채팅방 생성
+
+@enduml

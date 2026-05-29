@@ -1,0 +1,14 @@
+[project]
+name = "cloud-draft"
+version = "0.1.0"
+description = "PatSol 클라우드바우처 신청서 자동 초안 생성기"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.135.3",
+    "uvicorn[standard]>=0.44.0",
+    "openai>=2.31.0",
+    "pywin32>=311; sys_platform == 'win32'",
+]
+
+[tool.uv]
+package = false

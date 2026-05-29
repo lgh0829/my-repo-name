@@ -1,0 +1,62 @@
+\documentclass[border=10pt]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning}
+
+\tikzset{
+    block/.style = {rectangle, draw, thick, text width=6cm,
+                    align=center, minimum height=1.2cm, inner sep=6pt},
+    decision/.style = {diamond, draw, thick, text width=3cm,
+                       align=center, inner sep=2pt},
+    oval/.style = {rounded rectangle, draw, thick, align=center,
+                   minimum height=0.8cm, inner sep=6pt},
+    arrow/.style = {-Stealth, thick},
+}
+
+\begin{document}
+\begin{tikzpicture}[node distance=1.2cm]
+
+\node (start) [oval] {Start};
+
+\node (A) [block, below=of start]
+    {Operator Terminal (20)\\Sends Chat Room Creation\\Request to Server (10)};
+
+\node (B) [block, below=of A]
+    {Chat Room Management Module (13)\\of Server (10) Receives Application};
+
+\node (C) [decision, below=of B, yshift=-0.3cm]
+    {Approved?};
+
+\node (D) [block, below=of C, yshift=-0.3cm]
+    {Subscription/Payment Management\\Module (14) Requests Payment Info\\from Operator Terminal (20)};
+
+\node (E) [block, below=of D]
+    {Operator Terminal (20)\\Inputs and Registers\\Payment Info with Server (10)};
+
+\node (F) [block, below=of E]
+    {Settlement Module (16)\\Configures Settlement System};
+
+\node (G) [block, below=of F]
+    {Chat Room Management Module (13)\\Applies Operator-Set Settings};
+
+\node (H) [block, below=of G]
+    {Authorization Module (15)\\Assigns Admin Rights\\to Operator Account};
+
+\node (end) [oval, below=of H] {End: Chat Room Created};
+
+\node (denied) [block, right=2cm of C, text width=3cm]
+    {Application\\Denied};
+
+% Arrows
+\draw [arrow] (start) -- (A);
+\draw [arrow] (A) -- (B);
+\draw [arrow] (B) -- (C);
+\draw [arrow] (C) -- node[right] {Approved} (D);
+\draw [arrow] (C) -- node[above] {Not Approved} (denied);
+\draw [arrow] (D) -- (E);
+\draw [arrow] (E) -- (F);
+\draw [arrow] (F) -- (G);
+\draw [arrow] (G) -- (H);
+\draw [arrow] (H) -- (end);
+
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,7 @@
+.env
+output/session.json
+output/features.csv
+output/features.md
+output/prompts.json
+__pycache__/
+*.pyc

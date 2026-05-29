@@ -7,6 +7,7 @@ tags:
   - frd
   - {{도메인}}
   - wip
+jira: https://patsol.atlassian.net/browse/{{ISSUE-KEY}}
 관련문서:
   - "[[]]"
 상위문서: "[[]]"

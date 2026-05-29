@@ -57,6 +57,15 @@ tags: 소문자 영문 (쉼표 구분)
 - 어조: 전문적이되 과도한 마케팅 용어 지양, 고객 언어 우선
 - 수치와 근거를 동반한 주장 선호
 
+## Korean Business Writing
+
+- When refining Korean copy (marketing, FRD, email, Jira), preserve the user's intended nuance and tone — do NOT substitute synonyms that shift meaning (e.g., '준비됨' vs '선택 가능')
+- Default to formal business Korean (격식체) for B2B docs
+- Avoid startup/consulting jargon (e.g., 'insight', 'solution') for IP/patent industry contexts — use domain-appropriate terminology
+- Present 2-3 structured options with a comparison table when refining copy
+
+---
+
 ## 카피 작성 시 주의사항 — AI × 명세서 표현
 
 **변리사 대상 카피에서 "AI + 명세서 작성"을 직접 연결하는 표현은 피한다.**

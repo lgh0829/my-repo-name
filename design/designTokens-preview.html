@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PatSol Design Tokens — designTokens.ts 시각화</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+  <style>
+    /* ============================================================
+       CSS Variables — designTokens.ts 직접 매핑
+    ============================================================ */
+    :root {
+      /* --- Primitive: Blue --- */
+      --c-blue-50:  #F3F6FC;
+      --c-blue-100: #EBF0FA;
+      --c-blue-300: #A3BCE8;
+      --c-blue-500: #3361BE;
+
+      /* --- Primitive: Chart Blue --- */
+      --c-chart-50:  #EBF0FA;
+      --c-chart-100: #CBD7F1;
+      --c-chart-200: #A3B9E6;
+      --c-chart-300: #7A9ADB;
+      --c-chart-400: #527CD1;
+      --c-chart-800: #284C95;
+      --c-chart-900: #1D376D;
+
+      /* --- Primitive: Gray --- */
+      --c-gray-50:  #FAFAFA;
+      --c-gray-100: #F5F5F5;
+      --c-gray-200: #EDEDED;
+      --c-gray-250: #EEEEEE;
+      --c-gray-300: #E0E0E0;
+      --c-gray-400: #D9D9D9;
+      --c-gray-425: #CCCCCC;
+      --c-gray-450: #DDDDDD;
+      --c-gray-500: #BDBDBD;
+      --c-gray-525: #AAAAAA;
+      --c-gray-550: #9E9E9E;
+      --c-gray-575: #888888;
+      --c-gray-580: #72777A;
+      --c-gray-590: #666666;
+      --c-gray-595: #777777;
+      --c-gray-600: #757575;
+      --c-gray-605: #595D62;
+      --c-gray-650: #5E5E5E;
+      --c-gray-700: #616161;
+      --c-gray-750: #494949;
+      --c-gray-800: #424242;
+      --c-gray-850: #212121;
+      --c-gray-900: #1E1E1E;
+
+      /* --- Primitive: Neutral --- */
+      --c-neutral-700: #333333;
+      --c-neutral-900: #171717;
+      --c-neutral-950: #111111;
+
+      /* --- Primitive: Danger/Red --- */
+      --c-danger:              #FF3232;
+      --c-danger-action:       #F54848;
+      --c-danger-action-hover: #E55648;
+      --c-error-accent:        #FD6051;
+      --c-metric-danger:       #FB2828;
+      --c-icon-danger:         #EF4444;
+
+      /* --- Primitive: Success / Warning --- */
+      --c-success-300: #7DDE86;
+      --c-success-500: #22C55E;
+      --c-warning-500: #FFAB03;
+      --c-warning-100: #FFE4B5;
+
+      /* --- Primitive: Special --- */
+      --c-info-text:          #014361;
+      --c-selected-bg:        #EBEFF8;
+      --c-subtle-bg:          #F4F4F4;
+      --c-accent-soft-bg:     #E8F0FE;
+      --c-accent-chip-bg:     #EEF2FF;
+      --c-research-tab-bg:    #EDF2FF;
+      --c-summary-table-accent:#D7E1F5;
+      --c-timeline-accent:    #1976D2;
+      --c-research-selected:  #2F55A3;
+      --c-danger-outline:     #EF3535;
+
+      /* === BRAND === */
+      --brand-primary: #3361BE;
+
+      /* === SEMANTIC: TEXT (17) === */
+      --text-primary:   #1E1E1E;
+      --text-strong:    #212121;
+      --text-secondary: #424242;
+      --text-muted:     #616161;
+      --text-readonly:  #5E5E5E;
+      --text-subtle:    #757575;
+      --text-helper:    #888888;
+      --text-dim:       #777777;
+      --text-panel:     #666666;
+      --text-label:     #72777A;
+      --text-detail:    #595D62;
+      --text-body:      #494949;
+      --text-tertiary:  #9E9E9E;
+      --text-disabled:  #BDBDBD;
+      --text-inverse:   #FFFFFF;
+      --text-accent:    #3361BE;
+      --text-danger:    #FF3232;
+      --text-success:   #22C55E;
+      --text-warning:   #FFAB03;
+
+      /* === SEMANTIC: BACKGROUND (13) === */
+      --bg-canvas:       #FFFFFF;
+      --bg-surface:      #FAFAFA;
+      --bg-elevated:     #FFFFFF;
+      --bg-subtle:       #F4F4F4;
+      --bg-selected:     #EBEFF8;
+      --bg-inverse:      #1E1E1E;
+      --bg-strong:       #212121;
+      --bg-accent:       #F3F6FC;
+      --bg-accent-soft:  #E8F0FE;
+      --bg-accent-chip:  #EEF2FF;
+      --bg-accent-muted: #EBF0FA;
+      --bg-disabled:     #D9D9D9;
+      --bg-danger:       #F54848;
+      --bg-danger-hover: #E55648;
+
+      /* === SEMANTIC: BORDER (12) === */
+      --border-default:      #EDEDED;
+      --border-light:        #EEEEEE;
+      --border-subtle:       #E0E0E0;
+      --border-strong:       #D9D9D9;
+      --border-neutral:      #CCCCCC;
+      --border-hint:         #AAAAAA;
+      --border-muted:        #CDCDCD;
+      --border-accent:       #3361BE;
+      --border-accent-muted: #A3BCE8;
+      --border-inverse:      #757575;
+      --border-danger:       #FF3232;
+      --border-error-accent: #FD6051;
+
+      /* === SEMANTIC: ICON (7) === */
+      --icon-default: #424242;
+      --icon-subtle:  #757575;
+      --icon-inverse: #FFFFFF;
+      --icon-accent:  #3361BE;
+      --icon-danger:  #FF3232;
+      --icon-error:   #EF4444;
+      --icon-success: #22C55E;
+
+      /* === SEMANTIC: ACTION (5) === */
+      --action-info:          #1976D2;
+      --action-selected:      #2F55A3;
+      --action-excel:         #6EB92C;
+      --action-danger:        #F54848;
+      --action-danger-outline:#EF3535;
+      --action-danger-hover:  #E55648;
+
+      /* === SEMANTIC: METRIC (4) === */
+      --metric-high:   #FB2828;
+      --metric-medium: #FFAB03;
+      --metric-low:    #22CC00;
+
+      /* === STATUS / INFO / OVERLAY === */
+      --status-online:         #7DDE86;
+      --status-success-bg:     #F0FDF4;
+      --status-danger-bg:      #FFF1F0;
+      --info-bg:               #EBF0FA;
+      --info-text:             #014361;
+      --highlight-keyword-bg:  #FFE4B5;
+      --overlay-loading:       rgba(0,0,0,0.20);
+      --overlay-tutorial:      rgba(0,0,0,0.40);
+      --overlay-disabled:      rgba(255,255,255,0.50);
+
+      /* === TOPIC === */
+      --topic-obj-bg:     #FFF5DB;
+      --topic-obj-text:   #66531D;
+      --topic-sol-bg:     #CDF3E2;
+      --topic-sol-text:   #024E2D;
+
+      /* === SHADOWS === */
+      --shadow-button:   0 2px 4px rgba(0,0,0,0.2);
+      --shadow-header:   0 1px 3px 0 rgb(0 0 0/0.1), 0 1px 2px -1px rgb(0 0 0/0.1);
+      --shadow-floating: 0px 8px 24px -6px rgba(0,0,0,0.10);
+      --shadow-popover:  0px 8px 24px -6px rgba(0,0,0,0.12);
+      --shadow-tooltip:  0 4px 20px rgba(0,0,0,0.15);
+      --shadow-snackbar: 0px 8px 24px -6px rgba(0,0,0,0.30);
+      --shadow-cta:      0px 8px 65px 0px rgba(40,76,149,0.20);
+
+      /* === SPACING === */
+      --sp-0:  0px;  --sp-1:  4px;  --sp-2:  8px;  --sp-3: 12px;
+      --sp-4: 16px;  --sp-5: 20px;  --sp-6: 24px;  --sp-8: 32px;
+      --sp-10: 40px; --sp-12: 48px;
+
+      /* === RADIUS === */
+      --r-xs: 4px; --r-sm: 8px; --r-md: 10px;
+      --r-lg: 12px; --r-xl: 16px; --r-round: 999px;
+
+      /* === TYPOGRAPHY === */
+      --font: 'Pretendard', -apple-system, sans-serif;
+    }
+
+    /* ============================================================
+       Base
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      font-size: 14px;
+      color: var(--text-primary);
+      background: #EBEEF3;
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ============================================================
+       Page Header
+    ============================================================ */
+    .page-header {
+      background: var(--c-neutral-950);
+      color: #fff;
+      padding: var(--sp-4) var(--sp-6);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-header);
+    }
+    .page-header-left { display: flex; align-items: center; gap: var(--sp-3); }
+    .page-header h1 { font-size: 14px; font-weight: 600; }
+    .page-header p  { font-size: 11px; color: var(--c-gray-525); margin-top: 1px; }
+    .badge {
+      font-size: 10px; font-weight: 700;
+      background: var(--brand-primary);
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: var(--r-round);
+      letter-spacing: 0.04em;
+    }
+
+    /* ============================================================
+       Section Nav
+    ============================================================ */
+    .section-nav {
+      background: var(--bg-canvas);
+      border-bottom: 1px solid var(--border-default);
+      padding: 0 var(--sp-6);
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      position: sticky;
+      top: 52px;
+      z-index: 90;
+    }
+    .section-nav a {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-subtle);
+      padding: var(--sp-3) var(--sp-4);
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: color .15s, border-color .15s;
+    }
+    .section-nav a:hover { color: var(--text-accent); border-color: var(--brand-primary); }
+
+    /* ============================================================
+       Layout
+    ============================================================ */
+    .page-body {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: var(--sp-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-6);
+    }
+
+    /* ============================================================
+       Section Block
+    ============================================================ */
+    .section-block {
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-default);
+      border-radius: var(--r-lg);
+      padding: var(--sp-6);
+    }
+    .section-block + .section-block { margin-top: 0; }
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: var(--sp-5);
+      padding-bottom: var(--sp-3);
+      border-bottom: 2px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+    .section-title .tag {
+      font-size: 10px;
+      font-weight: 600;
+      background: var(--bg-accent);
+      color: var(--text-accent);
+      padding: 2px 7px;
+      border-radius: var(--r-round);
+      border: 1px solid var(--border-accent-muted);
+    }
+    .sub-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-subtle);
+      margin: var(--sp-5) 0 var(--sp-3);
+    }
+    .sub-title:first-of-type { margin-top: 0; }
+
+    /* ============================================================
+       Swatch
+    ============================================================ */
+    .swatch-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--sp-3);
+    }
+    .swatch {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      width: 64px;
+    }
+    .swatch-color {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--r-sm);
+      border: 1px solid rgba(0,0,0,0.08);
+      position: relative;
+    }
+    .swatch-name {
+      font-size: 10px;
+      color: var(--text-subtle);
+      text-align: center;
+      line-height: 1.3;
+      word-break: break-all;
+    }
+    .swatch-hex {
+      font-size: 10px;
+      font-family: monospace;
+      color: var(--text-tertiary);
+      text-align: center;
+    }
+
+    /* Wide swatch for semantic tokens */
+    .token-row {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border-default);
+    }
+    .token-row:last-child { border-bottom: none; }
+    .token-swatch {
+      width: 32px; height: 32px;
+      border-radius: var(--r-xs);
+      border: 1px solid rgba(0,0,0,0.10);
+      flex-shrink: 0;
+    }
+    .token-name {
+      font-size: 12px;
+      font-family: monospace;
+      color: var(--text-accent);
+      background: var(--bg-accent);
+      padding: 1px 6px;
+      border-radius: 3px;
+      width: 160px;
+      flex-shrink: 0;
+    }
+    .token-hex {
+      font-size: 12px;
+      font-family: monospace;
+      color: var(--text-muted);
+      width: 80px;
+      flex-shrink: 0;
+    }
+    .token-usage {
+      font-size: 12px;
+      color: var(--text-subtle);
+    }
+    .token-sample-text {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    /* Two-column token grid */
+    .token-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 var(--sp-6);
+    }
+    @media (max-width: 900px) { .token-2col { grid-template-columns: 1fr; } }
+
+    /* ============================================================
+       Typography
+    ============================================================ */
+    .type-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .type-row {
+      display: flex;
+      align-items: baseline;
+      gap: var(--sp-4);
+      padding: var(--sp-3) 0;
+      border-bottom: 1px solid var(--border-default);
+    }
+    .type-row:last-child { border-bottom: none; }
+    .type-meta {
+      font-size: 11px;
+      font-family: monospace;
+      color: var(--text-subtle);
+      width: 100px;
+      flex-shrink: 0;
+    }
+    .type-sample { color: var(--text-primary); flex: 1; }
+
+    .weight-grid {
+      display: flex;
+      gap: var(--sp-6);
+      flex-wrap: wrap;
+    }
+    .weight-item { display: flex; flex-direction: column; gap: var(--sp-1); }
+    .weight-label { font-size: 11px; font-family: monospace; color: var(--text-subtle); }
+    .weight-sample { font-size: 20px; color: var(--text-primary); }
+
+    /* ============================================================
+       Spacing
+    ============================================================ */
+    .spacing-list { display: flex; flex-direction: column; gap: var(--sp-2); }
+    .spacing-row {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+    }
+    .spacing-key {
+      font-size: 12px;
+      font-family: monospace;
+      color: var(--text-accent);
+      width: 60px;
+      flex-shrink: 0;
+    }
+    .spacing-bar {
+      height: 14px;
+      background: var(--brand-primary);
+      border-radius: 3px;
+      opacity: 0.8;
+    }
+    .spacing-val {
+      font-size: 11px;
+      font-family: monospace;
+      color: var(--text-subtle);
+    }
+
+    /* ============================================================
+       Radius
+    ============================================================ */
+    .radius-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--sp-5);
+      align-items: flex-end;
+    }
+    .radius-item { display: flex; flex-direction: column; align-items: center; gap: var(--sp-2); }
+    .radius-box {
+      width: 72px;
+      height: 72px;
+      background: var(--bg-accent);
+      border: 2px solid var(--brand-primary);
+    }
+    .radius-label { font-size: 11px; font-family: monospace; color: var(--text-subtle); }
+
+    /* ============================================================
+       Shadow
+    ============================================================ */
+    .shadow-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: var(--sp-5);
+    }
+    .shadow-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--sp-3);
+    }
+    .shadow-box {
+      width: 120px;
+      height: 60px;
+      background: var(--bg-canvas);
+      border-radius: var(--r-md);
+      border: 1px solid var(--border-default);
+    }
+    .shadow-label {
+      font-size: 11px;
+      font-family: monospace;
+      color: var(--text-subtle);
+    }
+
+    /* ============================================================
+       Chart Color Sequence
+    ============================================================ */
+    .sequence-bar {
+      display: flex;
+      border-radius: var(--r-sm);
+      overflow: hidden;
+      height: 40px;
+      margin-bottom: var(--sp-3);
+    }
+    .sequence-bar span { flex: 1; }
+
+    /* ============================================================
+       Topic Card
+    ============================================================ */
+    .topic-grid { display: flex; gap: var(--sp-4); flex-wrap: wrap; }
+    .topic-card {
+      padding: var(--sp-2) var(--sp-4);
+      border-radius: var(--r-sm);
+      border: 1px solid;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* ============================================================
+       Overlay Demo
+    ============================================================ */
+    .overlay-grid { display: flex; gap: var(--sp-4); flex-wrap: wrap; }
+    .overlay-item {
+      width: 140px;
+      height: 80px;
+      border-radius: var(--r-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    /* ============================================================
+       Theme Demo
+    ============================================================ */
+    .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); }
+    .theme-card {
+      border-radius: var(--r-md);
+      padding: var(--sp-4);
+      border: 1px solid var(--border-default);
+    }
+    .theme-card.light { background: #FFFFFF; }
+    .theme-card.dark  { background: #111111; }
+    .theme-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: var(--sp-3); }
+    .theme-card.light .theme-label { color: #757575; }
+    .theme-card.dark  .theme-label { color: #616161; }
+    .theme-row { display: flex; align-items: center; gap: var(--sp-2); margin-bottom: var(--sp-1); }
+    .theme-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .theme-text-sample { font-size: 12px; }
+
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     Header
+============================================================ -->
+<div class="page-header">
+  <div class="page-header-left">
+    <div>
+      <h1>PatSol Design Tokens</h1>
+      <p>Source: design/designTokens.ts · @yunjulee · 2026-04-07</p>
+    </div>
+    <span class="badge">v2026</span>
+  </div>
+  <div style="font-size:12px;color:var(--c-gray-525);">primary <span style="font-family:monospace;color:#A3BCE8;">#3361BE</span></div>
+</div>
+
+<!-- ============================================================
+     Section Nav
+============================================================ -->
+<nav class="section-nav">
+  <a href="#brand">Brand</a>
+  <a href="#text">Text</a>
+  <a href="#background">Background</a>
+  <a href="#border">Border</a>
+  <a href="#icon">Icon</a>
+  <a href="#action">Action / Metric</a>
+  <a href="#chart">Chart</a>
+  <a href="#topic">Topic / Status / Overlay</a>
+  <a href="#primitive">Primitive</a>
+  <a href="#typography">Typography</a>
+  <a href="#spacing">Spacing</a>
+  <a href="#radius">Radius</a>
+  <a href="#shadow">Shadow</a>
+  <a href="#theme">Theme Mode</a>
+</nav>
+
+<div class="page-body">
+
+  <!-- ===========================================================
+       Brand
+  =========================================================== -->
+  <div class="section-block" id="brand">
+    <div class="section-title">Brand <span class="tag">brandTokens</span></div>
+    <div class="token-row">
+      <div class="token-swatch" style="background:#3361BE;"></div>
+      <div class="token-name">brand.primary</div>
+      <div class="token-hex">#3361BE</div>
+      <div class="token-usage">Primary CTA, 브랜드 강조, 주요 사용자 액션</div>
+    </div>
+    <div style="margin-top:var(--sp-4);padding:var(--sp-4);background:var(--bg-accent);border-radius:var(--r-sm);border:1px solid var(--border-accent-muted);">
+      <div style="font-size:12px;color:var(--text-subtle);margin-bottom:var(--sp-2);">Blue Scale (primitiveColors 기반)</div>
+      <div class="swatch-grid">
+        <div class="swatch"><div class="swatch-color" style="background:#F3F6FC;"></div><div class="swatch-name">blue50</div><div class="swatch-hex">#F3F6FC</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#EBF0FA;"></div><div class="swatch-name">blue100</div><div class="swatch-hex">#EBF0FA</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#A3BCE8;"></div><div class="swatch-name">blue300</div><div class="swatch-hex">#A3BCE8</div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#3361BE;border:2px solid rgba(0,0,0,0.15);"></div><div class="swatch-name" style="font-weight:700;color:var(--text-accent);">blue500 ★</div><div class="swatch-hex">#3361BE</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===========================================================
+       Text
+  =========================================================== -->
+  <div class="section-block" id="text">
+    <div class="section-title">Text Colors <span class="tag">colorTokens.text · 19개</span></div>
+    <div class="token-2col">
+      <div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#1E1E1E;"></div>
+          <div class="token-name">text.primary</div>
+          <div class="token-hex">#1E1E1E</div>
+          <div class="token-sample-text" style="color:#1E1E1E;">Aa</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#212121;"></div>
+          <div class="token-name">text.strong</div>
+          <div class="token-hex">#212121</div>
+          <div class="token-sample-text" style="color:#212121;">Aa</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#424242;"></div>
+          <div class="token-name">text.secondary</div>
+          <div class="token-hex">#424242</div>
+          <div class="token-sample-text" style="color:#424242;">Aa</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#616161;"></div>
+          <div class="token-name">text.muted</div>
+          <div class="token-hex">#616161</div>
+          <div class="token-sample-text" style="color:#616161;">Aa</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#5E5E5E;"></div>
+          <div class="token-name">text.readonly</div>
+          <div class="token-hex">#5E5E5E</div>
+          <div class="token-sample-text" style="color:#5E5E5E;">Aa</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#757575;"></div>
+          <div class="token-name">text.subtle</div>
+          <div class="token-hex">#757575</div>
+          <div class="token-sample-text" style="color:#757575;">Aa</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#888888;"></div>
+          <div class="token-name">text.helper</div>
+          <div class="token-hex">#888888</div>
+          <div class="token-sample-text" style="color:#888888;">Aa</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#777777;"></div>
+          <div class="token-name">text.dim</div>
+          <div class="token-hex">#777777</div>
+          <div class="token-sample-text" style="color:#777777;">Aa</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#666666;"></div>
+          <div class="token-name">text.panel</div>
+          <div class="token-hex">#666666</div>
+          <div class="token-sample-text" style="color:#666666;">Aa</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#72777A;"></div>
+          <div class="token-name">text.label</div>
+          <div class="token-hex">#72777A</div>
+          <div class="token-sample-text" style="color:#72777A;">Aa</div>
+        </div>
+      </div>
+      <div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#595D62;"></div>
+          <div class="token-name">text.detail</div>
+          <div class="token-hex">#595D62</div>
+          <div class="token-sample-text" style="color:#595D62;">Aa</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#494949;"></div>
+          <div class="token-name">text.body</div>
+          <div class="token-hex">#494949</div>
+          <div class="token-sample-text" style="color:#494949;">Aa</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#9E9E9E;"></div>
+          <div class="token-name">text.tertiary</div>
+          <div class="token-hex">#9E9E9E</div>
+          <div class="token-sample-text" style="color:#9E9E9E;">Aa</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#BDBDBD;"></div>
+          <div class="token-name">text.disabled</div>
+          <div class="token-hex">#BDBDBD</div>
+          <div class="token-sample-text" style="color:#BDBDBD;">Aa</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#1E1E1E;"></div>
+          <div class="token-name">text.inverse</div>
+          <div class="token-hex">#FFFFFF</div>
+          <div class="token-sample-text" style="color:#fff;background:#1E1E1E;padding:1px 6px;border-radius:3px;">Aa</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#3361BE;"></div>
+          <div class="token-name">text.accent</div>
+          <div class="token-hex">#3361BE</div>
+          <div class="token-sample-text" style="color:#3361BE;">Aa</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#FF3232;"></div>
+          <div class="token-name">text.danger</div>
+          <div class="token-hex">#FF3232</div>
+          <div class="token-sample-text" style="color:#FF3232;">Aa</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#22C55E;"></div>
+          <div class="token-name">text.success</div>
+          <div class="token-hex">#22C55E</div>
+          <div class="token-sample-text" style="color:#22C55E;">Aa</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#FFAB03;"></div>
+          <div class="token-name">text.warning</div>
+          <div class="token-hex">#FFAB03</div>
+          <div class="token-sample-text" style="color:#FFAB03;">Aa</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===========================================================
+       Background
+  =========================================================== -->
+  <div class="section-block" id="background">
+    <div class="section-title">Background Colors <span class="tag">colorTokens.background · 13개</span></div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="swatch-color" style="background:#FFFFFF;"></div><div class="swatch-name">canvas</div><div class="swatch-hex">#FFFFFF</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#FAFAFA;"></div><div class="swatch-name">surface</div><div class="swatch-hex">#FAFAFA</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#FFFFFF;"></div><div class="swatch-name">elevated</div><div class="swatch-hex">#FFFFFF</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#F4F4F4;"></div><div class="swatch-name">subtle</div><div class="swatch-hex">#F4F4F4</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#EBEFF8;"></div><div class="swatch-name">selected</div><div class="swatch-hex">#EBEFF8</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#1E1E1E;"></div><div class="swatch-name">inverse</div><div class="swatch-hex">#1E1E1E</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#212121;"></div><div class="swatch-name">strong</div><div class="swatch-hex">#212121</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#F3F6FC;"></div><div class="swatch-name">accent</div><div class="swatch-hex">#F3F6FC</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#E8F0FE;"></div><div class="swatch-name">accentSoft</div><div class="swatch-hex">#E8F0FE</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#EEF2FF;"></div><div class="swatch-name">accentChip</div><div class="swatch-hex">#EEF2FF</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#EBF0FA;"></div><div class="swatch-name">accentMuted</div><div class="swatch-hex">#EBF0FA</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#D9D9D9;"></div><div class="swatch-name">disabled</div><div class="swatch-hex">#D9D9D9</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#F54848;"></div><div class="swatch-name">danger</div><div class="swatch-hex">#F54848</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#E55648;"></div><div class="swatch-name">dangerHover</div><div class="swatch-hex">#E55648</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#FD6051;"></div><div class="swatch-name">errorAccent</div><div class="swatch-hex">#FD6051</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#EDF2FF;"></div><div class="swatch-name">tabAccent</div><div class="swatch-hex">#EDF2FF</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#D7E1F5;"></div><div class="swatch-name">tableAccent</div><div class="swatch-hex">#D7E1F5</div></div>
+    </div>
+  </div>
+
+  <!-- ===========================================================
+       Border
+  =========================================================== -->
+  <div class="section-block" id="border">
+    <div class="section-title">Border Colors <span class="tag">colorTokens.border · 12개</span></div>
+    <div class="token-2col">
+      <div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#EDEDED;"></div>
+          <div class="token-name">border.default</div>
+          <div class="token-hex">#EDEDED</div>
+          <div class="token-usage" style="display:flex;align-items:center;gap:4px;"><div style="width:32px;border-top:1px solid #EDEDED;"></div></div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#EEEEEE;"></div>
+          <div class="token-name">border.light</div>
+          <div class="token-hex">#EEEEEE</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#E0E0E0;"></div>
+          <div class="token-name">border.subtle</div>
+          <div class="token-hex">#E0E0E0</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#D9D9D9;"></div>
+          <div class="token-name">border.strong</div>
+          <div class="token-hex">#D9D9D9</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#CCCCCC;"></div>
+          <div class="token-name">border.neutral</div>
+          <div class="token-hex">#CCCCCC</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#AAAAAA;"></div>
+          <div class="token-name">border.hint</div>
+          <div class="token-hex">#AAAAAA</div>
+        </div>
+      </div>
+      <div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#CDCDCD;"></div>
+          <div class="token-name">border.muted</div>
+          <div class="token-hex">#CDCDCD</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#3361BE;"></div>
+          <div class="token-name">border.accent</div>
+          <div class="token-hex">#3361BE</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#A3BCE8;"></div>
+          <div class="token-name">border.accentMuted</div>
+          <div class="token-hex">#A3BCE8</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#757575;"></div>
+          <div class="token-name">border.inverse</div>
+          <div class="token-hex">#757575</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#FF3232;"></div>
+          <div class="token-name">border.danger</div>
+          <div class="token-hex">#FF3232</div>
+        </div>
+        <div class="token-row">
+          <div class="token-swatch" style="background:#FD6051;"></div>
+          <div class="token-name">border.errorAccent</div>
+          <div class="token-hex">#FD6051</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===========================================================
+       Icon
+  =========================================================== -->
+  <div class="section-block" id="icon">
+    <div class="section-title">Icon Colors <span class="tag">colorTokens.icon · 7개</span></div>
+    <div class="swatch-grid">
+      <div class="swatch">
+        <div class="swatch-color" style="background:#EDEDED;display:flex;align-items:center;justify-content:center;">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="#424242"><circle cx="10" cy="10" r="8"/></svg>
+        </div>
+        <div class="swatch-name">default</div><div class="swatch-hex">#424242</div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#EDEDED;display:flex;align-items:center;justify-content:center;">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="#757575"><circle cx="10" cy="10" r="8"/></svg>
+        </div>
+        <div class="swatch-name">subtle</div><div class="swatch-hex">#757575</div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#1E1E1E;display:flex;align-items:center;justify-content:center;">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="#FFFFFF"><circle cx="10" cy="10" r="8"/></svg>
+        </div>
+        <div class="swatch-name">inverse</div><div class="swatch-hex">#FFFFFF</div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#EDEDED;display:flex;align-items:center;justify-content:center;">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="#3361BE"><circle cx="10" cy="10" r="8"/></svg>
+        </div>
+        <div class="swatch-name">accent</div><div class="swatch-hex">#3361BE</div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#EDEDED;display:flex;align-items:center;justify-content:center;">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="#FF3232"><circle cx="10" cy="10" r="8"/></svg>
+        </div>
+        <div class="swatch-name">danger</div><div class="swatch-hex">#FF3232</div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#EDEDED;display:flex;align-items:center;justify-content:center;">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="#EF4444"><circle cx="10" cy="10" r="8"/></svg>
+        </div>
+        <div class="swatch-name">error</div><div class="swatch-hex">#EF4444</div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#EDEDED;display:flex;align-items:center;justify-content:center;">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="#22C55E"><circle cx="10" cy="10" r="8"/></svg>
+        </div>
+        <div class="swatch-name">success</div><div class="swatch-hex">#22C55E</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===========================================================
+       Action / Metric
+  =========================================================== -->
+  <div class="section-block" id="action">
+    <div class="section-title">Action / Metric <span class="tag">colorTokens.action · colorTokens.metric</span></div>
+
+    <div class="sub-title">Action</div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="swatch-color" style="background:#1976D2;"></div><div class="swatch-name">info</div><div class="swatch-hex">#1976D2</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#2F55A3;"></div><div class="swatch-name">selected</div><div class="swatch-hex">#2F55A3</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#6EB92C;"></div><div class="swatch-name">excel</div><div class="swatch-hex">#6EB92C</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#F54848;"></div><div class="swatch-name">danger</div><div class="swatch-hex">#F54848</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#EF3535;"></div><div class="swatch-name">dangerOutline</div><div class="swatch-hex">#EF3535</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#E55648;"></div><div class="swatch-name">dangerHover</div><div class="swatch-hex">#E55648</div></div>
+    </div>
+
+    <div class="sub-title">Metric</div>
+    <div style="display:flex;gap:var(--sp-4);flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:var(--sp-2);padding:var(--sp-2) var(--sp-4);border-radius:var(--r-round);background:#FFF1F0;border:1px solid #FB2828;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#FB2828;"></div>
+        <span style="font-size:12px;font-weight:600;color:#FB2828;">High / Danger</span>
+        <span style="font-size:11px;font-family:monospace;color:#9E9E9E;">#FB2828</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:var(--sp-2);padding:var(--sp-2) var(--sp-4);border-radius:var(--r-round);background:#FFFBEB;border:1px solid #FFAB03;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#FFAB03;"></div>
+        <span style="font-size:12px;font-weight:600;color:#9B6B00;">Medium</span>
+        <span style="font-size:11px;font-family:monospace;color:#9E9E9E;">#FFAB03</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:var(--sp-2);padding:var(--sp-2) var(--sp-4);border-radius:var(--r-round);background:#F0FDF4;border:1px solid #22CC00;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#22CC00;"></div>
+        <span style="font-size:12px;font-weight:600;color:#166534;">Low</span>
+        <span style="font-size:11px;font-family:monospace;color:#9E9E9E;">#22CC00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===========================================================
+       Chart
+  =========================================================== -->
+  <div class="section-block" id="chart">
+    <div class="section-title">Chart Colors <span class="tag">colorTokens.chart</span></div>
+
+    <div class="sub-title">Blue Scale Sequence (진한색 → 연한색)</div>
+    <div class="sequence-bar">
+      <span style="background:#1D376D;"></span>
+      <span style="background:#284C95;"></span>
+      <span style="background:#3361BE;"></span>
+      <span style="background:#527CD1;"></span>
+      <span style="background:#7A9ADB;"></span>
+      <span style="background:#A3B9E6;"></span>
+      <span style="background:#CBD7F1;"></span>
+      <span style="background:#EBF0FA;"></span>
+    </div>
+    <div class="swatch-grid" style="margin-bottom:var(--sp-5);">
+      <div class="swatch"><div class="swatch-color" style="background:#1D376D;"></div><div class="swatch-name">900</div><div class="swatch-hex">#1D376D</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#284C95;"></div><div class="swatch-name">800</div><div class="swatch-hex">#284C95</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#3361BE;"></div><div class="swatch-name">500 ★</div><div class="swatch-hex">#3361BE</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#527CD1;"></div><div class="swatch-name">400</div><div class="swatch-hex">#527CD1</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#7A9ADB;"></div><div class="swatch-name">300</div><div class="swatch-hex">#7A9ADB</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#A3B9E6;"></div><div class="swatch-name">200</div><div class="swatch-hex">#A3B9E6</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#CBD7F1;"></div><div class="swatch-name">100</div><div class="swatch-hex">#CBD7F1</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#EBF0FA;"></div><div class="swatch-name">50</div><div class="swatch-hex">#EBF0FA</div></div>
+    </div>
+
+    <div class="sub-title">Trend Sequence</div>
+    <div class="sequence-bar">
+      <span style="background:#C6E3CB;"></span>
+      <span style="background:#83CACF;"></span>
+      <span style="background:#47AED0;"></span>
+      <span style="background:#3984B6;"></span>
+      <span style="background:#2C5A9C;"></span>
+      <span style="background:#1E3082;"></span>
+      <span style="background:#141C59;"></span>
+    </div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="swatch-color" style="background:#C6E3CB;"></div><div class="swatch-name">mint100</div><div class="swatch-hex">#C6E3CB</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#83CACF;"></div><div class="swatch-name">cyan200</div><div class="swatch-hex">#83CACF</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#47AED0;"></div><div class="swatch-name">sky300</div><div class="swatch-hex">#47AED0</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#3984B6;"></div><div class="swatch-name">blue400</div><div class="swatch-hex">#3984B6</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#2C5A9C;"></div><div class="swatch-name">blue500</div><div class="swatch-hex">#2C5A9C</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#1E3082;"></div><div class="swatch-name">indigo600</div><div class="swatch-hex">#1E3082</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#141C59;"></div><div class="swatch-name">navy700</div><div class="swatch-hex">#141C59</div></div>
+    </div>
+  </div>
+
+  <!-- ===========================================================
+       Topic / Status / Overlay
+  =========================================================== -->
+  <div class="section-block" id="topic">
+    <div class="section-title">Topic / Status / Overlay / Info <span class="tag">colorTokens.topic · status · overlay · info</span></div>
+
+    <div class="sub-title">Topic</div>
+    <div class="topic-grid">
+      <div class="topic-card" style="background:#FFF5DB;border-color:#66531D;color:#66531D;">목적 Objective</div>
+      <div class="topic-card" style="background:#CDF3E2;border-color:#024E2D;color:#024E2D;">해결수단 Solution</div>
+    </div>
+
+    <div class="sub-title">Status</div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="swatch-color" style="background:#7DDE86;"></div><div class="swatch-name">online</div><div class="swatch-hex">#7DDE86</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#F0FDF4;"></div><div class="swatch-name">successBg</div><div class="swatch-hex">#F0FDF4</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#FFF1F0;"></div><div class="swatch-name">dangerBg</div><div class="swatch-hex">#FFF1F0</div></div>
+    </div>
+
+    <div class="sub-title">Info / Highlight</div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="swatch-color" style="background:#EBF0FA;"></div><div class="swatch-name">info.bg</div><div class="swatch-hex">#EBF0FA</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#014361;"></div><div class="swatch-name">info.text</div><div class="swatch-hex">#014361</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#FFE4B5;"></div><div class="swatch-name">keyword Bg</div><div class="swatch-hex">#FFE4B5</div></div>
+    </div>
+
+    <div class="sub-title">Overlay</div>
+    <div class="overlay-grid">
+      <div class="overlay-item" style="background:rgba(0,0,0,0.20);">loading<br><span style="font-size:10px;font-family:monospace;">rgba(0,0,0,0.20)</span></div>
+      <div class="overlay-item" style="background:rgba(0,0,0,0.40);">tutorial<br><span style="font-size:10px;font-family:monospace;">rgba(0,0,0,0.40)</span></div>
+      <div class="overlay-item" style="background:#EDEDED;color:#424242;">disabled<br><span style="font-size:10px;font-family:monospace;">rgba(255,255,255,0.50)</span></div>
+    </div>
+  </div>
+
+  <!-- ===========================================================
+       Primitive Colors
+  =========================================================== -->
+  <div class="section-block" id="primitive">
+    <div class="section-title">Primitive Colors <span class="tag">primitiveColors</span></div>
+
+    <div class="sub-title">Gray Scale (25 steps)</div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="swatch-color" style="background:#FAFAFA;"></div><div class="swatch-name">gray50</div><div class="swatch-hex">#FAFAFA</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#F5F5F5;"></div><div class="swatch-name">gray100</div><div class="swatch-hex">#F5F5F5</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#EDEDED;"></div><div class="swatch-name">gray200</div><div class="swatch-hex">#EDEDED</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#EEEEEE;"></div><div class="swatch-name">gray250</div><div class="swatch-hex">#EEEEEE</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#E0E0E0;"></div><div class="swatch-name">gray300</div><div class="swatch-hex">#E0E0E0</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#D9D9D9;"></div><div class="swatch-name">gray400</div><div class="swatch-hex">#D9D9D9</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#CCCCCC;"></div><div class="swatch-name">gray425</div><div class="swatch-hex">#CCCCCC</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#DDDDDD;"></div><div class="swatch-name">gray450</div><div class="swatch-hex">#DDDDDD</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#BDBDBD;"></div><div class="swatch-name">gray500</div><div class="swatch-hex">#BDBDBD</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#AAAAAA;"></div><div class="swatch-name">gray525</div><div class="swatch-hex">#AAAAAA</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#9E9E9E;"></div><div class="swatch-name">gray550</div><div class="swatch-hex">#9E9E9E</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#888888;"></div><div class="swatch-name">gray575</div><div class="swatch-hex">#888888</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#72777A;"></div><div class="swatch-name">gray580</div><div class="swatch-hex">#72777A</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#666666;"></div><div class="swatch-name">gray590</div><div class="swatch-hex">#666666</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#777777;"></div><div class="swatch-name">gray595</div><div class="swatch-hex">#777777</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#757575;"></div><div class="swatch-name">gray600</div><div class="swatch-hex">#757575</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#595D62;"></div><div class="swatch-name">gray605</div><div class="swatch-hex">#595D62</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#5E5E5E;"></div><div class="swatch-name">gray650</div><div class="swatch-hex">#5E5E5E</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#616161;"></div><div class="swatch-name">gray700</div><div class="swatch-hex">#616161</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#494949;"></div><div class="swatch-name">gray750</div><div class="swatch-hex">#494949</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#424242;"></div><div class="swatch-name">gray800</div><div class="swatch-hex">#424242</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#212121;"></div><div class="swatch-name">gray850</div><div class="swatch-hex">#212121</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#1E1E1E;"></div><div class="swatch-name">gray900</div><div class="swatch-hex">#1E1E1E</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#333333;"></div><div class="swatch-name">neutral700</div><div class="swatch-hex">#333333</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#171717;"></div><div class="swatch-name">neutral900</div><div class="swatch-hex">#171717</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#111111;"></div><div class="swatch-name">neutral950</div><div class="swatch-hex">#111111</div></div>
+    </div>
+
+    <div class="sub-title">Danger / Red</div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="swatch-color" style="background:#FF3232;"></div><div class="swatch-name">danger</div><div class="swatch-hex">#FF3232</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#F54848;"></div><div class="swatch-name">dangerAction</div><div class="swatch-hex">#F54848</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#E55648;"></div><div class="swatch-name">dangerHover</div><div class="swatch-hex">#E55648</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#FD6051;"></div><div class="swatch-name">errorAccent</div><div class="swatch-hex">#FD6051</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#FB2828;"></div><div class="swatch-name">metricDanger</div><div class="swatch-hex">#FB2828</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#EF4444;"></div><div class="swatch-name">iconDanger</div><div class="swatch-hex">#EF4444</div></div>
+    </div>
+
+    <div class="sub-title">Success / Warning</div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="swatch-color" style="background:#7DDE86;"></div><div class="swatch-name">success300</div><div class="swatch-hex">#7DDE86</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#22C55E;"></div><div class="swatch-name">success500</div><div class="swatch-hex">#22C55E</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#FFAB03;"></div><div class="swatch-name">warning500</div><div class="swatch-hex">#FFAB03</div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#FFE4B5;"></div><div class="swatch-name">warning100</div><div class="swatch-hex">#FFE4B5</div></div>
+    </div>
+  </div>
+
+  <!-- ===========================================================
+       Typography
+  =========================================================== -->
+  <div class="section-block" id="typography">
+    <div class="section-title">Typography <span class="tag">typographyTokens</span></div>
+
+    <div class="sub-title">Font Family</div>
+    <div style="font-size:28px;font-family:'Pretendard', sans-serif;color:var(--text-primary);margin-bottom:var(--sp-1);">Pretendard</div>
+    <div style="font-size:12px;font-family:monospace;color:var(--text-subtle);">typographyTokens.fontFamily.sans = "Pretendard"</div>
+
+    <div class="sub-title">Font Weight (5단계)</div>
+    <div class="weight-grid">
+      <div class="weight-item">
+        <div class="weight-label">regular · 400</div>
+        <div class="weight-sample" style="font-weight:400;">PatSol Ag</div>
+      </div>
+      <div class="weight-item">
+        <div class="weight-label">medium · 500</div>
+        <div class="weight-sample" style="font-weight:500;">PatSol Ag</div>
+      </div>
+      <div class="weight-item">
+        <div class="weight-label">semibold · 600</div>
+        <div class="weight-sample" style="font-weight:600;">PatSol Ag</div>
+      </div>
+      <div class="weight-item">
+        <div class="weight-label">bold · 700</div>
+        <div class="weight-sample" style="font-weight:700;">PatSol Ag</div>
+      </div>
+      <div class="weight-item">
+        <div class="weight-label">extrabold · 800</div>
+        <div class="weight-sample" style="font-weight:800;">PatSol Ag</div>
+      </div>
+    </div>
+
+    <div class="sub-title">Font Size (참고용 — 별도 스케일 미정의)</div>
+    <div class="type-grid">
+      <div class="type-row">
+        <div class="type-meta">12px</div>
+        <div class="type-sample" style="font-size:12px;">캡션, 보조 레이블, 메타 정보</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta">14px</div>
+        <div class="type-sample" style="font-size:14px;">기본 본문, UI 레이블 (chat-panel-preview 기준)</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta">16px</div>
+        <div class="type-sample" style="font-size:16px;">강조 본문, 패널 헤더</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta">20px</div>
+        <div class="type-sample" style="font-size:20px;">섹션 제목</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta">24px</div>
+        <div class="type-sample" style="font-size:24px;">페이지 제목</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta">32px</div>
+        <div class="type-sample" style="font-size:32px;">Display</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===========================================================
+       Spacing
+  =========================================================== -->
+  <div class="section-block" id="spacing">
+    <div class="section-title">Spacing <span class="tag">spacingTokens · 숫자 키 기반</span></div>
+    <div class="spacing-list">
+      <div class="spacing-row"><div class="spacing-key">sp[0]</div><div class="spacing-bar" style="width:1px;background:var(--border-accent);"></div><div class="spacing-val">0px</div></div>
+      <div class="spacing-row"><div class="spacing-key">sp[1]</div><div class="spacing-bar" style="width:4px;"></div><div class="spacing-val">4px</div></div>
+      <div class="spacing-row"><div class="spacing-key">sp[2]</div><div class="spacing-bar" style="width:8px;"></div><div class="spacing-val">8px</div></div>
+      <div class="spacing-row"><div class="spacing-key">sp[3]</div><div class="spacing-bar" style="width:12px;"></div><div class="spacing-val">12px</div></div>
+      <div class="spacing-row"><div class="spacing-key">sp[4]</div><div class="spacing-bar" style="width:16px;"></div><div class="spacing-val">16px</div></div>
+      <div class="spacing-row"><div class="spacing-key">sp[5]</div><div class="spacing-bar" style="width:20px;"></div><div class="spacing-val">20px</div></div>
+      <div class="spacing-row"><div class="spacing-key">sp[6]</div><div class="spacing-bar" style="width:24px;"></div><div class="spacing-val">24px</div></div>
+      <div class="spacing-row"><div class="spacing-key">sp[8]</div><div class="spacing-bar" style="width:32px;"></div><div class="spacing-val">32px</div></div>
+      <div class="spacing-row"><div class="spacing-key">sp[10]</div><div class="spacing-bar" style="width:40px;"></div><div class="spacing-val">40px</div></div>
+      <div class="spacing-row"><div class="spacing-key">sp[12]</div><div class="spacing-bar" style="width:48px;"></div><div class="spacing-val">48px</div></div>
+    </div>
+  </div>
+
+  <!-- ===========================================================
+       Radius
+  =========================================================== -->
+  <div class="section-block" id="radius">
+    <div class="section-title">Radius <span class="tag">radiusTokens · 6단계</span></div>
+    <div class="radius-grid">
+      <div class="radius-item">
+        <div class="radius-box" style="border-radius:4px;"></div>
+        <div class="radius-label">xs · 4px</div>
+      </div>
+      <div class="radius-item">
+        <div class="radius-box" style="border-radius:8px;"></div>
+        <div class="radius-label">sm · 8px</div>
+      </div>
+      <div class="radius-item">
+        <div class="radius-box" style="border-radius:10px;"></div>
+        <div class="radius-label">md · 10px</div>
+      </div>
+      <div class="radius-item">
+        <div class="radius-box" style="border-radius:12px;"></div>
+        <div class="radius-label">lg · 12px</div>
+      </div>
+      <div class="radius-item">
+        <div class="radius-box" style="border-radius:16px;"></div>
+        <div class="radius-label">xl · 16px</div>
+      </div>
+      <div class="radius-item">
+        <div style="width:120px;height:40px;background:var(--bg-accent);border:2px solid var(--brand-primary);border-radius:999px;"></div>
+        <div class="radius-label">round · 999px</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===========================================================
+       Shadow
+  =========================================================== -->
+  <div class="section-block" id="shadow">
+    <div class="section-title">Shadow <span class="tag">shadowTokens · 10개</span></div>
+    <div class="shadow-grid">
+      <div class="shadow-item">
+        <div class="shadow-box" style="box-shadow:0 2px 4px rgba(0,0,0,0.2);"></div>
+        <div class="shadow-label">button</div>
+        <div style="font-size:10px;color:var(--text-tertiary);text-align:center;max-width:140px;">0 2px 4px / 0.2</div>
+      </div>
+      <div class="shadow-item">
+        <div class="shadow-box" style="box-shadow:0 1px 3px 0 rgb(0 0 0/0.1), 0 1px 2px -1px rgb(0 0 0/0.1);"></div>
+        <div class="shadow-label">header</div>
+        <div style="font-size:10px;color:var(--text-tertiary);text-align:center;max-width:140px;">sticky header</div>
+      </div>
+      <div class="shadow-item">
+        <div class="shadow-box" style="box-shadow:0px 8px 24px -6px rgba(0,0,0,0.10);"></div>
+        <div class="shadow-label">floating</div>
+        <div style="font-size:10px;color:var(--text-tertiary);text-align:center;max-width:140px;">8px 24px / 0.10</div>
+      </div>
+      <div class="shadow-item">
+        <div class="shadow-box" style="box-shadow:0px 8px 24px -6px rgba(0,0,0,0.12);"></div>
+        <div class="shadow-label">popover</div>
+        <div style="font-size:10px;color:var(--text-tertiary);text-align:center;max-width:140px;">8px 24px / 0.12</div>
+      </div>
+      <div class="shadow-item">
+        <div class="shadow-box" style="box-shadow:0 4px 20px rgba(0,0,0,0.15);"></div>
+        <div class="shadow-label">tooltip</div>
+        <div style="font-size:10px;color:var(--text-tertiary);text-align:center;max-width:140px;">4px 20px / 0.15</div>
+      </div>
+      <div class="shadow-item">
+        <div class="shadow-box" style="box-shadow:0px 4px 4px rgba(0,0,0,0.25);"></div>
+        <div class="shadow-label">bannerText</div>
+        <div style="font-size:10px;color:var(--text-tertiary);text-align:center;max-width:140px;">4px 4px / 0.25</div>
+      </div>
+      <div class="shadow-item">
+        <div class="shadow-box" style="box-shadow:0px 0px 64px rgba(245,72,72,0.35), 0px 1px 2px rgba(0,0,0,0.08);"></div>
+        <div class="shadow-label">alertIcon</div>
+        <div style="font-size:10px;color:var(--text-tertiary);text-align:center;max-width:140px;">red glow 64px</div>
+      </div>
+      <div class="shadow-item">
+        <div class="shadow-box" style="box-shadow:0px 8px 24px -6px rgba(0,0,0,0.30);"></div>
+        <div class="shadow-label">snackbar</div>
+        <div style="font-size:10px;color:var(--text-tertiary);text-align:center;max-width:140px;">8px 24px / 0.30</div>
+      </div>
+      <div class="shadow-item">
+        <div class="shadow-box" style="box-shadow:0px 1px 1px -1px rgba(0,0,0,0.10);"></div>
+        <div class="shadow-label">stickyHeader</div>
+        <div style="font-size:10px;color:var(--text-tertiary);text-align:center;max-width:140px;">1px 1px / 0.10</div>
+      </div>
+      <div class="shadow-item">
+        <div class="shadow-box" style="box-shadow:0px 8px 65px 0px rgba(40,76,149,0.20);"></div>
+        <div class="shadow-label">ctaModal</div>
+        <div style="font-size:10px;color:var(--text-tertiary);text-align:center;max-width:140px;">brand blue glow</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===========================================================
+       Theme Mode
+  =========================================================== -->
+  <div class="section-block" id="theme">
+    <div class="section-title">Theme Mode <span class="tag">themeModeTokens · MUI palette</span></div>
+    <div class="theme-grid">
+      <div class="theme-card light">
+        <div class="theme-label" style="color:#757575;">☀ Light Mode</div>
+        <div class="theme-row">
+          <div class="theme-dot" style="background:#3361BE;"></div>
+          <span class="theme-text-sample" style="font-size:12px;color:#424242;">primary.main <span style="font-family:monospace;color:#3361BE;">#3361BE</span></span>
+        </div>
+        <div class="theme-row">
+          <div class="theme-dot" style="background:#FFFFFF;border:1px solid #EDEDED;"></div>
+          <span class="theme-text-sample" style="font-size:12px;color:#424242;">background.paper <span style="font-family:monospace;color:#757575;">#FFFFFF</span></span>
+        </div>
+        <div class="theme-row">
+          <div class="theme-dot" style="background:#333333;"></div>
+          <span class="theme-text-sample" style="font-size:12px;color:#424242;">background.default <span style="font-family:monospace;color:#757575;">#333333</span></span>
+        </div>
+        <div class="theme-row">
+          <div class="theme-dot" style="background:#1E1E1E;"></div>
+          <span class="theme-text-sample" style="font-size:12px;color:#424242;">text.primary <span style="font-family:monospace;color:#757575;">#1E1E1E</span></span>
+        </div>
+        <div class="theme-row">
+          <div class="theme-dot" style="background:#424242;"></div>
+          <span class="theme-text-sample" style="font-size:12px;color:#424242;">text.secondary <span style="font-family:monospace;color:#757575;">#424242</span></span>
+        </div>
+      </div>
+      <div class="theme-card dark">
+        <div class="theme-label" style="color:#616161;">☾ Dark Mode</div>
+        <div class="theme-row">
+          <div class="theme-dot" style="background:#333333;"></div>
+          <span class="theme-text-sample" style="font-size:12px;color:#9E9E9E;">primary.main <span style="font-family:monospace;color:#AAAAAA;">#333333</span></span>
+        </div>
+        <div class="theme-row">
+          <div class="theme-dot" style="background:#171717;"></div>
+          <span class="theme-text-sample" style="font-size:12px;color:#9E9E9E;">background.paper <span style="font-family:monospace;color:#AAAAAA;">#171717</span></span>
+        </div>
+        <div class="theme-row">
+          <div class="theme-dot" style="background:#111111;"></div>
+          <span class="theme-text-sample" style="font-size:12px;color:#9E9E9E;">background.default <span style="font-family:monospace;color:#AAAAAA;">#111111</span></span>
+        </div>
+        <div class="theme-row">
+          <div class="theme-dot" style="background:#FFFFFF;"></div>
+          <span class="theme-text-sample" style="font-size:12px;color:#9E9E9E;">text.primary <span style="font-family:monospace;color:#AAAAAA;">#FFFFFF</span></span>
+        </div>
+        <div class="theme-row">
+          <div class="theme-dot" style="background:#D9D9D9;"></div>
+          <span class="theme-text-sample" style="font-size:12px;color:#9E9E9E;">text.secondary <span style="font-family:monospace;color:#AAAAAA;">#D9D9D9</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-body -->
+</body>
+</html>

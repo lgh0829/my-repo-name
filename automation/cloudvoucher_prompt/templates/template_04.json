@@ -1,0 +1,79 @@
+{
+  "id": "T04",
+  "name": "경쟁력 AS-IS/TO-BE형",
+  "emphasis": "경쟁력",
+  "style": "구조형",
+  "frame": "AS-IS/TO-BE",
+  "structure_ga": "가-δ",
+  "structure_na": "나-β",
+  "description": "기업 역량과 강점을 선행 소개한 뒤 경쟁력 강화 목적으로 PatSol을 도입하는 흐름. 나. 세부계획은 업무 흐름(workflow) 순서 중심.",
+
+  "ga_sections": [
+    {
+      "order": 1,
+      "title_pool": ["기업 현황", "기업 비즈니스 현황", "기업 현황 및 특성"],
+      "emphasis": "strengths 반영 — 기업 강점과 전문성을 먼저 소개, 경쟁력 강화의 필요성 연결",
+      "tone": "기업 소개 선행, employees_patent/non_patent 활용"
+    },
+    {
+      "order": 2,
+      "title_pool": ["이용목적", "도입 목적", "도입 배경 및 목적"],
+      "emphasis": "경쟁력 강화 — 시장 내 우위 확보를 위한 PatSol 도입 목적 서술",
+      "tone": "goal_rank.first를 핵심 목적 문장으로"
+    },
+    {
+      "order": 3,
+      "title_pool": ["현 업무 한계점 및 도입 필요성", "현황 및 개선 필요성", "기존 방식의 한계와 전환 필요성"],
+      "emphasis": "한계점과 필요성 통합 서술 — AS-IS 현황 문제 → PatSol 도입 후 TO-BE 기대 효과 대비",
+      "tone": "AS-IS/TO-BE 대비 구조형 항목 나열"
+    },
+    {
+      "order": 4,
+      "title_pool": ["공공 지원 필요 배경", "정부 지원의 필요성", "자체 도입의 한계 및 지원 필요성"],
+      "emphasis": "기술 전문성 + 보안 비용 + 범용 AI 한계로 경쟁력 도약에 정부 지원 필요",
+      "tone": "경쟁력 관점에서 진입 장벽을 논거로 활용"
+    }
+  ],
+
+  "na_sections": [
+    {
+      "order": 1,
+      "title": "통합 워크플로우 개요",
+      "emphasis": "선행기술조사 → 비교발명 분석 → 청구항 설계 → 명세서 초안 → 관리까지 단일 플랫폼 흐름 전체 소개",
+      "tone": "업무 흐름 전체 조감"
+    },
+    {
+      "order": 2,
+      "title": "선행기술조사 단계 활용",
+      "emphasis": "국내외 DB 통합 + AI 유사도 검색으로 조사 시간 단축, 검색 누락 최소화"
+    },
+    {
+      "order": 3,
+      "title": "청구항 설계 단계 활용",
+      "emphasis": "OS 매트릭스 분석 → 조사 결과 직결 연동 → 독립항·종속항 설계 경쟁력 강화"
+    },
+    {
+      "order": 4,
+      "title": "명세서 작성 단계 활용",
+      "emphasis": "청구항 설계 기반 초안 작성 지원 → 기재불비 감소 → 특허 품질 향상으로 서비스 경쟁력 확보"
+    },
+    {
+      "order": 5,
+      "title": "데이터 보안·이력 관리 단계 활용",
+      "emphasis": "중앙집중형 이력 관리로 고객 신뢰도 제고 + 지속 성장 기반 마련"
+    }
+  ],
+
+  "writing_instructions": {
+    "paragraph_style": "구조형 항목 나열 (ㅇ + - 계층 구조)",
+    "title_variation": "title_pool에서 문서 전체에 걸쳐 서로 다른 표현을 선택",
+    "forbidden_expressions": ["AI 명세서 자동작성", "명세서 자동완성", "AI가 명세서를 작성", "자동 생성"],
+    "required_elements": [
+      "기업 현황 섹션에 strengths 반영하여 강점 소개",
+      "한계점+필요성 통합 섹션에 AS-IS 현황 → TO-BE 기대 대비 구조 활용",
+      "나. 세부계획 첫 ㅇ에 통합 워크플로우 전체 흐름 조감 서술",
+      "AI 기반 유사도 검색 표현 나. 세부계획에 명시",
+      "경쟁력·서비스 품질 향상 논거를 전 섹션에 일관되게 유지"
+    ]
+  }
+}
