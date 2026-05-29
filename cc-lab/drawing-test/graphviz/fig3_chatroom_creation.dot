@@ -1,0 +1,64 @@
+digraph fig3_chatroom_creation {
+    graph [
+        rankdir=TB
+        label="도 3 — 채팅방 생성 동작 (운영자 단말 & 서버)"
+        labelloc=t
+        fontsize=16
+        fontname="Arial"
+        splines=ortho
+        nodesep=1.2
+        ranksep=0.6
+    ]
+    node [shape=box fontname="Arial" fontsize=11 style=filled fillcolor=white]
+    edge [fontname="Arial" fontsize=10]
+
+    // Lifeline headers
+    OT_head [label="운영자 단말(310)" shape=box style=filled fillcolor=lightgray width=2.5]
+    SV_head [label="서버(330)"        shape=box style=filled fillcolor=lightgray width=2.5]
+
+    // Operation nodes — left (OT)
+    op301 [label="동작(301)\n채팅방 운영 신청서 획득" shape=note]
+    op309 [label="동작(309)\n채팅방 운영 신청서\n승인 안내 메시지 표시" shape=note]
+    op311 [label="동작(311)\n지급 정보 획득" shape=note]
+    op319 [label="단계(319)\n지급 정보 등록\n안내 메시지 표시" shape=note]
+    op321 [label="단계(321)\n채팅방 설정 획득" shape=note]
+
+    // Operation nodes — right (SV)
+    op305 [label="동작(305)\n채팅방 운영 신청서\n승인 여부 결정 [승인]" shape=note]
+    op315 [label="단계(315)\n지급 정보 등록" shape=note]
+    op325 [label="단계(325)\n채팅방 생성" shape=note]
+
+    // Rank alignment: headers
+    { rank=same OT_head SV_head }
+
+    // Rank alignment: message pairs
+    { rank=same op301 }
+    { rank=same op305 }
+    { rank=same op309 }
+    { rank=same op311 }
+    { rank=same op315 }
+    { rank=same op319 }
+    { rank=same op321 }
+    { rank=same op325 }
+
+    // Vertical flow (left lifeline)
+    OT_head -> op301 [style=dashed arrowhead=none]
+    op301   -> op309 [style=dashed arrowhead=none]
+    op309   -> op311 [style=dashed arrowhead=none]
+    op311   -> op319 [style=dashed arrowhead=none]
+    op319   -> op321 [style=dashed arrowhead=none]
+
+    // Vertical flow (right lifeline)
+    SV_head -> op305 [style=dashed arrowhead=none]
+    op305   -> op315 [style=dashed arrowhead=none]
+    op315   -> op325 [style=dashed arrowhead=none]
+
+    // Messages OT → SV
+    op301 -> op305 [label="동작(303) 채팅방 운영 신청서 전송" style=solid constraint=false]
+    op311 -> op315 [label="단계(313) 지급 정보 전송" style=solid constraint=false]
+    op321 -> op325 [label="단계(323) 채팅방 설정 전송" style=solid constraint=false]
+
+    // Messages SV → OT
+    op305 -> op309 [label="동작(307) 승인 안내 메시지 표시 명령" style=solid constraint=false dir=back]
+    op315 -> op319 [label="단계(317) 지급 정보 등록 안내 메시지 표시 명령" style=solid constraint=false dir=back]
+}

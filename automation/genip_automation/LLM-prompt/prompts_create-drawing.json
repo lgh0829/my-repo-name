@@ -1,0 +1,24 @@
+[
+  {
+    "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-image-preview:generateContent",
+    "time": "2026-03-18T10:03:20.465Z",
+    "body": {
+      "contents": [
+        {
+          "parts": [
+            {
+              "text": "\n        Technical patent drawing of: Patent line art illustrating the invention described as: [기술분야]\n본 발명은 교육 플랫폼 환경에서 수강생의 질의에 효율적으로 대응하기 위한 자동화된 상담 관리 시스템 및 그 방법에 관한 것으로, 상세하게는 인공지능 자연어 처리 기술과 점층적 클러스터링 기법을 결합하여 학생 개개인의 수준과 특성에 최적화된 상담을 제공하는 맞춤형 질의응답 시스템에 관한 것이다.\n\n[배경기술의 문제점]\n온·오프라인 교육 환경에서 다수의 수강생이 제기하는 방대한 질의에 대해, 기존의 수동 기반 상담 시스템은 인력의 한계로 인해 응답 지연 및 일관성 부족의 문제가 빈번하게 발생하였다. 특히 개별 학생의 학습 진도나 사전 지식 수준을 고려하지 않은 획일적인 응답 제공으로 인해 상담의 질이 저하되었으며, 두 개 이상의 과목이 결합된 융합 질문에 대해서는 체계적이고 즉각적인 대응이 불가하여. Show main components clearly without text labels..\n        \n        [Constraints]\n        1. Style: Professional black and white line art (patent style).\n        2. Content: Clearly illustrate the components mentioned.\n        3. Background: Pure white. No shading, no gradients.\n        4. **IMPORTANT**: If possible, reflect the components described in the reference numerals: \n[Reference Numerals from Spec]:\n 100: 지능형 상담 관리 시스템\n110: 그룹핑 엔진\n120: 질문 분석 모듈\n130: 응답 생성 모듈\n140: 피드백 관리 모듈\n200: 다계층 데이터베이스\n\n        "
+            }
+          ],
+          "role": "user"
+        }
+      ],
+      "generationConfig": {
+        "imageConfig": {
+          "aspectRatio": "1:1",
+          "imageSize": "1K"
+        }
+      }
+    }
+  }
+]

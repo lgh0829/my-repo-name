@@ -1,0 +1,19 @@
+%%{init: {'theme': 'base', 'themeVariables': {
+  'primaryColor': '#ffffff',
+  'primaryBorderColor': '#000000',
+  'primaryTextColor': '#000000',
+  'lineColor': '#000000',
+  'fontSize': '13px'
+}}}%%
+flowchart TD
+    S([Start])
+    S --> A["Operator Terminal 20<br/>Sends Chat Room Creation<br/>Request to Server 10"]
+    A --> B["Chat Room Management<br/>Module 13 of Server 10<br/>Receives Application"]
+    B --> C{Approved?}
+    C -- Approved --> D["Subscription/Payment<br/>Management Module 14<br/>Requests Payment Info<br/>from Operator Terminal 20"]
+    C -- Not Approved --> X[Application Denied]
+    D --> E["Operator Terminal 20<br/>Inputs and Registers<br/>Payment Info with Server 10"]
+    E --> F["Settlement Module 16<br/>Configures Settlement System"]
+    F --> G["Chat Room Management<br/>Module 13 Applies Settings"]
+    G --> H["Authorization Module 15<br/>Assigns Admin Rights<br/>to Operator Account"]
+    H --> Z([End: Chat Room Created])

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PatSol 2Q 스프린트 마일스톤</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f6f8; color: #1a1a2e; }
+
+  .page { max-width: 1280px; margin: 0 auto; padding: 32px 24px; }
+
+  .header { margin-bottom: 32px; }
+  .header h1 { font-size: 22px; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
+  .header p { font-size: 13px; color: #6b7280; }
+
+  /* Legend */
+  .legend { display: flex; gap: 20px; margin-bottom: 28px; flex-wrap: wrap; align-items: center; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #374151; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .dot-tech   { background: #6366f1; }
+  .dot-ui     { background: #0ea5e9; }
+  .dot-new    { background: #f59e0b; }
+  .dot-spec   { background: #d1d5db; border: 1px dashed #9ca3af; }
+  .dot-qa     { background: #e5e7eb; border: 1px solid #d1d5db; }
+  .legend-sep { width: 1px; height: 14px; background: #e5e7eb; }
+
+  /* Summary chips */
+  .summary { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+  .chip { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  .chip-total { background: #1a1a2e; color: #fff; }
+  .chip-tech  { background: #ede9fe; color: #4f46e5; }
+  .chip-ui    { background: #e0f2fe; color: #0369a1; }
+  .chip-new   { background: #fef3c7; color: #b45309; }
+
+  /* Timeline header */
+  .timeline { display: grid; grid-template-columns: 90px repeat(6, 1fr); gap: 8px; }
+  .timeline-header { display: contents; }
+  .timeline-header .th-role { font-size: 11px; color: transparent; padding: 8px; }
+  .sprint-head {
+    background: #1a1a2e; color: #fff;
+    border-radius: 8px; padding: 10px 12px; text-align: center;
+    font-size: 12px; font-weight: 700;
+  }
+  .sprint-head .s-label { font-size: 14px; }
+  .sprint-head .s-date  { font-size: 10px; opacity: 0.65; margin-top: 2px; }
+  .sprint-head .s-count { margin-top: 6px; font-size: 10px; background: rgba(255,255,255,0.15); border-radius: 4px; padding: 2px 6px; }
+
+  /* Role rows */
+  .role-label {
+    display: flex; align-items: center; justify-content: center;
+    writing-mode: horizontal-tb;
+    font-size: 11px; font-weight: 700; color: #374151;
+    background: #fff; border-radius: 8px; padding: 8px 6px;
+    border: 1px solid #e5e7eb; text-align: center; line-height: 1.3;
+  }
+
+  /* Sprint cells */
+  .sprint-cell {
+    background: #fff; border-radius: 8px; padding: 10px;
+    border: 1px solid #e5e7eb;
+    display: flex; flex-direction: column; gap: 5px;
+    min-height: 80px;
+  }
+  .sprint-cell.empty { background: #fafafa; border-style: dashed; }
+  .sprint-cell.qa    { background: #f9fafb; border-style: dashed; justify-content: center; align-items: center; }
+
+  /* Task chips */
+  .task {
+    display: flex; align-items: flex-start; gap: 5px;
+    font-size: 11px; line-height: 1.4; border-radius: 5px;
+    padding: 5px 7px;
+  }
+  .task.tech { background: #ede9fe; color: #3730a3; }
+  .task.ui   { background: #e0f2fe; color: #075985; }
+  .task.new  { background: #fef3c7; color: #92400e; }
+  .task.spec { background: #f3f4f6; color: #6b7280; border: 1px dashed #d1d5db; }
+  .task.qa-item { background: #f3f4f6; color: #9ca3af; font-size: 11px; }
+
+  .task-no   { font-weight: 700; white-space: nowrap; flex-shrink: 0; }
+  .task-name { }
+
+  .qa-label { font-size: 12px; color: #9ca3af; font-weight: 600; }
+
+  /* Risk section */
+  .risk-section { margin-top: 32px; }
+  .risk-section h2 { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: #374151; }
+  .risk-list { display: flex; flex-direction: column; gap: 8px; }
+  .risk-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    background: #fff; border-radius: 8px; padding: 12px 16px;
+    border-left: 3px solid #f59e0b; font-size: 12px;
+  }
+  .risk-no { font-weight: 700; color: #b45309; flex-shrink: 0; }
+  .risk-text { color: #374151; }
+  .risk-text strong { color: #1a1a2e; }
+
+  /* Velocity bar */
+  .velocity { margin-top: 28px; }
+  .velocity h2 { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: #374151; }
+  .vel-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .vel-label { width: 30px; font-size: 12px; font-weight: 700; color: #6b7280; }
+  .vel-bar-wrap { flex: 1; background: #f3f4f6; border-radius: 4px; height: 20px; }
+  .vel-bar { height: 20px; border-radius: 4px; display: flex; align-items: center; padding: 0 8px; font-size: 11px; font-weight: 600; color: #fff; }
+  .vel-count { font-size: 12px; color: #374151; font-weight: 600; width: 40px; text-align: right; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <h1>PatSol 2Q 스프린트 마일스톤</h1>
+    <p>2026년 4월 1일 – 6월 30일 &nbsp;·&nbsp; 총 13주 &nbsp;·&nbsp; S1–S5 개발 + S6 QA &nbsp;·&nbsp; 기획1 · FE1 · FullStack1 · BE2</p>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot dot-tech"></div>기술검토 직행</div>
+    <div class="legend-item"><div class="legend-dot dot-ui"></div>소폭 UI 수정</div>
+    <div class="legend-item"><div class="legend-dot dot-new"></div>신규 화면 설계 (구현)</div>
+    <div class="legend-item"><div class="legend-dot dot-spec"></div>신규 화면 설계 (기획 스펙)</div>
+    <div class="legend-sep"></div>
+    <div class="legend-item" style="color:#9ca3af">구현 Y = 고도화 / N = 신기능</div>
+  </div>
+
+  <div class="summary">
+    <div class="chip chip-total">전체 32개</div>
+    <div class="chip chip-tech">기술검토 직행 9</div>
+    <div class="chip chip-ui">소폭 UI 수정 15</div>
+    <div class="chip chip-new">신규 화면 설계 8</div>
+  </div>
+
+  <!-- GRID -->
+  <div class="timeline">
+
+    <!-- Header row -->
+    <div class="role-label" style="visibility:hidden">-</div>
+
+    <div class="sprint-head">
+      <div class="s-label">S1</div>
+      <div class="s-date">4/1 – 4/14</div>
+      <div class="s-count">완료 7개</div>
+    </div>
+    <div class="sprint-head">
+      <div class="s-label">S2</div>
+      <div class="s-date">4/15 – 4/28</div>
+      <div class="s-count">완료 7개</div>
+    </div>
+    <div class="sprint-head">
+      <div class="s-label">S3</div>
+      <div class="s-date">4/29 – 5/12</div>
+      <div class="s-count">완료 8개</div>
+    </div>
+    <div class="sprint-head">
+      <div class="s-label">S4</div>
+      <div class="s-date">5/13 – 5/26</div>
+      <div class="s-count">완료 7개</div>
+    </div>
+    <div class="sprint-head">
+      <div class="s-label">S5</div>
+      <div class="s-date">5/27 – 6/9</div>
+      <div class="s-count">완료 3개</div>
+    </div>
+    <div class="sprint-head" style="background:#4b5563;">
+      <div class="s-label">S6</div>
+      <div class="s-date">6/10 – 6/23</div>
+      <div class="s-count">QA / 버퍼</div>
+    </div>
+
+    <!-- 기획1 -->
+    <div class="role-label">기획1</div>
+
+    <div class="sprint-cell">
+      <div class="task spec"><span class="task-no">2-1-4</span><span class="task-name">재검색 스펙</span></div>
+      <div class="task spec"><span class="task-no">3-2-1</span><span class="task-name">스타일 생성 스펙</span></div>
+    </div>
+    <div class="sprint-cell">
+      <div class="task spec"><span class="task-no">3-2-3</span><span class="task-name">선호 표현 관리 스펙</span></div>
+      <div class="task spec"><span class="task-no">4-2-5</span><span class="task-name">청구항 정렬 스펙</span></div>
+    </div>
+    <div class="sprint-cell">
+      <div class="task spec"><span class="task-no">4-2-6</span><span class="task-name">청구항 개별 AI 보정 스펙</span></div>
+      <div class="task spec"><span class="task-no">4-3-7</span><span class="task-name">도면 일관성 검증 스펙</span></div>
+    </div>
+    <div class="sprint-cell">
+      <div class="task spec"><span class="task-no">4-4-4</span><span class="task-name">명세서 일관성 검증 스펙</span></div>
+      <div class="task spec"><span class="task-no">4-4-6</span><span class="task-name">AI 도면 업데이트 스펙</span></div>
+    </div>
+    <div class="sprint-cell empty">
+      <div style="font-size:11px;color:#9ca3af;padding:4px;">전체 검토 · 버퍼</div>
+    </div>
+    <div class="sprint-cell qa">
+      <div class="qa-label">—</div>
+    </div>
+
+    <!-- FE1 -->
+    <div class="role-label">FE1</div>
+
+    <div class="sprint-cell">
+      <div class="task ui"><span class="task-no">1-2-4</span><span class="task-name">프롬프트 검색 (의도분류)</span></div>
+      <div class="task ui"><span class="task-no">2-2-4</span><span class="task-name">필터 적용 현황 조회</span></div>
+    </div>
+    <div class="sprint-cell">
+      <div class="task new"><span class="task-no">2-1-4</span><span class="task-name">재검색</span></div>
+      <div class="task ui"><span class="task-no">2-3-3</span><span class="task-name">검색 히스토리 조회</span></div>
+    </div>
+    <div class="sprint-cell">
+      <div class="task new"><span class="task-no">3-2-1</span><span class="task-name">명세서 스타일 생성</span></div>
+      <div class="task new"><span class="task-no">3-2-3</span><span class="task-name">선호 표현 관리</span></div>
+    </div>
+    <div class="sprint-cell">
+      <div class="task new"><span class="task-no">4-2-5</span><span class="task-name">청구항 정렬 순서 변경</span></div>
+      <div class="task new"><span class="task-no">4-2-6</span><span class="task-name">청구항 개별 AI 보정</span></div>
+    </div>
+    <div class="sprint-cell">
+      <div class="task new"><span class="task-no">4-3-7</span><span class="task-name">도면과 일관성 검증</span></div>
+    </div>
+    <div class="sprint-cell qa">
+      <div class="qa-label">QA / 통합</div>
+    </div>
+
+    <!-- FullStack1 -->
+    <div class="role-label">Full<br>Stack1</div>
+
+    <div class="sprint-cell">
+      <div class="task tech"><span class="task-no">2-7-1</span><span class="task-name">관심특허 저장</span></div>
+      <div class="task ui"><span class="task-no">2-1-2</span><span class="task-name">검색 내역 조회</span></div>
+    </div>
+    <div class="sprint-cell">
+      <div class="task ui"><span class="task-no">3-1-2</span><span class="task-name">도면 업로드</span></div>
+      <div class="task tech"><span class="task-no">3-3-1</span><span class="task-name">명세서 초안 생성</span></div>
+    </div>
+    <div class="sprint-cell">
+      <div class="task ui"><span class="task-no">4-2-1</span><span class="task-name">청구항 조회</span></div>
+      <div class="task ui"><span class="task-no">4-2-2</span><span class="task-name">독립항 추가</span></div>
+      <div class="task ui"><span class="task-no">4-2-3</span><span class="task-name">종속항 추가</span></div>
+    </div>
+    <div class="sprint-cell">
+      <div class="task ui"><span class="task-no">4-3-1</span><span class="task-name">명세 항목 추가</span></div>
+      <div class="task ui"><span class="task-no">4-3-2</span><span class="task-name">명세 항목 편집</span></div>
+      <div class="task ui"><span class="task-no">4-1-6</span><span class="task-name">명세서 설정 관리</span></div>
+    </div>
+    <div class="sprint-cell">
+      <div class="task new"><span class="task-no">4-4-4</span><span class="task-name">명세서 일관성 검증</span></div>
+      <div class="task new"><span class="task-no">4-4-6</span><span class="task-name">AI 도면 업데이트</span></div>
+    </div>
+    <div class="sprint-cell qa">
+      <div class="qa-label">QA / 통합</div>
+    </div>
+
+    <!-- BE2 -->
+    <div class="role-label">BE2<br><span style="font-weight:400;font-size:10px;color:#9ca3af">(2명)</span></div>
+
+    <div class="sprint-cell">
+      <div class="task tech"><span class="task-no">2-1-5</span><span class="task-name">청구항 생성 GNB</span></div>
+      <div class="task tech"><span class="task-no">2-1-6</span><span class="task-name">명세서 편집 GNB</span></div>
+      <div class="task tech"><span class="task-no">3-1-1</span><span class="task-name">발명서 업로드 고도화</span></div>
+    </div>
+    <div class="sprint-cell">
+      <div class="task tech"><span class="task-no">3-3-2</span><span class="task-name">명세 항목 자동생성</span></div>
+      <div class="task tech"><span class="task-no">4-2-7</span><span class="task-name">청구항 삭제</span></div>
+      <div class="task tech"><span class="task-no">4-2-8</span><span class="task-name">청구항 일괄 AI 보정</span></div>
+    </div>
+    <div class="sprint-cell">
+      <div class="task ui"><span class="task-no">3-2-2</span><span class="task-name">명세서 스타일 설정</span></div>
+      <div class="task tech"><span class="task-no">4-3-4</span><span class="task-name">명세 항목 삭제</span></div>
+      <div class="task ui"><span class="task-no">2-2-2</span><span class="task-name">토픽 필터 재검색</span></div>
+    </div>
+    <div class="sprint-cell">
+      <div class="task ui"><span class="task-no">4-3-5</span><span class="task-name">목차·순서 변경</span></div>
+      <div class="task ui"><span class="task-no">4-3-6</span><span class="task-name">도면 연결 미리보기</span></div>
+    </div>
+    <div class="sprint-cell empty">
+      <div style="font-size:11px;color:#9ca3af;padding:4px;">버퍼 · 이월 처리</div>
+    </div>
+    <div class="sprint-cell qa">
+      <div class="qa-label">QA / 통합</div>
+    </div>
+
+  </div><!-- /timeline -->
+
+  <!-- Velocity -->
+  <div class="velocity">
+    <h2>스프린트별 처리량</h2>
+    <div class="vel-row">
+      <div class="vel-label">S1</div>
+      <div class="vel-bar-wrap"><div class="vel-bar" style="width:43.75%;background:#6366f1;">7</div></div>
+      <div class="vel-count">7개</div>
+    </div>
+    <div class="vel-row">
+      <div class="vel-label">S2</div>
+      <div class="vel-bar-wrap"><div class="vel-bar" style="width:43.75%;background:#6366f1;">7</div></div>
+      <div class="vel-count">7개</div>
+    </div>
+    <div class="vel-row">
+      <div class="vel-label">S3</div>
+      <div class="vel-bar-wrap"><div class="vel-bar" style="width:50%;background:#0ea5e9;">8</div></div>
+      <div class="vel-count">8개</div>
+    </div>
+    <div class="vel-row">
+      <div class="vel-label">S4</div>
+      <div class="vel-bar-wrap"><div class="vel-bar" style="width:43.75%;background:#6366f1;">7</div></div>
+      <div class="vel-count">7개</div>
+    </div>
+    <div class="vel-row">
+      <div class="vel-label">S5</div>
+      <div class="vel-bar-wrap"><div class="vel-bar" style="width:18.75%;background:#f59e0b;">3</div></div>
+      <div class="vel-count">3개</div>
+    </div>
+    <div class="vel-row">
+      <div class="vel-label">S6</div>
+      <div class="vel-bar-wrap"><div class="vel-bar" style="width:100%;background:#e5e7eb;color:#9ca3af;">QA / 통합 테스트</div></div>
+      <div class="vel-count">—</div>
+    </div>
+  </div>
+
+  <!-- Risk -->
+  <div class="risk-section">
+    <h2>⚠ 리스크 포인트</h2>
+    <div class="risk-list">
+      <div class="risk-item">
+        <div class="risk-no">R1</div>
+        <div class="risk-text"><strong>S3 FullStack1 — 청구항 3종 (4-2-1/2/3)</strong>&nbsp; 종속항 추가의 다중 종속 처리(어두 자동 삽입, 번호 재계산) 복잡도 높음. S2 중 기술 검토 병행 권장.</div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-no">R2</div>
+        <div class="risk-text"><strong>S4 기획1 스펙 — 4-4-4 / 4-4-6 AI 도면 기능</strong>&nbsp; LLM 기반 도면 생성·수정은 외부 모델 의존도 높음. 기술 검토 결과에 따라 S5 구현 일정 조정 필요.</div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-no">R3</div>
+        <div class="risk-text"><strong>S5 집중도 낮음 (3개)</strong>&nbsp; S4까지 밀린 항목이 S5로 이월되면 S6 QA 시간을 잠식. S1–S4 완료율을 매 스프린트 말 기준으로 모니터링 권장.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

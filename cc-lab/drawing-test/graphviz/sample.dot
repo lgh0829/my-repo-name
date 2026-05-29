@@ -1,0 +1,35 @@
+digraph patent_flowchart {
+    rankdir=TB;
+    node [shape=box, style="filled", fillcolor="white",
+          fontname="Helvetica", fontsize=11, margin="0.2,0.1"];
+    edge [fontname="Helvetica", fontsize=10];
+
+    // Start/End style
+    start [label="Start", shape=oval, fillcolor="white"];
+    end   [label="End: Chat Room Created", shape=oval, fillcolor="white"];
+
+    // Process nodes
+    A [label="Operator Terminal (20)\nSends Chat Room Creation\nRequest to Server (10)"];
+    B [label="Chat Room Management\nModule (13) of Server (10)\nReceives Application"];
+    D [label="Subscription/Payment\nManagement Module (14)\nRequests Payment Info\nfrom Operator Terminal (20)"];
+    E [label="Operator Terminal (20)\nInputs and Registers\nPayment Info with Server (10)"];
+    F [label="Settlement Module (16)\nConfigures Settlement System"];
+    G [label="Chat Room Management\nModule (13) Applies Settings"];
+    H [label="Authorization Module (15)\nAssigns Admin Rights\nto Operator Account"];
+
+    // Decision node
+    C [label="Approved?", shape=diamond, fillcolor="white", width=1.5];
+    denied [label="Application Denied", shape=box];
+
+    // Edges
+    start -> A;
+    A -> B;
+    B -> C;
+    C -> D [label="Approved"];
+    C -> denied [label="Not Approved"];
+    D -> E;
+    E -> F;
+    F -> G;
+    G -> H;
+    H -> end;
+}

@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PatSol 클라우드바우처 신청서 초안 생성</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* 우선순위 선택 버튼 */
+    .pri-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      padding: 0.55rem 1rem;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 0.625rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #374151;
+      background: #fff;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+      user-select: none;
+    }
+    .pri-btn:hover { border-color: #93c5fd; background: #eff6ff; }
+    .pri-btn.sel  { border-color: #3b82f6; background: #eff6ff; color: #1d4ed8; }
+    .pri-badge {
+      position: absolute;
+      top: -8px; right: -8px;
+      width: 20px; height: 20px;
+      background: #3b82f6;
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* 라디오/체크 카드 공통 */
+    .r-card, .c-card {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 1rem;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 0.625rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #374151;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .r-card:hover, .c-card:hover { border-color: #93c5fd; background: #eff6ff; }
+    .r-card:has(input:checked), .c-card:has(input:checked) {
+      border-color: #3b82f6; background: #eff6ff; color: #1d4ed8;
+    }
+    .r-card-block {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 0.625rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      color: #374151;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .r-card-block:hover { border-color: #93c5fd; background: #eff6ff; }
+    .r-card-block:has(input:checked) {
+      border-color: #3b82f6; background: #eff6ff; color: #1d4ed8; font-weight: 500;
+    }
+
+    /* 입력 필드 */
+    .fi {
+      width: 100%;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 0.625rem;
+      padding: 0.65rem 0.875rem;
+      font-size: 0.875rem;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .fi:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.12); }
+    .fi::placeholder { color: #a0aec0; }
+
+    /* 섹션 카드 */
+    .section-card {
+      background: #fff;
+      border-radius: 1.25rem;
+      border: 1px solid #f1f5f9;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      padding: 1.75rem;
+    }
+
+    /* 섹션 헤더 뱃지 */
+    .sec-badge {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 700;
+    }
+
+    /* 필드 레이블 */
+    .fl { display: block; font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 0.5rem; }
+
+    /* 결과 복사 버튼 */
+    #copyBtn {
+      transition: background 0.15s;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen py-10 px-4" style="font-family: -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;">
+
+<div class="max-w-2xl mx-auto">
+
+  <!-- 헤더 -->
+  <header class="text-center mb-10">
+    <p class="text-blue-600 font-bold text-base mb-2 tracking-wide">PatSol × 클라우드바우처</p>
+    <h1 class="text-3xl font-bold text-gray-900 mb-3">신청서 초안 자동 생성</h1>
+    <p class="text-gray-400 text-sm leading-relaxed">
+      아래 정보를 입력하시면 AI가 맞춤형 클라우드바우처 신청서 초안을 자동으로 작성합니다.
+    </p>
+  </header>
+
+  <form id="survey" class="space-y-6" novalidate>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- A. 기업 기본 정보                                      -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="section-card space-y-5">
+      <h2 class="flex items-center gap-2 text-lg font-bold text-gray-800 border-b border-gray-100 pb-3">
+        <span class="sec-badge bg-blue-100 text-blue-700">A</span>
+        기업 기본 정보
+        <span class="text-xs font-normal text-red-400 ml-1">필수</span>
+      </h2>
+
+      <!-- 기업명 -->
+      <div>
+        <label class="fl">기업명 <span class="text-red-400">*</span></label>
+        <input id="company_name" type="text" required placeholder="예: 특허법인 공간" class="fi">
+      </div>
+
+      <!-- 업종 -->
+      <div>
+        <label class="fl">업종 <span class="text-red-400">*</span></label>
+        <input id="industry" type="text" required placeholder="예: 특허법인, 변리사 사무소, 법무법인, IT서비스" class="fi">
+      </div>
+
+      <!-- 주요 업무 -->
+      <div>
+        <label class="fl">주요 업무 <span class="text-red-400">*</span></label>
+        <textarea id="main_work" required rows="2"
+          placeholder="예: 중소기업 대상 특허 출원·선행기술조사 전문"
+          class="fi resize-none"></textarea>
+      </div>
+
+      <!-- 기업 강점 (선택) -->
+      <div>
+        <label class="fl">기업 강점 <span class="text-gray-400 text-xs font-normal">선택 — 입력 시 더 맞춤화된 초안 생성</span></label>
+        <textarea id="strengths" rows="2"
+          placeholder="예: 특허 도메인 전문성, 소규모 전문 인력, 중소기업 특화 이력, 신속한 의사결정"
+          class="fi resize-none"></textarea>
+      </div>
+
+      <!-- 직원 수 -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="fl">변리사·보조 인원 <span class="text-red-400">*</span></label>
+          <div class="relative">
+            <input id="employees_patent" type="number" min="0" required placeholder="0" class="fi" style="padding-right:2rem">
+            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none">명</span>
+          </div>
+        </div>
+        <div>
+          <label class="fl">행정·영업 등 인원 <span class="text-red-400">*</span></label>
+          <div class="relative">
+            <input id="employees_non_patent" type="number" min="0" required placeholder="0" class="fi" style="padding-right:2rem">
+            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none">명</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 주요 고객 유형 -->
+      <div>
+        <label class="fl">주요 고객 유형 <span class="text-red-400">*</span></label>
+        <div class="flex flex-wrap gap-2">
+          <label class="r-card"><input type="radio" name="key_customers" value="중소기업 중심" class="accent-blue-500"> 중소기업 중심</label>
+          <label class="r-card"><input type="radio" name="key_customers" value="대기업 중심" class="accent-blue-500"> 대기업 중심</label>
+          <label class="r-card"><input type="radio" name="key_customers" value="비슷함" class="accent-blue-500"> 비슷함</label>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- B. 도입 목적 및 문제점                                  -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="section-card space-y-6">
+      <h2 class="flex items-center gap-2 text-lg font-bold text-gray-800 border-b border-gray-100 pb-3">
+        <span class="sec-badge bg-blue-100 text-blue-700">B</span>
+        도입 목적 및 문제점
+        <span class="text-xs font-normal text-red-400 ml-1">필수</span>
+      </h2>
+
+      <!-- 주요 문제점 우선순위 -->
+      <div>
+        <label class="fl">
+          주요 문제점
+          <span class="text-gray-400 text-xs font-normal">— 해당되는 항목을 클릭하세요. 클릭 순서가 1·2·3순위입니다.</span>
+        </label>
+        <div id="pain_points_selector" class="flex flex-wrap gap-2 mt-1" data-max="3">
+          <button type="button" class="pri-btn" data-value="수작업 많음">수작업 많음</button>
+          <button type="button" class="pri-btn" data-value="시스템 분산">시스템 분산</button>
+          <button type="button" class="pri-btn" data-value="보안 우려">보안 우려</button>
+          <button type="button" class="pri-btn" data-value="인력 부족">인력 부족</button>
+          <button type="button" class="pri-btn" data-value="비용 부담">비용 부담</button>
+        </div>
+        <p class="text-xs text-gray-400 mt-1.5">선택된 항목을 다시 클릭하면 취소됩니다. 중간 순위 취소 시 자동 재번호됩니다.</p>
+      </div>
+
+      <!-- 도입 목표 우선순위 -->
+      <div>
+        <label class="fl">
+          도입 목표
+          <span class="text-gray-400 text-xs font-normal">— 해당되는 항목을 클릭하세요. 클릭 순서가 1·2·3순위입니다.</span>
+        </label>
+        <div id="goal_selector" class="flex flex-wrap gap-2 mt-1" data-max="3">
+          <button type="button" class="pri-btn" data-value="업무 효율화">업무 효율화</button>
+          <button type="button" class="pri-btn" data-value="보안 강화">보안 강화</button>
+          <button type="button" class="pri-btn" data-value="비용 절감">비용 절감</button>
+          <button type="button" class="pri-btn" data-value="경쟁력 강화">경쟁력 강화</button>
+          <button type="button" class="pri-btn" data-value="성장 잠재력">성장 잠재력</button>
+        </div>
+        <p class="text-xs text-gray-400 mt-1.5">선택된 항목을 다시 클릭하면 취소됩니다.</p>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- C. 클라우드 컴퓨팅 현황                                 -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="section-card space-y-6">
+      <h2 class="flex items-center gap-2 text-lg font-bold text-gray-800 border-b border-gray-100 pb-3">
+        <span class="sec-badge bg-blue-100 text-blue-700">C</span>
+        클라우드 컴퓨팅 현황
+        <span class="text-xs font-normal text-red-400 ml-1">필수</span>
+      </h2>
+
+      <!-- 1. 현재 클라우드 구성 유형 -->
+      <div>
+        <label class="fl">1. 현재 클라우드 구성 유형 <span class="text-red-400">*</span></label>
+        <div class="flex flex-wrap gap-2">
+          <label class="r-card"><input type="radio" name="cloud_current_config" value="미도입/온프레미스" class="accent-blue-500"> 미도입 / 온프레미스</label>
+          <label class="r-card"><input type="radio" name="cloud_current_config" value="민간 클라우드" class="accent-blue-500"> 민간 클라우드</label>
+          <label class="r-card"><input type="radio" name="cloud_current_config" value="자체 클라우드" class="accent-blue-500"> 자체 클라우드</label>
+        </div>
+      </div>
+
+      <!-- 2. 클라우드 도입 목적 -->
+      <div>
+        <label class="fl">
+          2. 클라우드 도입 목적
+          <span class="text-gray-400 text-xs font-normal">복수 선택 가능</span>
+        </label>
+        <div class="flex flex-wrap gap-2">
+          <label class="c-card"><input type="checkbox" name="cloud_purpose" value="신규 시스템 도입" class="accent-blue-500"> 신규 시스템 도입</label>
+          <label class="c-card"><input type="checkbox" name="cloud_purpose" value="기존 시스템의 클라우드 전환" class="accent-blue-500"> 기존 시스템 전환</label>
+          <label class="c-card"><input type="checkbox" name="cloud_purpose" value="서비스 확장" class="accent-blue-500"> 서비스 확장</label>
+          <label class="c-card">
+            <input type="checkbox" name="cloud_purpose" value="기타" id="purposeOtherCheck" class="accent-blue-500"> 기타
+          </label>
+        </div>
+        <input id="cloud_purpose_other_text" type="text" placeholder="기타 도입 목적을 입력하세요"
+          class="fi mt-2 hidden">
+      </div>
+
+      <!-- 3. 클라우드 도입 준비도 -->
+      <div>
+        <label class="fl">3. 클라우드 도입 준비도 <span class="text-red-400">*</span></label>
+        <div class="space-y-2">
+          <label class="r-card-block"><input type="radio" name="cloud_readiness" value="조사 또는 실무 검토 단계" class="accent-blue-500"> 조사 또는 실무 검토 단계</label>
+          <label class="r-card-block"><input type="radio" name="cloud_readiness" value="도입 추진 계획 수립 단계" class="accent-blue-500"> 도입 추진 계획 수립 단계</label>
+          <label class="r-card-block"><input type="radio" name="cloud_readiness" value="도입/전환 모델 설계 또는 전사적 도입 준비 단계" class="accent-blue-500"> 도입/전환 모델 설계 또는 전사적 도입 준비 단계</label>
+          <label class="r-card-block"><input type="radio" name="cloud_readiness" value="도입/전환 진행 단계" class="accent-blue-500"> 도입/전환 진행 단계</label>
+        </div>
+      </div>
+
+      <!-- 4. 클라우드 도입 방식 -->
+      <div>
+        <label class="fl">4. 클라우드 도입 방식 <span class="text-red-400">*</span></label>
+        <div class="flex flex-wrap gap-2">
+          <label class="r-card"><input type="radio" name="cloud_method" value="Public Cloud" class="accent-blue-500"> Public Cloud</label>
+          <label class="r-card"><input type="radio" name="cloud_method" value="Private Cloud" class="accent-blue-500"> Private Cloud</label>
+          <label class="r-card"><input type="radio" name="cloud_method" value="Hybrid Cloud" class="accent-blue-500"> Hybrid Cloud</label>
+          <label class="r-card"><input type="radio" name="cloud_method" value="컨설팅 결과에 따라 결정 예정" class="accent-blue-500"> 컨설팅 후 결정</label>
+        </div>
+      </div>
+
+      <!-- 5. 클라우드 도입 일정 -->
+      <div>
+        <label class="fl">5. 클라우드 도입 일정 <span class="text-red-400">*</span></label>
+        <div class="flex flex-wrap gap-2">
+          <label class="r-card"><input type="radio" name="cloud_timeline" value="기도입" class="accent-blue-500"> 기도입</label>
+          <label class="r-card"><input type="radio" name="cloud_timeline" value="2026년 상반기" class="accent-blue-500"> 2026년 상반기</label>
+          <label class="r-card"><input type="radio" name="cloud_timeline" value="2026년 하반기" class="accent-blue-500"> 2026년 하반기</label>
+          <label class="r-card"><input type="radio" name="cloud_timeline" value="도입 일정 미정" class="accent-blue-500"> 일정 미정</label>
+        </div>
+      </div>
+
+      <!-- 6. 예산 책정 -->
+      <div>
+        <label class="fl">6. 클라우드 도입 예산 책정 <span class="text-red-400">*</span></label>
+        <div class="space-y-2">
+          <label class="r-card-block">
+            <input type="radio" name="cloud_budget_status" value="예산이 책정되어 있음" id="budgetAllocated" class="accent-blue-500">
+            예산이 책정되어 있음
+          </label>
+          <label class="r-card-block"><input type="radio" name="cloud_budget_status" value="예산 책정 중임" class="accent-blue-500"> 예산 책정 중임</label>
+          <label class="r-card-block"><input type="radio" name="cloud_budget_status" value="컨설팅 결과에 따라 예산 책정 예정" class="accent-blue-500"> 컨설팅 결과에 따라 예산 책정 예정</label>
+          <label class="r-card-block"><input type="radio" name="cloud_budget_status" value="예산이 책정되어 있지 않음" class="accent-blue-500"> 예산이 책정되어 있지 않음</label>
+        </div>
+        <!-- 예산 금액 (예산 확정 시 노출) -->
+        <div id="budgetAmountWrapper" class="hidden mt-3 pl-1">
+          <label class="fl text-sm text-gray-500">예산 규모</label>
+          <div class="flex flex-wrap gap-2">
+            <label class="r-card"><input type="radio" name="cloud_budget_amount" value="500만원 미만" class="accent-blue-500"> 500만원 미만</label>
+            <label class="r-card"><input type="radio" name="cloud_budget_amount" value="500~1,000만원" class="accent-blue-500"> 500~1,000만원</label>
+            <label class="r-card"><input type="radio" name="cloud_budget_amount" value="1,000만원 이상" class="accent-blue-500"> 1,000만원 이상</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. IT 전담인력 -->
+      <div>
+        <label class="fl">7. IT 전담인력 <span class="text-red-400">*</span></label>
+        <div class="flex flex-wrap gap-2">
+          <label class="r-card"><input type="radio" name="it_staff" value="전담인력 있음" class="accent-blue-500"> 전담인력 있음</label>
+          <label class="r-card"><input type="radio" name="it_staff" value="외주 유지보수" class="accent-blue-500"> 외주 유지보수</label>
+          <label class="r-card"><input type="radio" name="it_staff" value="전담 부재" class="accent-blue-500"> 전담 부재</label>
+        </div>
+      </div>
+
+      <!-- 8. 데이터 관리체계 -->
+      <div>
+        <label class="fl">
+          8. 데이터 관리체계 <span class="text-red-400">*</span>
+          <span class="text-gray-400 text-xs font-normal">복수 선택 가능</span>
+        </label>
+        <div class="flex flex-wrap gap-2">
+          <label class="c-card"><input type="checkbox" name="data_management" value="개인 PC, USB 개별 저장" class="accent-blue-500"> 개인 PC, USB 개별 저장</label>
+          <label class="c-card"><input type="checkbox" name="data_management" value="사내 서버 또는 NAS" class="accent-blue-500"> 사내 서버 또는 NAS</label>
+          <label class="c-card"><input type="checkbox" name="data_management" value="클라우드(네이버, 구글드라이브 등)" class="accent-blue-500"> 클라우드 (네이버, 구글드라이브 등)</label>
+          <label class="c-card"><input type="checkbox" name="data_management" value="전사 통합관리 시스템(ERP, MES 등)" class="accent-blue-500"> 전사 통합관리 시스템 (ERP, MES 등)</label>
+        </div>
+      </div>
+
+      <!-- 9. 운영 중인 IT 시스템 수 -->
+      <div>
+        <label class="fl">9. 운영 중인 IT 시스템(애플리케이션) 수 <span class="text-red-400">*</span></label>
+        <div class="flex items-center gap-2">
+          <div class="relative" style="width:8rem">
+            <input id="it_asset_count" type="number" min="0" required placeholder="0"
+              class="fi" style="padding-right:2rem">
+            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none">개</span>
+          </div>
+          <span class="text-xs text-gray-400">ERP, 그룹웨어, 업무 시스템 등 합산</span>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- D. 선택 항목                                           -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="section-card space-y-5">
+      <h2 class="flex items-center gap-2 text-lg font-bold text-gray-800 border-b border-gray-100 pb-3">
+        <span class="sec-badge bg-gray-100 text-gray-500">D</span>
+        선택 항목
+        <span class="text-xs font-normal text-gray-400 ml-1">입력 시 더 풍부한 초안 생성</span>
+      </h2>
+
+      <!-- 매출 규모 -->
+      <div>
+        <label class="fl">매출 규모</label>
+        <div class="flex flex-wrap gap-2">
+          <label class="r-card"><input type="radio" name="revenue_scale" value="5억 미만" class="accent-blue-500"> 5억 미만</label>
+          <label class="r-card"><input type="radio" name="revenue_scale" value="5~50억" class="accent-blue-500"> 5~50억</label>
+          <label class="r-card"><input type="radio" name="revenue_scale" value="50억 이상" class="accent-blue-500"> 50억 이상</label>
+        </div>
+      </div>
+
+      <!-- 현재 사용 툴 -->
+      <div>
+        <label class="fl">현재 사용 중인 AI·SaaS 툴</label>
+        <input id="current_tools" type="text"
+          placeholder="예: ChatGPT, 구글드라이브, 윈도우 공유폴더, 네이버웍스"
+          class="fi">
+      </div>
+
+      <!-- 기타 우려사항 -->
+      <div>
+        <label class="fl">기타 우려사항 또는 특이사항</label>
+        <textarea id="specific_concerns" rows="2"
+          placeholder="예: 보안 감사 대응 어려움, 외부 유출 위험, 특정 규제 준수 필요 등"
+          class="fi resize-none"></textarea>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- E. 기대효과                                            -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="section-card space-y-5">
+      <h2 class="flex items-center gap-2 text-lg font-bold text-gray-800 border-b border-gray-100 pb-3">
+        <span class="sec-badge bg-gray-100 text-gray-500">E</span>
+        기대효과
+        <span class="text-xs font-normal text-gray-400 ml-1">3개 이하 선택</span>
+      </h2>
+      <div>
+        <label class="fl">PatSol 도입 후 가장 기대하는 효과</label>
+        <div class="flex flex-wrap gap-2">
+          <label class="c-card"><input type="checkbox" name="expected_effects" value="선행기술조사_시간단축" class="accent-blue-500"> 선행기술조사 시간 단축</label>
+          <label class="c-card"><input type="checkbox" name="expected_effects" value="명세서초안_작성시간단축" class="accent-blue-500"> 명세서 초안 작성시간 단축</label>
+          <label class="c-card"><input type="checkbox" name="expected_effects" value="수작업오류_누락감소" class="accent-blue-500"> 수작업 오류·누락 감소</label>
+          <label class="c-card"><input type="checkbox" name="expected_effects" value="미공개발명_보안강화" class="accent-blue-500"> 미공개 발명 보안 강화</label>
+          <label class="c-card"><input type="checkbox" name="expected_effects" value="고객응대_품질향상" class="accent-blue-500"> 고객 응대 품질 향상</label>
+          <label class="c-card"><input type="checkbox" name="expected_effects" value="조사외주_비용절감" class="accent-blue-500"> 조사 외주·비용 절감</label>
+          <label class="c-card"><input type="checkbox" name="expected_effects" value="AI기반_공백기술발굴" class="accent-blue-500"> AI 기반 공백기술 발굴</label>
+          <label class="c-card"><input type="checkbox" name="expected_effects" value="데이터축적_출원전략고도화" class="accent-blue-500"> 데이터 축적·출원전략 고도화</label>
+        </div>
+        <p class="text-xs text-gray-400 mt-1.5">최대 3개까지 선택할 수 있습니다.</p>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- F. 향후 활용 방향                                      -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div class="section-card space-y-5">
+      <h2 class="flex items-center gap-2 text-lg font-bold text-gray-800 border-b border-gray-100 pb-3">
+        <span class="sec-badge bg-gray-100 text-gray-500">F</span>
+        향후 활용 방향
+        <span class="text-xs font-normal text-gray-400 ml-1">3개 이하 선택</span>
+      </h2>
+      <div>
+        <label class="fl">사업 종료 이후 PatSol 활용 계획</label>
+        <div class="flex flex-wrap gap-2">
+          <label class="c-card"><input type="checkbox" name="future_plans" value="구독연장_지속이용" class="accent-blue-500"> 구독 연장·지속 이용</label>
+          <label class="c-card"><input type="checkbox" name="future_plans" value="사용인원_확대" class="accent-blue-500"> 사용 인원 확대</label>
+          <label class="c-card"><input type="checkbox" name="future_plans" value="인접업무_적용범위확대" class="accent-blue-500"> 인접 업무 적용 범위 확대</label>
+          <label class="c-card"><input type="checkbox" name="future_plans" value="고객사_협업공유활용" class="accent-blue-500"> 고객사 협업·공유 활용</label>
+          <label class="c-card"><input type="checkbox" name="future_plans" value="데이터기반_출원전략고도화" class="accent-blue-500"> 데이터 기반 출원전략 고도화</label>
+          <label class="c-card"><input type="checkbox" name="future_plans" value="단계적_업무자동화확장" class="accent-blue-500"> 단계적 업무 자동화 확장</label>
+        </div>
+        <p class="text-xs text-gray-400 mt-1.5">최대 3개까지 선택할 수 있습니다.</p>
+      </div>
+    </div>
+
+
+    <!-- 제출 버튼 -->
+    <button id="submitBtn" type="submit"
+      class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-4 rounded-2xl text-base shadow-md transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+      초안 생성하기 →
+    </button>
+
+  </form>
+
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- 상태 메시지                                            -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div id="statusBox" class="hidden mt-6 rounded-2xl px-6 py-4 text-sm font-medium text-center"></div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- 결과 출력 (입력 데이터 확인용)                         -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div id="result" class="hidden mt-4 section-card">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h2 class="text-base font-bold text-gray-700">입력 데이터 확인</h2>
+        <p class="text-xs text-gray-400 mt-0.5">서버 없이 로컬 실행 시 아래 JSON을 <code class="bg-gray-100 px-1 rounded">test_cloud_draft.py</code>의 SURVEY에 붙여넣기 하세요.</p>
+      </div>
+      <button id="copyBtn" onclick="copyResult()"
+        class="text-sm bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-xl font-medium text-gray-700">
+        복사
+      </button>
+    </div>
+    <pre id="resultJson"
+      class="bg-slate-50 rounded-xl p-4 text-xs text-gray-700 overflow-x-auto leading-relaxed border border-slate-100"></pre>
+  </div>
+
+</div><!-- /max-w-2xl -->
+
+
+<script>
+// ── 우선순위 선택기 ──────────────────────────────────────────────────
+const priorityState = {};  // gridId → [{value, btn}]
+
+document.querySelectorAll('[data-max]').forEach(grid => {
+  const id = grid.id;
+  priorityState[id] = [];
+  const max = parseInt(grid.dataset.max);
+
+  grid.querySelectorAll('.pri-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const state = priorityState[id];
+      const idx = state.findIndex(s => s.btn === btn);
+
+      if (idx !== -1) {
+        // 이미 선택됨 → 제거
+        state.splice(idx, 1);
+      } else if (state.length < max) {
+        // 새로 추가
+        state.push({ value: btn.dataset.value, btn });
+      }
+      renderPriority(id);
+    });
+  });
+});
+
+function renderPriority(id) {
+  const grid = document.getElementById(id);
+  const state = priorityState[id];
+
+  grid.querySelectorAll('.pri-btn').forEach(btn => {
+    btn.classList.remove('sel');
+    const badge = btn.querySelector('.pri-badge');
+    if (badge) badge.remove();
+  });
+
+  state.forEach((s, i) => {
+    s.btn.classList.add('sel');
+    const badge = document.createElement('span');
+    badge.className = 'pri-badge';
+    badge.textContent = i + 1;
+    s.btn.appendChild(badge);
+  });
+}
+
+function getPriorityValues(gridId) {
+  return priorityState[gridId].map(s => s.value);
+}
+
+
+// ── 예산 확정 시 금액 필드 노출 ─────────────────────────────────────
+document.querySelectorAll('input[name="cloud_budget_status"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+    const show = radio.value === '예산이 책정되어 있음' && radio.checked;
+    document.getElementById('budgetAmountWrapper').classList.toggle('hidden', !show);
+  });
+});
+
+
+// ── 기타 도입 목적 텍스트 필드 ──────────────────────────────────────
+document.getElementById('purposeOtherCheck').addEventListener('change', function () {
+  document.getElementById('cloud_purpose_other_text').classList.toggle('hidden', !this.checked);
+});
+
+
+// ── 폼 제출 ─────────────────────────────────────────────────────────
+document.getElementById('survey').addEventListener('submit', async function (e) {
+  e.preventDefault();
+
+  const errors = [];
+  if (!v('company_name'))                                           errors.push('기업명');
+  if (!v('industry'))                                               errors.push('업종');
+  if (!v('main_work'))                                              errors.push('주요 업무');
+  if (document.getElementById('employees_patent').value === '')     errors.push('변리사·보조 인원');
+  if (document.getElementById('employees_non_patent').value === '') errors.push('행정·영업 등 인원');
+  if (!r('key_customers'))                                          errors.push('주요 고객 유형');
+  if (getPriorityValues('pain_points_selector').length === 0)       errors.push('주요 문제점 (최소 1개)');
+  if (getPriorityValues('goal_selector').length === 0)              errors.push('도입 목표 (최소 1개)');
+  if (!r('cloud_current_config'))                                   errors.push('현재 클라우드 구성 유형');
+  if (!r('cloud_readiness'))                                        errors.push('클라우드 도입 준비도');
+  if (!r('cloud_method'))                                           errors.push('클라우드 도입 방식');
+  if (!r('cloud_timeline'))                                         errors.push('클라우드 도입 일정');
+  if (!r('cloud_budget_status'))                                    errors.push('예산 책정 현황');
+  if (!r('it_staff'))                                               errors.push('IT 전담인력');
+  if (!document.querySelectorAll('input[name="data_management"]:checked').length)
+                                                                    errors.push('데이터 관리체계 (최소 1개)');
+  if (document.getElementById('it_asset_count').value === '')       errors.push('운영 중인 IT 시스템 수');
+
+  if (errors.length) {
+    alert('다음 항목을 입력해주세요:\n\n• ' + errors.join('\n• '));
+    return;
+  }
+
+  const survey = buildSurvey();
+
+  // JSON 미리보기 표시
+  document.getElementById('resultJson').textContent = JSON.stringify(survey, null, 2);
+  document.getElementById('result').classList.remove('hidden');
+
+  // 서버 API 호출
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = '생성 중... (약 30초~1분)';
+  setStatus('loading', '초안을 생성 중입니다. 잠시만 기다려주세요...');
+
+  try {
+    const res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(survey),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: '알 수 없는 오류' }));
+      throw new Error(err.detail || `서버 오류 (${res.status})`);
+    }
+
+    // 파일 다운로드
+    const blob = await res.blob();
+    const disposition = res.headers.get('content-disposition') || '';
+    const match = disposition.match(/filename\*?=(?:UTF-8'')?([^\s;]+)/i);
+    const filename = match ? decodeURIComponent(match[1]) : `${survey.company_name}_draft.hwp`;
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+
+    setStatus('success', `✓ 초안 파일이 다운로드되었습니다: ${filename}`);
+
+  } catch (err) {
+    // 서버 없이 직접 실행하는 경우 (로컬 파일 열기 등)
+    if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+      setStatus('warn', '서버에 연결할 수 없습니다. 아래 JSON을 복사하여 직접 사용하세요.');
+    } else {
+      setStatus('error', `오류: ${err.message}`);
+    }
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '초안 생성하기 →';
+    document.getElementById('statusBox').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+});
+
+function setStatus(type, msg) {
+  const box = document.getElementById('statusBox');
+  box.classList.remove('hidden', 'bg-blue-50', 'text-blue-700', 'bg-green-50', 'text-green-700',
+                        'bg-red-50', 'text-red-700', 'bg-yellow-50', 'text-yellow-700');
+  const map = {
+    loading: ['bg-blue-50',   'text-blue-700'],
+    success: ['bg-green-50',  'text-green-700'],
+    error:   ['bg-red-50',    'text-red-700'],
+    warn:    ['bg-yellow-50', 'text-yellow-700'],
+  };
+  box.classList.add(...(map[type] || map.warn));
+  box.textContent = msg;
+  box.classList.remove('hidden');
+}
+
+// 텍스트 input 값 (trim)
+function v(id) { return document.getElementById(id)?.value.trim() || ''; }
+// 라디오 선택값
+function r(name) { return document.querySelector(`input[name="${name}"]:checked`)?.value || ''; }
+// 체크박스 선택값 배열
+function c(name) { return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(el => el.value); }
+
+
+function buildSurvey() {
+  const ep = parseInt(document.getElementById('employees_patent').value) || 0;
+  const en = parseInt(document.getElementById('employees_non_patent').value) || 0;
+
+  const budgetStatus = r('cloud_budget_status');
+  const budgetAmount = budgetStatus === '예산이 책정되어 있음'
+    ? (r('cloud_budget_amount') || '')
+    : '';
+
+  const strengths = v('strengths');
+
+  const survey = {
+    company_name:             v('company_name'),
+    industry:                 v('industry'),
+    main_work:                v('main_work'),
+    pain_points:              getPriorityValues('pain_points_selector'),
+    goal:                     getPriorityValues('goal_selector'),
+    employees:                ep + en,
+    cloud_current_config:     r('cloud_current_config'),
+    cloud_purpose:            c('cloud_purpose'),
+    cloud_purpose_other_text: v('cloud_purpose_other_text'),
+    cloud_readiness:          r('cloud_readiness'),
+    cloud_method:             r('cloud_method'),
+    cloud_timeline:           r('cloud_timeline'),
+    cloud_budget_status:      budgetStatus,
+    cloud_budget_amount:      budgetAmount,
+    it_staff:                 r('it_staff'),
+    data_management:          c('data_management'),
+    it_asset_count:           parseInt(document.getElementById('it_asset_count').value) || 0,
+    revenue_scale:            r('revenue_scale'),
+    key_customers:            r('key_customers'),
+    current_tools:            v('current_tools'),
+    specific_concerns:        v('specific_concerns'),
+  };
+
+  // 선택 항목: 비어 있으면 포함하지 않음
+  if (!strengths)             delete survey.specific_concerns;  // keep it anyway for context
+  if (strengths)              survey.strengths = strengths;
+  if (!r('revenue_scale'))    delete survey.revenue_scale;
+  if (!v('current_tools'))    delete survey.current_tools;
+  if (!v('specific_concerns')) delete survey.specific_concerns;
+
+  const expectedEffects = c('expected_effects');
+  const futurePlans     = c('future_plans');
+  if (expectedEffects.length) survey.expected_effects = expectedEffects;
+  if (futurePlans.length)     survey.future_plans     = futurePlans;
+
+  return survey;
+}
+
+
+// ── 체크박스 최대 선택 수 제한 ───────────────────────────────────────
+function limitCheckbox(name, max) {
+  document.querySelectorAll(`input[name="${name}"]`).forEach(cb => {
+    cb.addEventListener('change', () => {
+      const checked = document.querySelectorAll(`input[name="${name}"]:checked`);
+      document.querySelectorAll(`input[name="${name}"]:not(:checked)`).forEach(el => {
+        el.disabled = checked.length >= max;
+        el.closest('label').style.opacity  = checked.length >= max ? '0.4' : '';
+        el.closest('label').style.cursor   = checked.length >= max ? 'not-allowed' : '';
+      });
+    });
+  });
+}
+
+limitCheckbox('expected_effects', 3);
+limitCheckbox('future_plans', 3);
+
+
+// ── 복사 버튼 ────────────────────────────────────────────────────────
+async function copyResult() {
+  const text = document.getElementById('resultJson').textContent;
+  try {
+    await navigator.clipboard.writeText(text);
+    const btn = document.getElementById('copyBtn');
+    const orig = btn.textContent;
+    btn.textContent = '복사됨 ✓';
+    btn.classList.add('text-green-700', 'bg-green-100');
+    setTimeout(() => {
+      btn.textContent = orig;
+      btn.classList.remove('text-green-700', 'bg-green-100');
+    }, 2000);
+  } catch {
+    alert('복사에 실패했습니다. 직접 선택하여 복사해주세요.');
+  }
+}
+</script>
+
+</body>
+</html>

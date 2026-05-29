@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PatSol — 특허 검색</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, sans-serif; font-size: 14px; color: #1a1a1a; background: #f5f5f5; }
+
+/* GNB */
+.gnb { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 0 24px; display: flex; align-items: center; height: 52px; gap: 24px; position: sticky; top: 0; z-index: 100; }
+.gnb .logo { font-weight: 700; font-size: 16px; color: #1a56db; margin-right: 8px; }
+.gnb a { color: #555; text-decoration: none; font-size: 13px; }
+.gnb a.active { color: #1a56db; font-weight: 600; border-bottom: 2px solid #1a56db; padding-bottom: 2px; }
+.gnb .right { margin-left: auto; display: flex; gap: 16px; align-items: center; color: #555; font-size: 13px; }
+
+/* Layout */
+.page { max-width: 960px; margin: 32px auto; padding: 0 24px; display: flex; flex-direction: column; gap: 24px; }
+.section { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 24px; }
+h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.subtitle { color: #666; font-size: 13px; margin-bottom: 20px; }
+h2 { font-size: 13px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 12px; }
+
+/* Import Cards */
+.import-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+.import-card { border: 2px dashed #d0d0d0; border-radius: 8px; padding: 16px 12px; text-align: center; cursor: pointer; transition: border-color .15s, background .15s; }
+.import-card:hover { border-color: #1a56db; background: #f0f4ff; }
+.import-card .icon { font-size: 24px; margin-bottom: 8px; }
+.import-card .name { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+.import-card .desc { font-size: 11px; color: #888; line-height: 1.4; }
+.divider { text-align: center; color: #999; font-size: 12px; margin: 4px 0 16px; }
+
+/* Search Area */
+.search-area { position: relative; }
+.search-hint { font-size: 12px; color: #888; margin-bottom: 8px; }
+.search-hint kbd { background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 3px; padding: 1px 5px; font-size: 11px; color: #555; font-family: inherit; }
+
+/* ── ① 수식 프리뷰 바 ──────────────────────────────────────────────────── */
+.formula-bar {
+  background: #f8f9ff;
+  border: 1px solid #c7d2fe;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.formula-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #a5b4fc;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-right: 4px;
+  white-space: nowrap;
+}
+.formula-empty {
+  font-size: 12px;
+  color: #c7d2fe;
+  font-style: italic;
+}
+/* 자연어 토큰 */
+.fml-nl {
+  display: inline-flex;
+  align-items: center;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 12px;
+  color: #334155;
+  max-width: 360px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fml-paren { font-size: 13px; color: #94a3b8; font-weight: 300; }
+/* 논리 연산자 */
+.fml-op {
+  font-size: 11px;
+  font-weight: 800;
+  color: #7c3aed;
+  letter-spacing: 0.5px;
+  padding: 0 2px;
+}
+/* 필드 조건 칩 */
+.fml-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: #e0e7ff;
+  border: 1px solid #a5b4fc;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 12px;
+  color: #3730a3;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.fml-chip:hover { background: #c7d2fe; }
+.fml-chip .fml-chip-type { color: #6366f1; font-weight: 700; margin-right: 2px; }
+.fml-chip .fml-chip-del {
+  background: none; border: none; cursor: pointer;
+  color: #6366f1; font-size: 13px; line-height: 1; padding: 0; margin-left: 3px;
+}
+/* NOT는 빨간 계열 */
+.fml-op.not { color: #dc2626; }
+.fml-chip.not-chip { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+.fml-chip.not-chip .fml-chip-type { color: #dc2626; }
+.fml-chip.not-chip .fml-chip-del { color: #dc2626; }
+
+/* ── ② 생성된 검색식 (접힘/펼침) ─────────────────────────────────────── */
+.raw-query-wrap {
+  margin-bottom: 8px;
+}
+.raw-query-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  color: #888;
+  padding: 2px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.raw-query-toggle:hover { color: #1a56db; }
+.raw-query-toggle .arrow { font-size: 10px; transition: transform 0.15s; }
+.raw-query-toggle.open .arrow { transform: rotate(180deg); }
+.raw-query-body {
+  margin-top: 6px;
+  background: #1e1e2e;
+  border-radius: 6px;
+  padding: 12px 14px;
+  position: relative;
+}
+.raw-query-body code {
+  font-family: 'Menlo', 'Consolas', monospace;
+  font-size: 12px;
+  color: #cdd6f4;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-all;
+  display: block;
+}
+/* syntax coloring */
+.raw-query-body code .q-op   { color: #cba6f7; font-weight: 700; }  /* AND OR NOT */
+.raw-query-body code .q-field { color: #89dceb; }                    /* CPC: 출원인: */
+.raw-query-body code .q-val   { color: #a6e3a1; }                    /* values */
+.raw-query-body code .q-nl    { color: #f9e2af; }                    /* natural lang */
+.raw-query-body code .q-paren { color: #6c7086; }                    /* ( ) [ ] */
+.raw-query-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  justify-content: flex-end;
+}
+.raw-query-actions button {
+  background: #313244;
+  color: #cdd6f4;
+  border: 1px solid #45475a;
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.raw-query-actions button:hover { background: #45475a; }
+
+/* Textarea */
+.textarea-wrap { position: relative; }
+textarea { width: 100%; border: 1px solid #d0d0d0; border-radius: 6px; padding: 12px; font-size: 14px; resize: vertical; min-height: 80px; font-family: inherit; outline: none; }
+textarea:focus { border-color: #1a56db; box-shadow: 0 0 0 3px #dbeafe; }
+
+/* @ Command Palette */
+.cmd-palette {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 320px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  z-index: 200;
+  overflow: hidden;
+}
+.cmd-palette-header { padding: 8px 12px 6px; font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #f0f0f0; }
+.cmd-section { padding: 4px 0; }
+.cmd-section-label { padding: 4px 12px 2px; font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; }
+.cmd-item { display: flex; align-items: center; gap: 10px; padding: 7px 12px; cursor: pointer; transition: background 0.1s; }
+.cmd-item:hover { background: #f0f4ff; }
+.cmd-item .cmd-icon { font-size: 14px; width: 20px; text-align: center; }
+.cmd-item .cmd-name { font-size: 13px; font-weight: 600; color: #1a1a1a; min-width: 70px; }
+.cmd-item .cmd-desc { font-size: 12px; color: #888; }
+.cmd-item .cmd-key { font-size: 11px; color: #6366f1; background: #e0e7ff; padding: 1px 6px; border-radius: 4px; margin-left: auto; white-space: nowrap; }
+.cmd-divider { height: 1px; background: #f0f0f0; margin: 2px 0; }
+
+/* Sub-palettes */
+.sub-palette {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 360px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  z-index: 200;
+  overflow: hidden;
+}
+.sub-palette-row { display: flex; align-items: center; padding: 8px 12px; border-bottom: 1px solid #f0f0f0; gap: 6px; }
+.sub-palette-row label { font-size: 12px; font-weight: 700; color: #6366f1; white-space: nowrap; }
+.sub-palette-row input { flex: 1; border: none; outline: none; font-size: 13px; font-family: inherit; }
+.sub-palette-header { padding: 8px 12px 4px; font-size: 11px; color: #888; font-weight: 600; text-transform: uppercase; border-bottom: 1px solid #f0f0f0; }
+
+/* CPC results */
+.cpc-results { max-height: 180px; overflow-y: auto; }
+.cpc-item { display: flex; align-items: flex-start; gap: 10px; padding: 7px 12px; cursor: pointer; transition: background 0.1s; }
+.cpc-item:hover { background: #f0f4ff; }
+.cpc-item .cpc-code { font-size: 12px; font-weight: 700; color: #3730a3; min-width: 90px; font-family: monospace; }
+.cpc-item .cpc-label { font-size: 12px; color: #555; }
+.cpc-item .cpc-star { color: #f59e0b; font-size: 12px; }
+
+/* Date range */
+.date-row { display: flex; align-items: center; gap: 8px; padding: 10px 12px; }
+.date-row label { font-size: 12px; font-weight: 700; color: #6366f1; }
+.date-row input[type=number] { width: 64px; border: 1px solid #d0d0d0; border-radius: 4px; padding: 4px 6px; font-size: 13px; text-align: center; outline: none; }
+.date-row input[type=number]:focus { border-color: #6366f1; }
+.date-row span { font-size: 12px; color: #888; }
+
+/* Country grid */
+.country-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 10px 12px; }
+.country-btn { border: 1px solid #d0d0d0; border-radius: 4px; padding: 6px 4px; text-align: center; cursor: pointer; font-size: 12px; background: #fff; transition: all 0.1s; }
+.country-btn:hover { border-color: #6366f1; background: #e0e7ff; color: #3730a3; }
+.country-btn.selected { border-color: #6366f1; background: #e0e7ff; color: #3730a3; font-weight: 600; }
+
+/* Shared confirm button */
+.btn-confirm { background: #1a56db; color: #fff; border: none; border-radius: 4px; padding: 4px 12px; font-size: 12px; cursor: pointer; margin-left: auto; }
+.btn-confirm:hover { background: #1e40af; }
+.palette-footer { display: flex; justify-content: flex-end; padding: 8px 12px; border-top: 1px solid #f0f0f0; }
+
+/* Search row */
+.search-row { display: flex; justify-content: flex-end; margin-top: 8px; gap: 8px; }
+.btn { padding: 8px 20px; border-radius: 6px; font-size: 14px; cursor: pointer; border: none; font-weight: 500; }
+.btn-primary { background: #1a56db; color: #fff; }
+.btn-primary:hover { background: #1e40af; }
+.btn-outline { background: #fff; color: #555; border: 1px solid #d0d0d0; }
+.btn-outline:hover { background: #f5f5f5; }
+.btn-sm { padding: 5px 12px; font-size: 12px; margin-left: auto; }
+
+/* Flow */
+.flow-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.flow-card { border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px; }
+.flow-card .tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; margin-bottom: 10px; }
+.tag-es { background: #fef3c7; color: #92400e; }
+.tag-a { background: #d1fae5; color: #065f46; }
+.tag-b { background: #ede9fe; color: #5b21b6; }
+.flow-card ol { padding-left: 16px; font-size: 13px; color: #444; line-height: 1.8; }
+
+/* Results */
+.results-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.results-header .count { font-size: 18px; font-weight: 700; }
+.chip { display: inline-flex; align-items: center; gap: 4px; background: #e0e7ff; color: #3730a3; border-radius: 16px; padding: 3px 10px; font-size: 12px; }
+.chip button { background: none; border: none; cursor: pointer; color: #3730a3; font-size: 13px; line-height: 1; padding: 0; }
+.topic-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+.topic-card { border: 1px solid #e0e7ff; border-radius: 6px; padding: 10px 12px; cursor: pointer; transition: background .15s; }
+.topic-card:hover { background: #e0e7ff; }
+.topic-card .topic-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+.topic-card .topic-count { font-size: 12px; color: #888; }
+.patent-card { border: 1px solid #e0e0e0; border-radius: 6px; padding: 14px 16px; margin-bottom: 10px; }
+.patent-card .title { font-weight: 600; font-size: 14px; margin-bottom: 4px; display: flex; justify-content: space-between; }
+.patent-card .title .score { color: #1a56db; font-size: 13px; font-weight: 700; }
+.patent-card .meta { font-size: 12px; color: #888; margin-bottom: 6px; }
+.patent-card .abstract { font-size: 13px; color: #444; margin-bottom: 8px; }
+.patent-card .tags span { display: inline-block; background: #f3f4f6; color: #555; font-size: 11px; padding: 2px 8px; border-radius: 4px; margin-right: 4px; }
+.more-link { color: #1a56db; font-size: 13px; cursor: pointer; }
+
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<!-- GNB -->
+<nav class="gnb">
+  <span class="logo">PatSol</span>
+  <a href="#" class="active">특허검색</a>
+  <a href="#">AI명세서</a>
+  <a href="#">특허분석</a>
+  <a href="#">검색히스토리</a>
+  <a href="#">명세서히스토리</a>
+  <div class="right">
+    <span>명세서작성 0건</span>
+    <a href="#">마이페이지</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- Page Body -->
+  <div class="section">
+    <h1>특허 검색</h1>
+    <p class="subtitle">문서를 업로드하거나 발명 내용을 입력하세요</p>
+
+    <h2>문서 Import</h2>
+    <div class="import-cards">
+      <div class="import-card"><div class="icon">📄</div><div class="name">직무발명신고서</div><div class="desc">AI가 텍스트 + 이미지 추출 후 변환</div></div>
+      <div class="import-card"><div class="icon">📐</div><div class="name">도면</div><div class="desc">AI가 텍스트 + 이미지 추출 후 변환</div></div>
+      <div class="import-card"><div class="icon">📝</div><div class="name">클라이언트 회의록</div><div class="desc">AI가 텍스트 + 이미지 추출 후 변환</div></div>
+      <div class="import-card"><div class="icon">📁</div><div class="name">기타 발명문서</div><div class="desc">AI가 텍스트 + 이미지 추출 후 변환</div></div>
+    </div>
+    <p class="divider">── 또는 직접 입력 ──</p>
+
+    <h2>검색 입력</h2>
+    <div class="search-area">
+
+      <!-- ① 수식 프리뷰 바 -->
+      <div class="formula-bar" id="formulaBar">
+        <span class="formula-label">검색식</span>
+        <span class="formula-empty" id="formulaEmpty">입력 내용이 수식으로 표시됩니다</span>
+      </div>
+
+      <!-- ② 생성된 검색식 (접힘/펼침) -->
+      <div class="raw-query-wrap">
+        <button class="raw-query-toggle" id="rawQueryToggle" onclick="toggleRawQuery()">
+          생성된 검색식 <span class="arrow">▾</span>
+        </button>
+        <div class="raw-query-body hidden" id="rawQueryBody">
+          <code id="rawQueryCode"></code>
+          <div class="raw-query-actions">
+            <button onclick="copyQuery()">복사 ⎘</button>
+            <button onclick="editQuery()">직접 수정 ✏</button>
+          </div>
+        </div>
+      </div>
+
+      <p class="search-hint">발명 내용을 자유롭게 설명하세요 &nbsp;·&nbsp; 검색 조건을 추가하려면 <kbd>@</kbd> 를 입력하세요</p>
+
+      <div class="textarea-wrap">
+        <textarea id="searchInput" placeholder="발명 내용을 입력하거나, @ 를 입력해 검색 조건(CPC·출원인·국가·날짜)을 추가하세요..."></textarea>
+
+        <!-- @ Command Palette -->
+        <div class="cmd-palette hidden" id="cmdPalette">
+          <div class="cmd-palette-header">검색 조건 추가 &nbsp;—&nbsp; @ 명령</div>
+          <div class="cmd-section">
+            <div class="cmd-section-label">논리 연산자</div>
+            <div class="cmd-item" data-action="AND">
+              <span class="cmd-icon">⊕</span>
+              <span class="cmd-name">AND</span>
+              <span class="cmd-desc">두 조건을 모두 포함</span>
+              <span class="cmd-key">AND</span>
+            </div>
+            <div class="cmd-item" data-action="OR">
+              <span class="cmd-icon">⊔</span>
+              <span class="cmd-name">OR</span>
+              <span class="cmd-desc">둘 중 하나 포함</span>
+              <span class="cmd-key">OR</span>
+            </div>
+            <div class="cmd-item" data-action="NOT">
+              <span class="cmd-icon">⊖</span>
+              <span class="cmd-name">NOT</span>
+              <span class="cmd-desc">이 조건을 제외</span>
+              <span class="cmd-key">NOT</span>
+            </div>
+          </div>
+          <div class="cmd-divider"></div>
+          <div class="cmd-section">
+            <div class="cmd-section-label">필드 검색</div>
+            <div class="cmd-item" data-action="CPC">
+              <span class="cmd-icon">#</span>
+              <span class="cmd-name">CPC</span>
+              <span class="cmd-desc">IPC/CPC 분류코드 지정</span>
+            </div>
+            <div class="cmd-item" data-action="출원인">
+              <span class="cmd-icon">🏢</span>
+              <span class="cmd-name">출원인</span>
+              <span class="cmd-desc">특정 기업·개인 검색</span>
+            </div>
+            <div class="cmd-item" data-action="발명자">
+              <span class="cmd-icon">👤</span>
+              <span class="cmd-name">발명자</span>
+              <span class="cmd-desc">발명자 이름 검색</span>
+            </div>
+            <div class="cmd-item" data-action="출원일">
+              <span class="cmd-icon">📅</span>
+              <span class="cmd-name">출원일</span>
+              <span class="cmd-desc">날짜 범위 지정</span>
+            </div>
+            <div class="cmd-item" data-action="국가">
+              <span class="cmd-icon">🌐</span>
+              <span class="cmd-name">국가</span>
+              <span class="cmd-desc">KR · US · EP · JP · CN</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CPC sub-palette -->
+        <div class="sub-palette hidden" id="cpcPalette">
+          <div class="sub-palette-row">
+            <label>CPC:</label>
+            <input type="text" id="cpcInput" placeholder="코드 또는 키워드 입력 (예: H01M)" autocomplete="off">
+          </div>
+          <div class="cpc-results" id="cpcResults"></div>
+        </div>
+
+        <!-- Applicant / Inventor sub-palette -->
+        <div class="sub-palette hidden" id="textFieldPalette">
+          <div class="sub-palette-row">
+            <label id="textFieldLabel">출원인:</label>
+            <input type="text" id="textFieldInput" placeholder="입력..." autocomplete="off">
+            <button class="btn-confirm" id="textFieldConfirm">추가</button>
+          </div>
+        </div>
+
+        <!-- Date range sub-palette -->
+        <div class="sub-palette hidden" id="datePalette">
+          <div class="date-row">
+            <label>출원일:</label>
+            <input type="number" id="dateFrom" placeholder="2020" min="1970" max="2026">
+            <span>~</span>
+            <input type="number" id="dateTo" placeholder="2024" min="1970" max="2026">
+            <button class="btn-confirm" id="dateConfirm">추가</button>
+          </div>
+        </div>
+
+        <!-- Country sub-palette -->
+        <div class="sub-palette hidden" id="countryPalette">
+          <div class="sub-palette-header">국가 선택 (복수 가능)</div>
+          <div class="country-grid">
+            <button class="country-btn" data-country="KR">🇰🇷 KR</button>
+            <button class="country-btn" data-country="US">🇺🇸 US</button>
+            <button class="country-btn" data-country="EP">🇪🇺 EP</button>
+            <button class="country-btn" data-country="JP">🇯🇵 JP</button>
+            <button class="country-btn" data-country="CN">🇨🇳 CN</button>
+          </div>
+          <div class="palette-footer">
+            <button class="btn-confirm" id="countryConfirm">추가</button>
+          </div>
+        </div>
+
+      </div><!-- /textarea-wrap -->
+    </div><!-- /search-area -->
+
+    <div class="search-row">
+      <button class="btn btn-outline" onclick="resetAll()">초기화</button>
+      <button class="btn btn-primary" onclick="runSearch()">검색 →</button>
+    </div>
+  </div>
+
+  <!-- Search Flow -->
+  <div class="section hidden" id="flowSection">
+    <h2>검색 실행 흐름</h2>
+    <div class="flow-cards">
+      <div class="flow-card">
+        <span class="tag tag-es">검색식 입력</span>
+        <ol><li>상세 검색식 입력<br><small>Boolean / CPC 코드</small></li><li>Elastic Search 실행</li><li>결과 섹션 이동 ↓</li></ol>
+      </div>
+      <div class="flow-card">
+        <span class="tag tag-a">자연어 — 경로 A</span>
+        <ol><li>AI 충분도 판단<br>→ <strong>"충분"</strong>으로 판정</li><li>Vector DB 검색<br>Top 50 즉시 실행</li><li>결과 섹션 이동 ↓</li></ol>
+      </div>
+      <div class="flow-card">
+        <span class="tag tag-b">자연어 — 경로 B</span>
+        <ol><li>AI 충분도 판단<br>→ <strong>"불충분"</strong>으로 판정</li><li>VectorDB 클러스터링<br>→ 상위 토픽 자동 생성</li><li>토픽 Q&A 폼 생성</li><li>의도 구체화 → VectorDB Top 50</li></ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="section hidden" id="resultsSection">
+    <h2>검색 결과</h2>
+    <div class="results-header">
+      <span class="count">42건</span>
+      <span class="chip">열관리 시스템 <button>×</button></span>
+      <span class="chip">BMS 제어 <button>×</button></span>
+      <button class="btn btn-outline btn-sm" onclick="resetAll()">다시 검색</button>
+    </div>
+
+    <h2>AI 추천 토픽 카드</h2>
+    <div class="topic-cards">
+      <div class="topic-card"><div class="topic-name">열관리 시스템</div><div class="topic-count">18건</div></div>
+      <div class="topic-card"><div class="topic-name">BMS 제어 알고리즘</div><div class="topic-count">14건</div></div>
+      <div class="topic-card"><div class="topic-name">셀 구조 최적화</div><div class="topic-count">7건</div></div>
+      <div class="topic-card"><div class="topic-name">전해질 안정화</div><div class="topic-count">3건</div></div>
+    </div>
+
+    <h2>특허 결과</h2>
+    <div class="patent-card">
+      <div class="title"><span>급속충전 시 배터리 셀 온도 균일화를 위한 열관리 제어 시스템</span><span class="score">98%</span></div>
+      <div class="meta">KR10-2023-0147821 · 삼성SDI · 2023.10.24 · H01M</div>
+      <div class="abstract">리튬이온 배터리 급속충전 과정에서 발생하는 셀 간 온도 불균형을...</div>
+      <div class="tags"><span>급속충전</span><span>열관리</span><span>온도제어</span></div>
+    </div>
+    <div class="patent-card">
+      <div class="title"><span>배터리 관리 시스템의 충전 전류 동적 제어 방법 및 장치</span><span class="score">91%</span></div>
+      <div class="meta">KR10-2022-0089341 · LG에너지솔루션 · 2022.07.19 · H02J</div>
+      <div class="abstract">충전 중 셀 온도 및 SOC를 실시간으로 모니터링하여 전류를...</div>
+      <div class="tags"><span>BMS</span><span>전류제어</span><span>SOC</span></div>
+    </div>
+    <p class="more-link">… 40건 더 보기</p>
+  </div>
+
+</div>
+
+<script>
+// ── CPC sample data ──────────────────────────────────────────────────────────
+const CPC_DATA = [
+  { code: 'H01M',        label: '전지; 전지 제조' },
+  { code: 'H01M 10',     label: '이차전지' },
+  { code: 'H01M 10/6',   label: '이차전지 — 온도 관리', star: true },
+  { code: 'H01M 10/613', label: '온도 모니터링 수단', star: true },
+  { code: 'H01M 10/625', label: '냉각 수단' },
+  { code: 'H01M 50',     label: '전지 구성요소' },
+  { code: 'H02J 7',      label: '배터리 충전 회로' },
+  { code: 'H02J 7/00',   label: '배터리 충방전 제어' },
+];
+
+// ── State ────────────────────────────────────────────────────────────────────
+let activeFilters = [];     // { id, type, value }
+let selectedCountries = [];
+let rawQueryOpen = false;
+
+// ── DOM refs ─────────────────────────────────────────────────────────────────
+const textarea         = document.getElementById('searchInput');
+const cmdPalette       = document.getElementById('cmdPalette');
+const cpcPalette       = document.getElementById('cpcPalette');
+const textFieldPalette = document.getElementById('textFieldPalette');
+const datePalette      = document.getElementById('datePalette');
+const countryPalette   = document.getElementById('countryPalette');
+
+function closeAllPalettes() {
+  [cmdPalette, cpcPalette, textFieldPalette, datePalette, countryPalette]
+    .forEach(p => p.classList.add('hidden'));
+}
+
+// ── @ trigger ────────────────────────────────────────────────────────────────
+textarea.addEventListener('input', function () {
+  const val = this.value;
+  const pos = this.selectionStart;
+  if (val[pos - 1] === '@') {
+    closeAllPalettes();
+    cmdPalette.classList.remove('hidden');
+  } else if (!val.includes('@')) {
+    cmdPalette.classList.add('hidden');
+  }
+  updateFormula();
+});
+
+textarea.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') closeAllPalettes();
+});
+
+// ── Command palette ───────────────────────────────────────────────────────────
+document.querySelectorAll('.cmd-item').forEach(item => {
+  item.addEventListener('click', function () {
+    const action = this.dataset.action;
+    const val = textarea.value;
+    const atPos = val.lastIndexOf('@');
+    if (atPos !== -1) textarea.value = val.slice(0, atPos) + val.slice(atPos + 1);
+    closeAllPalettes();
+
+    if (action === 'AND' || action === 'OR' || action === 'NOT') {
+      addFilter(action, null);
+      textarea.focus();
+    } else if (action === 'CPC') {
+      renderCpcResults('');
+      document.getElementById('cpcInput').value = '';
+      cpcPalette.classList.remove('hidden');
+      setTimeout(() => document.getElementById('cpcInput').focus(), 50);
+    } else if (action === '출원인' || action === '발명자') {
+      document.getElementById('textFieldLabel').textContent = action + ':';
+      document.getElementById('textFieldInput').value = '';
+      document.getElementById('textFieldInput').placeholder = action + ' 입력...';
+      textFieldPalette.classList.remove('hidden');
+      setTimeout(() => document.getElementById('textFieldInput').focus(), 50);
+    } else if (action === '출원일') {
+      document.getElementById('dateFrom').value = '';
+      document.getElementById('dateTo').value = '';
+      datePalette.classList.remove('hidden');
+      setTimeout(() => document.getElementById('dateFrom').focus(), 50);
+    } else if (action === '국가') {
+      selectedCountries = [];
+      document.querySelectorAll('.country-btn').forEach(b => b.classList.remove('selected'));
+      countryPalette.classList.remove('hidden');
+    }
+  });
+});
+
+// ── CPC autocomplete ──────────────────────────────────────────────────────────
+function renderCpcResults(query) {
+  const container = document.getElementById('cpcResults');
+  const q = query.toUpperCase();
+  const filtered = q
+    ? CPC_DATA.filter(d => d.code.toUpperCase().startsWith(q) || d.label.includes(query))
+    : CPC_DATA;
+  container.innerHTML = filtered.map(d => `
+    <div class="cpc-item" data-code="${d.code}">
+      <span class="cpc-code">${d.code}</span>
+      <span class="cpc-label">${d.label}</span>
+      ${d.star ? '<span class="cpc-star">★</span>' : ''}
+    </div>`).join('');
+  container.querySelectorAll('.cpc-item').forEach(el => {
+    el.addEventListener('click', function () {
+      addFilter('CPC', this.dataset.code);
+      closeAllPalettes();
+      textarea.focus();
+    });
+  });
+}
+document.getElementById('cpcInput').addEventListener('input', function () { renderCpcResults(this.value); });
+document.getElementById('cpcInput').addEventListener('keydown', e => { if (e.key === 'Escape') closeAllPalettes(); });
+
+// ── Text field ────────────────────────────────────────────────────────────────
+document.getElementById('textFieldConfirm').addEventListener('click', function () {
+  const val = document.getElementById('textFieldInput').value.trim();
+  const type = document.getElementById('textFieldLabel').textContent.replace(':', '');
+  if (val) addFilter(type, val);
+  closeAllPalettes();
+  textarea.focus();
+});
+document.getElementById('textFieldInput').addEventListener('keydown', function (e) {
+  if (e.key === 'Enter') document.getElementById('textFieldConfirm').click();
+  if (e.key === 'Escape') closeAllPalettes();
+});
+
+// ── Date ──────────────────────────────────────────────────────────────────────
+document.getElementById('dateConfirm').addEventListener('click', function () {
+  const from = document.getElementById('dateFrom').value;
+  const to   = document.getElementById('dateTo').value;
+  if (from || to) {
+    const val = (from && to) ? `${from}–${to}` : (from ? `${from}~` : `~${to}`);
+    addFilter('출원일', val);
+  }
+  closeAllPalettes();
+  textarea.focus();
+});
+
+// ── Country ───────────────────────────────────────────────────────────────────
+document.querySelectorAll('.country-btn').forEach(btn => {
+  btn.addEventListener('click', function () {
+    const c = this.dataset.country;
+    if (selectedCountries.includes(c)) {
+      selectedCountries = selectedCountries.filter(x => x !== c);
+      this.classList.remove('selected');
+    } else {
+      selectedCountries.push(c);
+      this.classList.add('selected');
+    }
+  });
+});
+document.getElementById('countryConfirm').addEventListener('click', function () {
+  if (selectedCountries.length) addFilter('국가', selectedCountries.join('·'));
+  closeAllPalettes();
+  textarea.focus();
+});
+
+// ── Filter management ─────────────────────────────────────────────────────────
+function addFilter(type, value) {
+  activeFilters.push({ id: Date.now(), type, value });
+  updateFormula();
+}
+function removeFilter(id) {
+  activeFilters = activeFilters.filter(f => f.id !== id);
+  updateFormula();
+}
+
+// ── ① 수식 프리뷰 바 업데이트 ─────────────────────────────────────────────
+function updateFormula() {
+  const bar    = document.getElementById('formulaBar');
+  const empty  = document.getElementById('formulaEmpty');
+  const nlText = textarea.value.trim();
+  const hasNL  = nlText.length > 0;
+  const hasFilters = activeFilters.length > 0;
+
+  if (!hasNL && !hasFilters) {
+    // 빈 상태
+    bar.innerHTML = `<span class="formula-label">검색식</span>
+                     <span class="formula-empty">입력 내용이 수식으로 표시됩니다</span>`;
+    updateRawQuery('');
+    return;
+  }
+
+  let parts = [];
+
+  // 자연어 토큰
+  if (hasNL) {
+    const truncated = nlText.length > 40 ? nlText.slice(0, 40) + '…' : nlText;
+    parts.push(`<span class="fml-paren">(</span><span class="fml-nl">${escHtml(truncated)}</span><span class="fml-paren">)</span>`);
+  }
+
+  // 구조화 조건들
+  activeFilters.forEach((f, i) => {
+    const isOp  = (f.type === 'AND' || f.type === 'OR' || f.type === 'NOT');
+    const isNot = (f.type === 'NOT');
+
+    if (isOp) {
+      parts.push(`<span class="fml-op${isNot ? ' not' : ''}">${f.type}</span>`);
+    } else {
+      parts.push(`
+        <span class="fml-chip${isNot ? ' not-chip' : ''}" title="${f.type}: ${f.value}">
+          <span class="fml-chip-type">${f.type}:</span>${escHtml(f.value)}
+          <button class="fml-chip-del" onclick="removeFilter(${f.id})">×</button>
+        </span>`);
+    }
+  });
+
+  bar.innerHTML = `<span class="formula-label">검색식</span>` + parts.join('');
+  updateRawQuery(buildRawQuery(nlText, activeFilters));
+}
+
+// ── ② 생성된 검색식 업데이트 ──────────────────────────────────────────────
+function buildRawQuery(nl, filters) {
+  const parts = [];
+  if (nl) parts.push(`"${nl}"`);
+  filters.forEach(f => {
+    const isOp = (f.type === 'AND' || f.type === 'OR' || f.type === 'NOT');
+    if (isOp) {
+      parts.push(f.type);
+    } else if (f.type === 'CPC') {
+      parts.push(`CPC:${f.value.replace(/\s/g, '')}`);
+    } else if (f.type === '출원일') {
+      const [from, to] = f.value.replace('–', '–').split(/[–~]/);
+      if (from && to) parts.push(`출원일:[${from.trim()} TO ${to.trim()}]`);
+      else if (from) parts.push(`출원일:[${from.trim()} TO *]`);
+      else parts.push(`출원일:[* TO ${(to||'').trim()}]`);
+    } else if (f.type === '국가') {
+      const countries = f.value.split('·');
+      parts.push(countries.length > 1
+        ? `국가:(${countries.join(' OR ')})`
+        : `국가:${countries[0]}`);
+    } else {
+      parts.push(`${f.type}:"${f.value}"`);
+    }
+  });
+  return parts.join(' ');
+}
+
+function updateRawQuery(raw) {
+  const code = document.getElementById('rawQueryCode');
+  if (!raw) { code.innerHTML = ''; return; }
+
+  // syntax highlighting
+  const highlighted = raw
+    .replace(/\b(AND|OR|NOT)\b/g, '<span class="q-op">$1</span>')
+    .replace(/(CPC:|출원일:|국가:|출원인:|발명자:)/g, '<span class="q-field">$1</span>')
+    .replace(/"([^"]+)"/g, '<span class="q-nl">"$1"</span>')
+    .replace(/(\[|\])/g, '<span class="q-paren">$1</span>');
+
+  code.innerHTML = highlighted;
+}
+
+function toggleRawQuery() {
+  rawQueryOpen = !rawQueryOpen;
+  const body   = document.getElementById('rawQueryBody');
+  const toggle = document.getElementById('rawQueryToggle');
+  body.classList.toggle('hidden', !rawQueryOpen);
+  toggle.classList.toggle('open', rawQueryOpen);
+}
+
+function copyQuery() {
+  const text = document.getElementById('rawQueryCode').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    btn.textContent = '복사됨 ✓';
+    setTimeout(() => { btn.textContent = '복사 ⎘'; }, 1500);
+  });
+}
+
+function editQuery() {
+  const text = document.getElementById('rawQueryCode').textContent;
+  textarea.value = text;
+  activeFilters = [];
+  updateFormula();
+  textarea.focus();
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── Close palettes on outside click ──────────────────────────────────────────
+document.addEventListener('click', function (e) {
+  if (!e.target.closest('.textarea-wrap')) closeAllPalettes();
+});
+
+// ── Search / Reset ────────────────────────────────────────────────────────────
+function runSearch() {
+  const q = textarea.value.trim();
+  if (!q && !activeFilters.length) return;
+  closeAllPalettes();
+  document.getElementById('flowSection').classList.remove('hidden');
+  document.getElementById('resultsSection').classList.remove('hidden');
+  document.getElementById('flowSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+function resetAll() {
+  textarea.value = '';
+  activeFilters = [];
+  updateFormula();
+  closeAllPalettes();
+  rawQueryOpen = false;
+  document.getElementById('rawQueryBody').classList.add('hidden');
+  document.getElementById('rawQueryToggle').classList.remove('open');
+  document.getElementById('flowSection').classList.add('hidden');
+  document.getElementById('resultsSection').classList.add('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
