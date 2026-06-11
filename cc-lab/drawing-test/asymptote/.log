@@ -1,0 +1,61 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=latex 2026.5.29)  2 JUN 2026 17:47
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**\scrollmode\input \nonstopmode\input fig_assembly_.tex
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/tools/.tex File ignored)
+(./fig_assembly_.tex
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/base/size12.clo
+File: size12.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count275
+\c@section=\count276
+\c@subsection=\count277
+\c@subsubsection=\count278
+\c@paragraph=\count279
+\c@subparagraph=\count280
+\c@figure=\count281
+\c@table=\count282
+\abovecaptionskip=\skip49
+\belowcaptionskip=\skip50
+\bibindent=\dimen148
+)
+\ASYbox=\box53
+\ASYdimen=\dimen149
+
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/l3backend/l3backend-dvips.de
+f
+File: l3backend-dvips.def 2025-10-09 L3 backend support: dvips
+\l__pdfannot_backend_content_box=\box54
+\l__pdfannot_backend_model_box=\box55
+\g__pdfannot_backend_int=\count283
+\g__pdfannot_backend_link_int=\count284
+\g__pdfannot_backend_link_sf_int=\count285
+)
+No file .aux.
+! I can't write on file `.aux'.
+\document ...ate \openout \@mainaux \jobname .aux 
+                                                  \immediate \write \@mainau...
+l.10 \begin{document}
+                     
+(Press Enter to retry, or Control-D to exit; default file extension is `.tex')
+Please type another output file name
+! Emergency stop.
+\document ...ate \openout \@mainaux \jobname .aux 
+                                                  \immediate \write \@mainau...
+l.10 \begin{document}
+                     
+*** (job aborted, file error in nonstop mode)
+
+ 
+Here is how much of TeX's memory you used:
+ 430 strings out of 469007
+ 8487 string characters out of 5454839
+ 433753 words of memory out of 5000000
+ 29210 multiletter control sequences out of 15000+600000
+ 628019 words of font info for 41 fonts, out of 8000000 for 9000
+ 319 hyphenation exceptions out of 8191
+ 35i,0n,38p,194b,36s stack positions out of 10000i,1000n,20000p,200000b,200000s
+No pages of output.
