@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "cluster-viewer",
+      "runtimeExecutable": "/Users/leegh/Library/Python/3.9/bin/streamlit",
+      "runtimeArgs": ["run", "/Users/leegh/cc-workspace/es-search/app.py", "--server.port", "8501", "--server.headless", "true"],
+      "port": 8501,
+      "autoPort": false
+    }
+  ]
+}

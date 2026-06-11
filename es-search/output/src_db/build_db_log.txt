@@ -1,0 +1,100 @@
+[08:39:25] 대상: 3192건
+[08:39:25] 기저장: 0건 / 신규처리: 3192건
+  BATCH ERR [0]: Error binding parameter 6 - probably unsupported type.
+  [08:39:36] 100/3192 (3%) | 저장3 에러100 | ETA 5.4분
+  BATCH ERR [100]: Error binding parameter 6 - probably unsupported type.
+  [08:39:46] 200/3192 (6%) | 저장6 에러200 | ETA 5.2분
+  BATCH ERR [200]: Error binding parameter 6 - probably unsupported type.
+  [08:39:56] 300/3192 (9%) | 저장15 에러300 | ETA 5.0분
+  BATCH ERR [300]: Error binding parameter 6 - probably unsupported type.
+  [08:40:06] 400/3192 (13%) | 저장69 에러400 | ETA 4.8분
+  BATCH ERR [400]: Error binding parameter 6 - probably unsupported type.
+  [08:40:17] 500/3192 (16%) | 저장93 에러500 | ETA 4.6분
+  BATCH ERR [500]: Error binding parameter 6 - probably unsupported type.
+  [08:40:27] 600/3192 (19%) | 저장201 에러600 | ETA 4.5분
+  BATCH ERR [600]: Error binding parameter 6 - probably unsupported type.
+  [08:40:38] 700/3192 (22%) | 저장201 에러700 | ETA 4.3분
+  BATCH ERR [700]: Error binding parameter 6 - probably unsupported type.
+  [08:40:48] 800/3192 (25%) | 저장246 에러800 | ETA 4.1분
+  BATCH ERR [800]: Error binding parameter 6 - probably unsupported type.
+  [08:40:58] 900/3192 (28%) | 저장297 에러900 | ETA 4.0분
+  BATCH ERR [900]: Error binding parameter 6 - probably unsupported type.
+  [08:41:09] 1000/3192 (31%) | 저장309 에러1000 | ETA 3.8분
+  [08:41:09] 1100/3192 (34%) | 저장409 에러1000 | ETA 3.3분
+  BATCH ERR [1100]: database is locked
+  [08:41:34] 1200/3192 (38%) | 저장409 에러1100 | ETA 3.6분
+  BATCH ERR [1200]: database is locked
+  [08:42:00] 1300/3192 (41%) | 저장409 에러1200 | ETA 3.8분
+  BATCH ERR [1300]: database is locked
+  [08:42:26] 1400/3192 (44%) | 저장409 에러1300 | ETA 3.9분
+  [08:42:27] 1500/3192 (47%) | 저장509 에러1300 | ETA 3.4분
+  [08:42:27] 1600/3192 (50%) | 저장609 에러1300 | ETA 3.0분
+  [08:42:27] 1700/3192 (53%) | 저장709 에러1300 | ETA 2.7분
+  [08:42:28] 1800/3192 (56%) | 저장809 에러1300 | ETA 2.4분
+  [08:42:28] 1900/3192 (60%) | 저장909 에러1300 | ETA 2.1분
+  [08:42:28] 2000/3192 (63%) | 저장1009 에러1300 | ETA 1.8분
+  [08:42:28] 2100/3192 (66%) | 저장1109 에러1300 | ETA 1.6분
+  [08:42:29] 2200/3192 (69%) | 저장1209 에러1300 | ETA 1.4분
+  [08:42:29] 2300/3192 (72%) | 저장1309 에러1300 | ETA 1.2분
+  [08:42:29] 2400/3192 (75%) | 저장1409 에러1300 | ETA 1.0분
+  [08:42:29] 2500/3192 (78%) | 저장1509 에러1300 | ETA 0.8분
+  [08:42:30] 2600/3192 (81%) | 저장1609 에러1300 | ETA 0.7분
+  [08:42:30] 2700/3192 (85%) | 저장1709 에러1300 | ETA 0.6분
+  [08:42:30] 2800/3192 (88%) | 저장1809 에러1300 | ETA 0.4분
+  [08:42:31] 2900/3192 (91%) | 저장1909 에러1300 | ETA 0.3분
+  [08:42:31] 3000/3192 (94%) | 저장2009 에러1300 | ETA 0.2분
+  [08:42:31] 3100/3192 (97%) | 저장2109 에러1300 | ETA 0.1분
+  [08:42:31] 3192/3192 (100%) | 저장2201 에러1300 | ETA 0.0분
+
+[완료] 총 2295건 | Embodiment있음 2295건 | 소요 3.1분
+[08:44:09] 대상: 3192건
+[08:44:09] 기저장: 2307건 / 신규처리: 885건
+  BATCH ERR [0]: Error binding parameter 6 - probably unsupported type.
+  [08:44:19] 100/885 (11%) | 저장0 에러100 | ETA 1.4분
+  BATCH ERR [100]: Error binding parameter 6 - probably unsupported type.
+  [08:44:29] 200/885 (23%) | 저장0 에러200 | ETA 1.2분
+  BATCH ERR [200]: Error binding parameter 6 - probably unsupported type.
+  [08:44:40] 300/885 (34%) | 저장0 에러300 | ETA 1.0분
+  BATCH ERR [300]: Error binding parameter 6 - probably unsupported type.
+  [08:44:50] 400/885 (45%) | 저장0 에러400 | ETA 0.8분
+  BATCH ERR [400]: Error binding parameter 6 - probably unsupported type.
+  [08:45:00] 500/885 (56%) | 저장0 에러500 | ETA 0.7분
+  BATCH ERR [500]: Error binding parameter 6 - probably unsupported type.
+  [08:45:11] 600/885 (68%) | 저장0 에러600 | ETA 0.5분
+  BATCH ERR [600]: Error binding parameter 6 - probably unsupported type.
+  [08:45:21] 700/885 (79%) | 저장0 에러700 | ETA 0.3분
+  BATCH ERR [700]: Error binding parameter 6 - probably unsupported type.
+  [08:45:31] 800/885 (90%) | 저장0 에러800 | ETA 0.1분
+  BATCH ERR [800]: Error binding parameter 6 - probably unsupported type.
+  [08:45:42] 885/885 (100%) | 저장192 에러885 | ETA 0.0분
+
+[완료] 총 2371건 | Embodiment있음 2371건 | 소요 1.6분
+[08:45:43] 남은 건수: 885건
+  ERR[0]: Error binding parameter 6 - probably unsupported type.
+  [08:45:59] 50/885 | 저장0 에러50
+  ERR[50]: Error binding parameter 6 - probably unsupported type.
+  ERR[100]: Error binding parameter 6 - probably unsupported type.
+  ERR[150]: Error binding parameter 6 - probably unsupported type.
+  ERR[200]: Error binding parameter 6 - probably unsupported type.
+  ERR[250]: Error binding parameter 6 - probably unsupported type.
+  [08:47:15] 300/885 | 저장4 에러300
+  ERR[300]: Error binding parameter 6 - probably unsupported type.
+  ERR[350]: Error binding parameter 6 - probably unsupported type.
+  ERR[400]: Error binding parameter 6 - probably unsupported type.
+  ERR[450]: Error binding parameter 6 - probably unsupported type.
+  ERR[500]: Error binding parameter 6 - probably unsupported type.
+  [08:48:32] 550/885 | 저장236 에러550
+  ERR[550]: Error binding parameter 6 - probably unsupported type.
+  ERR[600]: Error binding parameter 6 - probably unsupported type.
+  ERR[650]: Error binding parameter 6 - probably unsupported type.
+  ERR[700]: Error binding parameter 6 - probably unsupported type.
+  ERR[750]: Error binding parameter 6 - probably unsupported type.
+  [08:49:48] 800/885 | 저장292 에러800
+  ERR[850]: Error binding parameter 6 - probably unsupported type.
+
+[완료] 총 2444건 저장
+[08:51:16] 남은: 762건
+  [08:51:16] 250/762 저장300 에러0
+  [08:51:16] 500/762 저장550 에러0
+  [08:51:17] 750/762 저장762 에러0
+[완료] 총 3192건

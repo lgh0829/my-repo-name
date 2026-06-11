@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>명세서 본문 스타일 선택 — 프로토타입</title>
+<style>
+  :root{--bg:#0f1116;--card:#1a1d27;--card2:#222633;--bd:#2c3142;--tx:#e6e8ee;--mut:#9aa3b5;--ac:#5b8cff;--ac2:#3ad6a0;--warn:#ffb454;}
+  *{box-sizing:border-box;font-family:-apple-system,'Segoe UI',Roboto,'Noto Sans KR',sans-serif}
+  body{margin:0;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.6}
+  .wrap{max-width:1180px;margin:0 auto;padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  h1{grid-column:1/3;font-size:20px;margin:0 0 4px}
+  .sub{grid-column:1/3;color:var(--mut);margin:-6px 0 8px;font-size:13px}
+  .panel{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px}
+  .panel h2{font-size:15px;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+  .badge{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--card2);color:var(--mut)}
+  .step{font-size:11px;color:var(--ac);font-weight:700;letter-spacing:.5px}
+  /* 1차 탭 */
+  .tabs{display:flex;gap:6px;margin-bottom:12px}
+  .tab{flex:1;text-align:center;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--card2);cursor:pointer;font-size:13px}
+  .tab.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+  /* 프리셋 카드 */
+  .preset{border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:8px;cursor:pointer;transition:.15s}
+  .preset:hover{border-color:var(--ac)}
+  .preset.on{border-color:var(--ac);background:rgba(91,140,255,.08)}
+  .preset .nm{font-weight:700;font-size:14px}
+  .preset .src{font-size:11px;color:var(--mut)}
+  .preset .tags{margin-top:6px;display:flex;flex-wrap:wrap;gap:4px}
+  .tag{font-size:11px;background:var(--card2);padding:2px 7px;border-radius:6px;color:var(--mut)}
+  .prev{margin-top:8px;font-size:12px;color:var(--mut);background:#12141c;border-left:3px solid var(--ac);padding:6px 10px;border-radius:4px;display:none}
+  .preset.on .prev{display:block}
+  /* reference */
+  .refbox{display:none}
+  .refbox.on{display:block}
+  input[type=text]{width:100%;padding:10px;background:#12141c;border:1px solid var(--bd);border-radius:8px;color:var(--tx)}
+  /* 2차 고급 */
+  .adv-toggle{cursor:pointer;color:var(--ac);font-size:13px;user-select:none;margin-bottom:8px}
+  .adv{display:none}
+  .adv.on{display:block}
+  .row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd)}
+  .row:last-child{border:none}
+  .row .lab{font-size:13px}
+  .row .lab small{color:var(--mut);display:block;font-size:11px}
+  .seg{display:flex;border:1px solid var(--bd);border-radius:7px;overflow:hidden}
+  .seg button{background:var(--card2);border:none;color:var(--mut);padding:5px 10px;cursor:pointer;font-size:12px}
+  .seg button.on{background:var(--ac);color:#fff}
+  .ovr{font-size:10px;color:var(--warn);margin-left:6px}
+  /* 전개축(자동·비노출) */
+  .auto{background:#12141c;border:1px dashed var(--bd);border-radius:10px;padding:14px}
+  .auto .lk{display:flex;justify-content:space-between;align-items:center}
+  .pill{font-size:12px;padding:3px 10px;border-radius:20px;background:rgba(58,214,160,.15);color:var(--ac2);font-weight:700}
+  .auto small{color:var(--mut);display:block;margin-top:6px;font-size:11px}
+  select{padding:8px;background:#12141c;border:1px solid var(--bd);border-radius:8px;color:var(--tx)}
+  /* 프롬프트 미리보기 */
+  .prompt{grid-column:1/3;background:var(--card)}
+  pre{background:#0b0d12;border:1px solid var(--bd);border-radius:10px;padding:16px;overflow:auto;font-size:12.5px;color:#cdd3e0;white-space:pre-wrap;max-height:380px}
+  .k{color:var(--ac2)} .v{color:var(--warn)} .lock{color:var(--ac2)}
+  .modelchip{display:inline-block;font-size:12px;background:var(--card2);padding:4px 10px;border-radius:6px;margin-right:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>명세서 본문 스타일 선택 <span class="badge">spec-prompt-architect UI 프로토타입</span></h1>
+  <p class="sub">문체 축 = 사용자 선택(대리인/프리셋) · 전개 축 = 발명 CPC가 자동 결정. 선택에 따라 우측 하단 생성 프롬프트가 실시간 갱신됩니다.</p>
+
+  <!-- 1차: 문체 선택 -->
+  <div class="panel">
+    <h2><span class="step">STEP 1</span> 문체 스타일 <span class="badge">대리인 변별력 0.27</span></h2>
+    <div class="tabs">
+      <div class="tab on" data-mode="preset" onclick="setMode('preset')">스타일 프리셋</div>
+      <div class="tab" data-mode="ref" onclick="setMode('ref')">참고 명세서 지정 (권장)</div>
+    </div>
+    <div id="presetBox">
+      <!-- 프리셋 카드 (실측 기반) -->
+    </div>
+    <div id="refBox" class="refbox">
+      <input type="text" placeholder="닮고 싶은 출원번호 입력 (예: 1020230076077)" id="refInput" oninput="onRef()">
+      <p class="prev" style="display:block">입력 출원을 embodiment-analyzer가 13차원 프로파일링하여 문체 파라미터를 자동 추출합니다. (전개 축은 그래도 발명 CPC로 결정)</p>
+    </div>
+  </div>
+
+  <!-- 2차: 고급 미세조정 -->
+  <div class="panel">
+    <h2><span class="step">STEP 2</span> 미세 조정 <span class="badge">선택 · 핵심 차원만</span></h2>
+    <div class="adv-toggle" onclick="toggleAdv()">▸ 고급: 프리셋 위에 일부 차원 덮어쓰기</div>
+    <div class="adv" id="adv">
+      <div class="row"><div class="lab">실시 용어<small>변별력 0.69</small></div>
+        <div class="seg" data-dim="실시용어"><button data-v="실시예">실시예</button><button data-v="실시형태">실시형태</button></div></div>
+      <div class="row"><div class="lab">용어정의 선행<small>변별력 0.67</small></div>
+        <div class="seg" data-dim="용어정의"><button data-v="on">넣음</button><button data-v="off">뺌</button></div></div>
+      <div class="row"><div class="lab">용어 보일러플레이트<small>변별력 0.74</small></div>
+        <div class="seg" data-dim="보일러"><button data-v="on">넣음</button><button data-v="off">뺌</button></div></div>
+      <div class="row"><div class="lab">효과 섹션<small>변별력 0.37</small></div>
+        <div class="seg" data-dim="효과"><button data-v="on">기재</button><button data-v="off">생략</button></div></div>
+      <div class="row"><div class="lab">권리범위 면책 위치</div>
+        <div class="seg" data-dim="면책"><button data-v="도입">도입</button><button data-v="말미">말미</button><button data-v="변형예">JP변형예</button><button data-v="없음">없음</button></div></div>
+      <p class="prev" style="display:block;margin-top:10px">⚠ 덮어쓴 항목은 <span class="ovr">override</span> 표시됩니다. 프리셋과 다른 비현실 조합은 경고됩니다.</p>
+    </div>
+  </div>
+
+  <!-- 전개 축: 자동 -->
+  <div class="panel" style="grid-column:1/3">
+    <h2><span class="step">STEP 3</span> 전개 방식 <span class="badge">자동 · 사용자 선택 불가</span></h2>
+    <div class="auto">
+      <div class="lk">
+        <div>발명 기술분야(CPC):
+          <select id="cpc" onchange="render()">
+            <option value="H">H 전기·반도체</option>
+            <option value="C">C 화학·조성물</option>
+            <option value="G">G 물리·소프트웨어</option>
+            <option value="B">B 처리·운수</option>
+            <option value="F">F 기계</option>
+            <option value="E">E 토목·고정구조</option>
+            <option value="A">A 의료·생활</option>
+          </select>
+        </div>
+        <div>전개 앵커: <span class="pill" id="anchor">도면-공간</span></div>
+      </div>
+      <small>전개앵커는 CPC가 결정합니다(변별력 0.61). 도면참조·수치한정 밀도는 앵커에 종속되며 작성자가 바꿀 수 없습니다. 화학이면 실험-수치, SW면 동작-시간, 기계·전자면 도면-공간으로 강제됩니다.</small>
+    </div>
+  </div>
+
+  <!-- 생성 프롬프트 미리보기 -->
+  <div class="panel prompt">
+    <h2>⚙ 생성 프롬프트 미리보기 <span class="badge">prompts.yaml id:8 Spec Embodiment 베이스</span></h2>
+    <div id="model"></div>
+    <pre id="out"></pre>
+  </div>
+</div>
+
+<script>
+// 실측 기반 프리셋 (disclaimer_anchor_dimensions.csv 집계)
+const PRESETS=[
+ {id:'kc_std',nm:'국내 표준형',src:'김앤장 김성남류 · C2 · 502건',
+  d:{실시용어:'실시예',용어정의:'off',보일러:'off',효과:'on',면책:'말미',실시예구조:'단일'},
+  prev:'"이하, 첨부 도면을 참조하여 본 발명의 실시예를 상세히 설명한다…" 단일 실시예·효과 기재·면책 말미'},
+ {id:'kc_term',nm:'용어정의 특화형',src:'김앤장 김현진류 · 139건',
+  d:{실시용어:'실시예',용어정의:'on',보일러:'on',효과:'on',면책:'없음',실시예구조:'단일'},
+  prev:'용어정의·해석규칙 보일러플레이트를 도입부에 선행 배치 (괄호형 도면부호)'},
+ {id:'kc_bg',nm:'배경기술 중심형',src:'김앤장 김성환류 · C4 · 168건',
+  d:{실시용어:'없음',용어정의:'off',보일러:'off',효과:'on',면책:'없음',실시예구조:'단일'},
+  prev:'배경기술을 길게(직접 과제 "문제가 있었다") · 실시예는 간결'},
+ {id:'lm_disc',nm:'면책 도입형',src:'leeandmok 이승희류 · 41건',
+  d:{실시용어:'실시예',용어정의:'off',보일러:'off',효과:'on',면책:'도입',실시예구조:'단일'},
+  prev:'도입부에 권리범위 면책을 길게 배치 후 실시예 전개'},
+ {id:'jp',nm:'JP 번역체',src:'jang 장수길류 · 993건',
+  d:{실시용어:'실시형태',용어정의:'off',보일러:'off',효과:'on',면책:'변형예',실시예구조:'단일'},
+  prev:'"실시형태" 용어·선행기술 특허문헌 인용·말미 "~해도 된다" 변형예 나열'},
+];
+const ANCHOR={H:'도면-공간',C:'실험-수치',G:'동작-시간',B:'도면-공간',F:'도면-공간',E:'도면-공간',A:'도면-공간'};
+const ANCHOR_RULE={
+ '도면-공간':'도 N을 참조하며 구성요소를 부호와 함께 공간 배치순으로 기술. 도면당 상세 서술.',
+ '동작-시간':'"먼저→이후→이어서" 시간순 단계로 동작 흐름 전개. 상태 변화를 값과 함께 추적.',
+ '실험-수치':'성분/조건 명시 → 실험예(시료군) → 정량 데이터(억제율·함량·평가점수)로 효과 입증. 도면 불요.'};
+const MODEL={
+ '도면-공간':{m:'Tier-1 고성능 (예: gpt-5.2 / Claude Opus급)',why:'도면부호 수십 개 일관 유지·장문 롱컨텍스트'},
+ '동작-시간':{m:'추론 강화형 Tier-1~2',why:'단계 논리 일관성'},
+ '실험-수치':{m:'저환각 Tier-1~2 (수치는 사람 검증)',why:'실험 데이터 환각 위험'}};
+
+let mode='preset', sel='kc_std', ovr={};
+function setMode(m){mode=m;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.mode===m));
+  document.getElementById('refBox').classList.toggle('on',m==='ref');
+  document.getElementById('presetBox').style.display=m==='ref'?'none':'block';render();}
+function toggleAdv(){document.getElementById('adv').classList.toggle('on')}
+function onRef(){render()}
+function buildPresets(){const b=document.getElementById('presetBox');b.innerHTML=PRESETS.map(p=>
+ `<div class="preset ${p.id===sel?'on':''}" onclick="pick('${p.id}')">
+   <div class="nm">${p.nm}</div><div class="src">${p.src}</div>
+   <div class="tags">${Object.entries(p.d).filter(([k])=>k!=='실시예구조').map(([k,v])=>`<span class="tag">${k}:${v}</span>`).join('')}</div>
+   <div class="prev">예: ${p.prev}</div></div>`).join('')}
+function pick(id){sel=id;ovr={};buildPresets();render()}
+// 세그먼트 override
+document.addEventListener('click',e=>{const btn=e.target.closest('.seg button');if(!btn)return;
+  const dim=btn.parentElement.dataset.dim;ovr[dim]=btn.dataset.v;
+  btn.parentElement.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===btn));render()});
+
+function curStyle(){let base=mode==='ref'?{실시용어:'(참고출원서 자동추출)',용어정의:'auto',보일러:'auto',효과:'auto',면책:'auto',실시예구조:'단일'}
+   :Object.assign({},PRESETS.find(p=>p.id===sel).d);
+  return Object.assign({},base,ovr);}
+function render(){
+  const cpc=document.getElementById('cpc').value, anc=ANCHOR[cpc];
+  document.getElementById('anchor').textContent=anc;
+  const s=curStyle();
+  const lab=l=>`<span class="${ovr[l]?'v':'k'}">${l}</span>`;
+  const refnote=mode==='ref'?`참고 출원: ${document.getElementById('refInput').value||'(미입력)'} → 문체 자동 프로파일링\n`:'';
+  const out=
+`${refnote}[역할] 너는 한국 변리사다. 아래 청구항·도면으로 '발명을 실시하기 위한 구체적인 내용'(실시예)을 작성한다.
+
+[전개 축 — CPC가 강제 · 변경 불가] 🔒
+  · 발명 분야: ${cpc} → 전개앵커: ${anc}
+  · ${ANCHOR_RULE[anc]}
+
+[문체 축 — ${mode==='ref'?'참고출원 자동추출':'프리셋: '+PRESETS.find(p=>p.id===sel).nm}]
+  · 실시 용어        : ${s.실시용어}
+  · 용어정의 선행    : ${s.용어정의}
+  · 용어 보일러플레이트: ${s.보일러}
+  · 효과 섹션        : ${s.효과}
+  · 권리범위 면책    : ${s.면책}
+  · 실시예 구조      : ${s.실시예구조}
+${Object.keys(ovr).length?'  · (override 적용됨: '+Object.keys(ovr).join(', ')+')':''}
+
+[베이스 프롬프트] prompts.yaml id:8 Spec Embodiment
+  [청구항] {claim_text}
+  [도면의 설명] {drawings}
+  위 청구범위에 맞게 실시예를 작성해줘. 위 전개 축·문체 축 규칙을 모두 준수.
+  실시예는 {output_length}자 이상. 참고 예시: {example}
+
+[금지] 전개앵커 위반(예: ${anc==='실험-수치'?'도면 없는 발명에 "도 N 참조" 강요':'발명 본질과 다른 전개'}) 금지.`;
+  document.getElementById('out').textContent=out;
+  const M=MODEL[anc];
+  document.getElementById('model').innerHTML=
+   `<span class="modelchip">권장 모델: ${M.m}</span><span style="color:var(--mut);font-size:12px">근거: ${M.why}</span>`;
+}
+buildPresets();render();
+</script>
+</body>
+</html>
