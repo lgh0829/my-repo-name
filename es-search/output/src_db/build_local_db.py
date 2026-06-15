@@ -5,7 +5,7 @@ patents.db: patents + patents_embodiment + patents_parsed
 import sqlite3, json, urllib.request, base64, re, csv, os, time
 from datetime import datetime
 
-DB_PATH = 'output/patents_local.db'
+DB_PATH = 'output/src_db/patents_local.db'
 CSV_PATH = 'output/disclaimer_anchor_dimensions.csv'
 BATCH    = 100
 FIELDS   = [
