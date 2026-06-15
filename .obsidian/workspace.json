@@ -11,10 +11,14 @@
             "id": "1ac51b7597e9c7ee",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "chat-test/chat_수동테스트_가이드.md",
+                "mode": "preview",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "새 탭"
+              "title": "chat_수동테스트_가이드"
             }
           }
         ]
@@ -82,12 +86,13 @@
             "state": {
               "type": "outline",
               "state": {
+                "file": "chat-test/chat_수동테스트_가이드.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "개요"
+              "title": "chat_수동테스트_가이드 의 개요"
             }
           }
         ]
@@ -200,22 +205,26 @@
   },
   "active": "1ac51b7597e9c7ee",
   "lastOpenFiles": [
-    "es-search/output/boilerplate_presence_draft.csv",
-    "es-search/output/src_db/patents_local.db",
+    "cc-lab/drawing-test/output/ps1054-sequence.png",
+    "cc-lab/drawing-test/plantuml/ps1054-sequence.puml",
+    "cc-lab/drawing-test/output/ps1054-workflow.png",
+    "cc-lab/drawing-test/mermaid/ps1054-workflow.mmd",
+    "meetings/260608-weekly-review.md",
+    "es-search/output/src_db/patents_local_v2.db-shm",
+    "es-search/output/src_db/patents_local_v2.db-wal",
+    "es-search/output/src_db/patents_local_v2.db",
+    "es-search/output/src_db/build_local_db_v2.py",
+    "채팅 테스트/chat_수동테스트_가이드.md",
+    "chat-test/chat_수동테스트_가이드.md",
+    "chat-test/chat_repl.py",
+    "chat-test",
+    "채팅 테스트/chat_repl.py",
+    "채팅 테스트",
     "testcase/PATSOL00002/spec.md",
     "testcase/PATSOL00002/result_v2.md",
-    "testcase/PATSOL00002",
-    "testcase",
-    "roadmap/~$2026-Q1-jira-okr-analysis.xlsx",
-    "roadmap/okr_export.xlsx",
-    "roadmap/2026-Q1-jira-okr-analysis.xlsx",
-    "review-notes/topic_results_v2.json",
-    "review-notes/topic_results.json",
     "meetings/_meeting-gen/templates/technical.md",
     "meetings/_meeting-gen/templates/product.md",
     "meetings/_meeting-gen/templates/general.md",
-    "meetings/_meeting-gen/scripts/transcribe.py",
-    "meetings/_meeting-gen/vocab.json",
     "meetings/_meeting-gen/README.md",
     "meetings/260611-IP기업인-patsol-교육-준비.md",
     "meetings/260610-document-page-api.md",
@@ -233,9 +242,6 @@
     "es-search/output/test-result/1020200172234__yaml.md",
     "es-search/output/test-result/1020200172234__new.md",
     "es-search/output/test-result/1020200029131__yaml.md",
-    "es-search/output/test-result/1020200029131__new.md",
-    "es-search/output/test-result/1020190174301__yaml.md",
-    "es-search/output/test-result/1020190174301__new_v6_pref.md",
     "es-search/output/diagram/write_specification_vn.png",
     "es-search/output/diagram/write_specification_small.png",
     "es-search/output/diagram/write_specification.png",
@@ -245,7 +251,6 @@
     "design/cloud-support-lp/특허 AI·빅데이터 분석 정부지원 바우처 _ 워트인텔리전스_files/fea9a024a6fc2.png",
     "design/cloud-support-lp/특허 AI·빅데이터 분석 정부지원 바우처 _ 워트인텔리전스_files/default_profile.png",
     "design/cloud-support-lp/특허 AI·빅데이터 분석 정부지원 바우처 _ 워트인텔리전스_files/d9301dedc5f68.png",
-    "design/cloud-support-lp/특허 AI·빅데이터 분석 정부지원 바우처 _ 워트인텔리전스_files/d1ba68faf7643.png",
     "design/refs/무제.canvas",
     "무제.canvas"
   ]
