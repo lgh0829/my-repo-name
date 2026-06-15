@@ -1,0 +1,112 @@
+@startuml ps1054-sequence
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.5
+skinparam sequenceArrowColor #555555
+skinparam sequenceLifeLineBorderColor #AAAAAA
+skinparam sequenceLifeLineBackgroundColor #F9F9F9
+
+skinparam participant {
+    BackgroundColor #E8F5EF
+    BorderColor #5FAF8C
+    FontColor #1a1a1a
+    FontSize 13
+    FontStyle bold
+}
+
+skinparam actor {
+    BackgroundColor #C8B4E8
+    BorderColor #9B7FCB
+    FontColor #1a1a1a
+    FontSize 13
+    FontStyle bold
+}
+
+skinparam note {
+    BackgroundColor #FFFDE7
+    BorderColor #E0C040
+    FontSize 11
+}
+
+skinparam database {
+    BackgroundColor #F5CBA7
+    BorderColor #E08940
+}
+
+actor 고객
+participant "PatSol" as PS
+participant 우림
+
+== 진입 ==
+
+우림 -> 고객 : 카카오톡 링크 발송
+
+고객 -> PS : 랜딩 페이지 접속
+
+== 정보 수집 ==
+
+고객 -> PS : 개인정보 입력
+note right of PS
+  필수 동의
+  ✔ 개인정보처리방침
+  ✔ 이용약관 (AI 결과 법적효력 없음)
+  ✔ 환불·취소 정책
+  ☐ 마케팅 수신 (선택)
+end note
+
+고객 -> PS : 아이디어 입력
+note right of PS
+  ① 한 줄 요약 (필수, 50자)
+  ② 작동 방식 (필수, 300자)
+  ③ 참고 자료 (선택, 사진·스케치)
+  🎤 음성 입력 → 텍스트 자동 변환 지원
+end note
+
+== AI 분석 ==
+
+PS -> PS : AI 선행기술조사 실행\n(유사특허 검색 · 핵심 분석)
+
+PS --> 고객 : 결과 미리보기 반환
+note left of 고객
+  결제 전 공개 범위
+  📊 유사특허 건수
+  🔑 핵심 키워드
+  🏷 등록가능성 등급
+  💡 특허 전략 힌트 (🔒 블러)
+end note
+
+== 결제 ==
+
+고객 -> PS : 결제 요청 (토스페이먼츠)
+
+alt 결제 성공
+    PS --> 고객 : 전체 보고서 열람
+    note left of 고객
+      결제 후 공개 범위
+      · 유사특허 상세 목록
+        (출원번호 · 청구항 요약)
+      · 독립항 초안
+      · 등록 전략 및 다음 단계
+    end note
+
+    PS -> 고객 : 이메일 고유 링크 발송
+    PS -> 고객 : SMS 고유 링크 발송
+    PS -> 우림 : 자동 알림 (신규 결제 완료)
+
+else 결제 실패
+    PS --> 고객 : 결제 실패 안내 및 재시도 유도
+end
+
+== 재접근 ==
+
+고객 -> PS : 이메일/SMS 링크로 재접근
+PS --> 고객 : 보고서 재열람
+
+== 관리자 (CS 대응) ==
+
+우림 -> PS : 고객 검색 및 상태 확인
+PS --> 우림 : 고객 정보 · 결제 · 보고서 조회
+우림 -> PS : 링크 재발송 요청
+PS -> 고객 : 보고서 링크 재발송
+
+@enduml

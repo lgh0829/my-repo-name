@@ -1,0 +1,72 @@
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#C8B4E8', 'primaryTextColor': '#1a1a1a', 'primaryBorderColor': '#9B7FCB', 'lineColor': '#888', 'secondaryColor': '#B8D4F0', 'tertiaryColor': '#F5F5F5'}}}%%
+flowchart TD
+
+    %% 우림특허 액션
+    A(["`**카카오톡 링크 전달**`"]):::urim
+
+    %% 고객 메인 플로우
+    B["`**랜딩 페이지 접속**`"]:::customer
+    C["`**개인정보 입력 + 약관 동의**
+    ─────────────────
+    *필수* 개인정보처리방침
+    *필수* 이용약관 *(AI 결과 법적효력 없음 명시)*
+    *필수* 환불·취소 정책
+    *선택* 마케팅 수신 동의`"]:::customer
+    D["`**아이디어 입력**
+    ─────────────────
+    ① 한 줄 요약 *필수, 50자 이내*
+    ② 작동 방식 *필수, 300자 이내*
+    ③ 참고 자료 *선택, 사진·스케치*`"]:::customer
+    V[/"`🎤 음성 입력
+    → 텍스트 변환`"/]:::side
+    E["`**AI 선행기술조사 실행**
+    유사특허 검색 · 핵심 분석`"]:::ai
+    F["`**결과 미리보기** *(결제 전)*
+    ─────────────────
+    *분석* 유사특허 건수 · 핵심 키워드
+         · 등록가능성 등급
+    *가이드* 특허 전략 힌트 🔒블러`"]:::customer
+    G["`**결제** *(토스페이먼츠)*
+    카드 · 간편결제`"]:::payment
+    H{결제 성공?}
+    I["`**전체 보고서 열람**
+    ─────────────────
+    유사특허 상세 목록
+    독립항 초안
+    등록 전략 및 다음 단계`"]:::customer
+
+    %% 재접근 링크 발송
+    J1["`📧 이메일 고유 링크 발송`"]:::side
+    J2["`📱 SMS 고유 링크 발송`"]:::side
+    K["`**링크로 재접근**`"]:::customer
+
+    %% 관리자
+    Z(["`**관리자 페이지 확인**
+    고객 정보 · 결제 · 보고서`"]):::urim
+    Z2(["`**담당자 직접 링크 재발송**
+    *(CS 요청 시)*`"]):::urim
+
+    %% 메인 플로우 연결
+    A -->|링크 발송| B
+    B --> C
+    C --> D
+    V -.->|자동 채움| D
+    D --> E
+    E --> F
+    F --> G
+    G --> H
+    H -->|성공| I
+    H -->|실패| G
+    I --> J1
+    I --> J2
+    J1 & J2 --> K
+    J1 & J2 -.->|자동 알림| Z
+    Z -.->|CS 요청시| Z2
+    Z2 -.->|링크 재발송| K
+
+    %% 스타일
+    classDef urim fill:#A8D5C2,stroke:#5FAF8C,color:#1a1a1a,rx:12
+    classDef customer fill:#C8B4E8,stroke:#9B7FCB,color:#1a1a1a
+    classDef ai fill:#F5CBA7,stroke:#E08940,color:#1a1a1a
+    classDef payment fill:#F1A9A0,stroke:#C0392B,color:#1a1a1a
+    classDef side fill:#FAFAFA,stroke:#AAAAAA,color:#555555,stroke-dasharray: 4 3
