@@ -1,6 +1,6 @@
 # patents_local.db — 스키마 문서
 
-> 파일 경로: `es-search/output/src_db/patents_local.db`
+> 파일 경로: `es-search/data/local/patents_local.db`
 > 생성일: 2026-06-10
 > 레코드 수: 3,192건 전수 / 195.2 MB
 > 출처 인덱스: `kr_pub_patents` + `kr_opn_patents` (두 인덱스 합산, pub 우선)
@@ -115,6 +115,7 @@ LIMIT 20;
 
 | 파일 | 설명 |
 |---|---|
-| `build_local_db.py` | DB 생성 스크립트 (ES → SQLite) |
+| `../../scripts/db/build_local_db.py` | DB 생성 스크립트 (ES → SQLite) |
+| `../../scripts/db/build_local_db_v2.py` | v2 ES DB 생성 스크립트 (ES → SQLite) |
 | `build_db_log.txt` | 빌드 로그 |
-| `../disclaimer_anchor_dimensions.csv` | 32개 컬럼 측정값 (3,192건, DB와 동일 출원번호) |
+| `../../output/disclaimer_anchor_dimensions.csv` | 32개 컬럼 측정값 (3,192건, DB와 동일 출원번호) |

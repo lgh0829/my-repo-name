@@ -5,7 +5,7 @@ patents.db: patents + patents_embodiment + patents_parsed
 import sqlite3, json, urllib.request, base64, re, csv, os, time
 from datetime import datetime
 
-DB_PATH = 'output/src_db/patents_local.db'
+DB_PATH = 'data/local/patents_local.db'
 CSV_PATH = 'output/disclaimer_anchor_dimensions.csv'
 BATCH    = 100
 FIELDS   = [
@@ -162,6 +162,7 @@ def main():
     total = len(appnos)
     print(f"[{datetime.now():%H:%M:%S}] 대상: {total}건")
 
+    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
     con = sqlite3.connect(DB_PATH)
     con.execute("PRAGMA journal_mode=WAL")
     con.execute("PRAGMA synchronous=NORMAL")

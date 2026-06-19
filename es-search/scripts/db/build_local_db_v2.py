@@ -13,10 +13,10 @@
     claims[] → [{claim_number, text}, ...]
   documents.GRANT.grant_id / grant_date
 """
-import sqlite3, json, urllib.request, base64, re, csv, time
+import sqlite3, json, urllib.request, base64, re, csv, time, os
 from datetime import datetime
 
-DB_PATH  = 'output/src_db/patents_local_v2.db'
+DB_PATH  = 'data/local/patents_local_v2.db'
 CSV_PATH = 'output/disclaimer_anchor_dimensions.csv'
 ES_URL   = 'http://192.168.0.7:9207'
 ES_CREDS = base64.b64encode(b'elastic:88888888').decode()
@@ -273,6 +273,7 @@ def main():
     total = len(appnos)
     print(f"[{datetime.now():%H:%M:%S}] 대상: {total}건")
 
+    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
     con = sqlite3.connect(DB_PATH)
     con.execute("PRAGMA journal_mode=WAL")
     con.execute("PRAGMA synchronous=NORMAL")

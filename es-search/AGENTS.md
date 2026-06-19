@@ -1,6 +1,4 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code when working in this repository.
+# AGENTS.md — es-search
 
 이 저장소는 Elasticsearch 특허 데이터를 조회해 명세서 작성 스타일을 분석하고, 리포트·CSV·스타일 프롬프트·간단한 뷰어 앱을 만드는 작업 공간이다.
 
