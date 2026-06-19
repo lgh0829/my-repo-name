@@ -1,0 +1,27 @@
+{
+  "name": "patsol-token-harness",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "PatSol 디자인 토큰 하네스 — 검증·리포트·산출물 생성·Figma 동기화",
+  "bin": {
+    "tokens": "src/cli.ts"
+  },
+  "scripts": {
+    "tokens": "tsx src/cli.ts",
+    "normalize": "tsx src/cli.ts normalize",
+    "lint": "tsx src/cli.ts lint",
+    "report": "tsx src/cli.ts report",
+    "build": "tsx src/cli.ts build",
+    "all": "tsx src/cli.ts all"
+  },
+  "dependencies": {
+    "culori": "^4.0.1"
+  },
+  "devDependencies": {
+    "@types/culori": "^4.0.1",
+    "@types/node": "^22.19.21",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "generatedFrom": "designTokens-v0.2.ts (v0.2 정리 후)",
+  "counts": {
+    "error": 0,
+    "warn": 60,
+    "info": 2
+  },
+  "errors": [],
+  "note": "정리 완료 baseline. error 0. warn은 landing/topic 등 마케팅 일회성 hex 위주(정책 보류)."
+}

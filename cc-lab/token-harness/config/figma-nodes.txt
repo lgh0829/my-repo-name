@@ -1,0 +1,29 @@
+# ─────────────────────────────────────────────────────────────
+# Figma 노드 입력 슬롯  (Dev Mode MCP · get_variable_defs)
+# ─────────────────────────────────────────────────────────────
+# Figma에서 컴포넌트/프레임 선택 → 우클릭 → "Copy link to selection"
+# 복사된 URL을 한 줄에 하나씩 붙여넣으세요.
+#
+# 허용 형식 (둘 다 가능):
+#   1) URL만        : https://www.figma.com/design/XD5Txm.../Patsol?node-id=123-456
+#   2) 라벨 | URL   : primaryButton | https://www.figma.com/design/XD5Txm.../Patsol?node-id=123-456
+#
+# 규칙:
+#   - '#'로 시작하는 줄과 빈 줄은 무시됩니다.
+#   - node-id 가 없는 URL(파일 전체 링크)은 건너뜁니다. 반드시 노드 선택 링크여야 합니다.
+#   - 라벨을 주면 리포트가 읽기 쉬워집니다(예: primary/500, colorStyles, button-primary).
+#
+# 채운 뒤 저에게 "됐어"라고 알려주시면:
+#   npx tsx src/cli.ts nodes   ← 파싱 결과 확인
+#   (제가 노드별 변수 추출 → dist/figma-vars.json 저장)
+#   npx tsx src/cli.ts figma-diff   ← SSOT 대조 → dist/figma-diff.md
+# ─────────────────────────────────────────────────────────────
+
+# 예시 (지우고 실제 URL로 교체):
+ui screen | https://www.figma.com/design/XD5TxmzMB68uXpKRmrgHpt/Patsol_StoryBoard?node-id=348-9543
+ui screen | https://www.figma.com/design/XD5TxmzMB68uXpKRmrgHpt/Patsol_StoryBoard?node-id=1261-1921
+Component | https://www.figma.com/design/XD5TxmzMB68uXpKRmrgHpt/Patsol_StoryBoard?node-id=1453-2373
+ui screen | https://www.figma.com/design/XD5TxmzMB68uXpKRmrgHpt/Patsol_StoryBoard?node-id=1420-2537
+Component | https://www.figma.com/design/XD5TxmzMB68uXpKRmrgHpt/Patsol_StoryBoard?node-id=1119-2477
+Modal | https://www.figma.com/design/XD5TxmzMB68uXpKRmrgHpt/Patsol_StoryBoard?node-id=301-8415&t=cqvajXfIpMoMB38L-4
+Modal | https://www.figma.com/design/XD5TxmzMB68uXpKRmrgHpt/Patsol_StoryBoard?node-id=1274-5945&t=cqvajXfIpMoMB38L-4

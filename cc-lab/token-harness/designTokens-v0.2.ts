@@ -43,7 +43,8 @@ const primitiveColors = {
 	gray50:  "#FAFAFA",
 	// gray100 (#F5F5F5) 제거 — v0.2: 미참조
 	gray200: "#EDEDED",
-	gray250: "#EEEEEE",
+	// gray250 (#EEEEEE) 제거 — v0.2 정리: gray200과 ΔE<1 near-dup이자 스케일 역전(250>200인데 더 밝음).
+	//   유일 참조였던 border.light를 gray200으로 통합.
 	gray300: "#E0E0E0",
 	gray400: "#D9D9D9",
 	gray425: "#CCCCCC",
@@ -91,9 +92,13 @@ const primitiveColors = {
 	warning500: "#FFAB03",
 	warning100: "#FFE4B5",
 
+	// --- Action / Metric greens (semantic 직박힘 정리: primitive 경유) ---
+	excelGreen:     "#6EB92C", // action.excel 전용 (Excel 내보내기 버튼)
+	metricLowGreen: "#22CC00", // metric.low 전용 (낮음 지표)
+
 	// --- Special / Context-specific ---
 	selectedBackground:   "#EBEFF8",
-	subtleBackground:     "#F4F4F4",
+	subtleBackground:     "#F5F5F5", // v0.2 정리: #F4F4F4→#F5F5F5 통일(제품 #f5f5f5·#f4f4f4 수렴, ΔE0.2)
 	accentSoftBackground: "#E8F0FE",
 	accentChipBackground: "#EEF2FF",
 	researchTabBackground:"#EDF2FF",
@@ -145,7 +150,7 @@ export const colorTokens = {
 		muted:     primitiveColors.gray700,   // ⚠ gray700 역전 주석 참조
 		readonly:  primitiveColors.gray650,   // ⚠ gray650 역전 주석 참조
 		subtle:    primitiveColors.gray600,
-		helper:    primitiveColors.gray575,
+		helper:    primitiveColors.gray650,  // v0.2 정리: gray575(#888,3.54:1 미달) → gray650(#5E5E5E,6.4:1 AA)
 		dim:       primitiveColors.gray595,   // ⚠ gray595 역전 주석 참조
 		panel:     primitiveColors.gray590,   // ⚠ gray590 역전 주석 참조
 		label:     primitiveColors.grayWarm,  // v0.2: gray580 → grayWarm
@@ -179,13 +184,13 @@ export const colorTokens = {
 		errorAccent: primitiveColors.errorAccent,
 	},
 	border: {
-		default:      primitiveColors.gray200,
-		light:        primitiveColors.gray250,
-		subtle:       primitiveColors.gray300,
-		strong:       primitiveColors.gray400,
-		neutral:      primitiveColors.gray425,
-		hint:         primitiveColors.gray525,
-		muted:        "#CDCDCD",
+		// --- neutral: 진할수록 강조. default = 라이브 최다 사용 divider ---
+		// v0.2 정리: default·light(#EDEDED 중복) / subtle(#E0E0E0) / strong(#D9D9D9)
+		//   / neutral·muted(#CCCCCC 중복) / hint(#AAAAAA) 7개를 명도순 3단계로 수렴.
+		default:      primitiveColors.gray200,  // #EDEDED  기본 divider
+		strong:       primitiveColors.gray400,  // #D9D9D9  강조 보더(카드·인풋)
+		strongest:    primitiveColors.gray525,  // #AAAAAA  최강조 보더
+		// --- semantic (유지) ---
 		accent:       brandTokens.primary,
 		accentMuted:  primitiveColors.blue300,
 		inverse:      primitiveColors.gray600,
@@ -204,7 +209,7 @@ export const colorTokens = {
 	action: {
 		info:         primitiveColors.timelineAccent,
 		selected:     primitiveColors.researchSelected,
-		excel:        "#6EB92C",
+		excel:        primitiveColors.excelGreen,
 		danger:       primitiveColors.dangerAction,
 		dangerOutline:primitiveColors.dangerOutline,
 		dangerHover:  primitiveColors.dangerActionHover,
@@ -213,7 +218,7 @@ export const colorTokens = {
 		danger: primitiveColors.metricDanger,
 		high:   primitiveColors.metricDanger,
 		medium: primitiveColors.warning500,
-		low:    "#22CC00",
+		low:    primitiveColors.metricLowGreen,
 	},
 	chart: {
 		blueScale: chartBlueScale,
@@ -315,6 +320,38 @@ export const typographyTokens = {
 		bold:      700,
 		extrabold: 800,
 	},
+	// v0.2 신설: 타입 스케일 (SaaS 컴팩트, 7스텝)
+	fontSize: {
+		xs:   "12px",
+		sm:   "14px",
+		base: "16px",
+		lg:   "18px",
+		xl:   "20px",
+		"2xl":"24px",
+		"3xl":"30px",
+	},
+	lineHeight: {
+		tight:  1.3, // 제목
+		snug:   1.4, // 레이블/캡션
+		normal: 1.5, // 본문
+	},
+} as const;
+
+/**
+ * 역할 기반 텍스트 스타일 (size + weight + lineHeight 묶음).
+ * 사용자 앵커: 섹션제목 18/semibold · item제목 16/semibold · 본문 16/regular
+ *            · 버튼 14/semibold · 레이블 12/medium. 나머지는 표준 램프로 보강.
+ */
+export const textStyles = {
+	display:   { fontSize: "30px", fontWeight: 700, lineHeight: 1.3 },
+	h1:        { fontSize: "24px", fontWeight: 700, lineHeight: 1.3 },
+	h2:        { fontSize: "18px", fontWeight: 600, lineHeight: 1.4 }, // 섹션 제목
+	itemTitle: { fontSize: "16px", fontWeight: 600, lineHeight: 1.5 },
+	body:      { fontSize: "16px", fontWeight: 400, lineHeight: 1.5 },
+	bodySm:    { fontSize: "14px", fontWeight: 400, lineHeight: 1.5 },
+	button:    { fontSize: "14px", fontWeight: 600, lineHeight: 1.0 },
+	label:     { fontSize: "12px", fontWeight: 500, lineHeight: 1.4 },
+	caption:   { fontSize: "12px", fontWeight: 400, lineHeight: 1.4 },
 } as const;
 
 export const spacingTokens = {
@@ -395,6 +432,7 @@ export const themeModeTokens = {
 export const designTokens = {
 	color:      colorTokens,
 	typography: typographyTokens,
+	textStyles: textStyles,
 	spacing:    spacingTokens,
 	radius:     radiusTokens,
 	shadow:     shadowTokens,
