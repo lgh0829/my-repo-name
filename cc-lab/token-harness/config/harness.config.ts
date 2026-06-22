@@ -42,23 +42,15 @@ export const harnessConfig = {
 		{ fg: "color.info.text", bg: "color.info.background", label: "info 배너" },
 	] as ContrastPair[],
 
-	/** 명도 역전 예외 — 의도된 역할 분리로 간주(info로 강등). */
-	lightnessExceptions: [
-		["gray650", "gray700"],
-		["gray590", "gray595"],
-	] as [string, string][],
+	/** 명도 역전 예외 — v0.3 ramp 정리로 역전 구간 제거됨. 예외 없음. */
+	lightnessExceptions: [] as [string, string][],
 
-	/** 순수 gray 스케일에서 분리된 의미색 — 역전 검사 제외. */
-	lightnessExcludeNames: ["grayWarm", "grayCool"],
+	/** 순수 gray 스케일에서 분리된 의미색 — v0.3에서 grayWarm/grayCool 폐기됨. v0.5에서 grayDisabled도 gray300으로 ramp 편입. */
+	lightnessExcludeNames: [] as string[],
 
 	/** primitive 네이밍 allowlist (스케일 패턴 외 허용 의미명). */
 	namingAllowlist: [
-		"white", "black", "grayWarm", "grayCool", "infoText",
-		"danger", "dangerAction", "dangerActionHover", "errorAccent",
-		"metricDanger", "iconDanger", "dangerOutline",
-		"selectedBackground", "subtleBackground", "accentSoftBackground",
-		"accentChipBackground", "researchTabBackground", "summaryTableAccent",
-		"timelineAccent", "researchSelected",
+		"white", "black", "infoText",
 		"eventBannerStart", "eventBannerEnd", "eventButtonHover",
 		"excelGreen", "metricLowGreen",
 	],
@@ -90,7 +82,7 @@ export const harnessConfig = {
 		"main primary": "color.brand.primary",
 		"color/color-wh": "color.primitive.white",
 		"Black": "color.primitive.gray900",
-		"color/color-gray/700": "color.primitive.gray600",
+		"color/color-gray/700": "color.primitive.gray450",
 		"color/info-color/500": "color.action.info",
 	} as Record<string, string>,
 
