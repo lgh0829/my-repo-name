@@ -2,8 +2,8 @@
  * @file 디자인 토큰 정의
  * @description MUI 테마와 Tailwind 설정에서 함께 참조할 스타일 기준값을 관리합니다.
  * @author yunjulee
- * @version 0.4.3
- * @lastModified 2026-06-22
+ * @version 0.4.4
+ * @lastModified 2026-06-24
  *
  * --- v0.2 변경 내역 ---
  * [제거] gray100, gray450 — 미참조
@@ -44,6 +44,14 @@
  *   · danger500(#FF3232) = 기준 main red
  *   · 매핑: errorAccent→400, dangerAction→450, danger→500,
  *           dangerActionHover→550, iconDanger→600, metricDanger→650, dangerOutline→700
+ *
+ * --- v0.4.4 변경 내역 ---
+ * [border 시맨틱 재정비] 실사용 기준 이름·값 재배정 (PatSol-Front audit 결과 반영)
+ *   · 구 3단계(default/strong/strongest) → 4단계(subtle/default/muted/neutral)
+ *   · 이름 재배정: default(gray150)→subtle / strong(gray250)→muted / strongest(gray400)→neutral
+ *   · default는 gray200(#E0E0E0)으로 재배정 — "기본 카드·인풋 보더"에 더 적합한 값
+ *   · 제거: strong(→muted로 이관) / strongest(0회 미사용, →neutral로 이관)
+ *   · PatSol-Front 실사용 빈도: subtle 70회+, muted 30회+, neutral 10회+, default 10회
  */
 
 const primitiveColors = {
@@ -77,9 +85,9 @@ const primitiveColors = {
 	// 숫자 공백(250→400, 450→600)은 팔레트의 실제 지각 단절을 반영한다.
 	gray50: "#FAFAFA",  // background.surface
 	gray100: "#F5F5F5",  // background.subtle      +50  ΔE  1.0
-	gray150: "#EDEDED",  // border.default          +50  ΔE  1.7
-	gray200: "#E0E0E0",  // border.strong           +50  ΔE  2.8
-	gray250: "#D9D9D9",  // border intermediate     +50  ΔE  1.6
+	gray150: "#EDEDED",  // border.subtle           +50  ΔE  1.7
+	gray200: "#E0E0E0",  // border.default          +50  ΔE  2.8
+	gray250: "#D9D9D9",  // border.muted            +50  ΔE  1.6
 	gray300: "#BDBDBD",  // text/bg.disabled        +50  ΔE  6.9
 	gray400: "#AAAAAA",  // border.strongest        +100 ΔE  5.2
 	gray450: "#9E9E9E",  // text.tertiary           +50  ΔE  3.6
@@ -202,41 +210,49 @@ export const colorTokens = {
 		tabAccent: primitiveColors.blue100,   // was researchTabBackground (#EDF2FF, ΔE 1.4)
 		tableAccent: primitiveColors.blue200, // was summaryTableAccent
 		accentMuted: primitiveColors.blue100,
+		// Group 3: Status
 		disabled: primitiveColors.gray300,
 		danger: primitiveColors.danger450,
 		dangerHover: primitiveColors.danger550,
 		errorAccent: primitiveColors.danger400,
 	},
 	border: {
-		// --- neutral: 진할수록 강조. default = 라이브 최다 사용 divider ---
-		// v0.2 정리: default·light(#EDEDED 중복) / subtle(#E0E0E0) / strong(#D9D9D9)
-		//   / neutral·muted(#CCCCCC 중복) / hint(#AAAAAA) 7개를 명도순 3단계로 수렴.
-		default: primitiveColors.gray150,  // #EDEDED  기본 divider
-		strong: primitiveColors.gray250,  // #D9D9D9  강조 보더(카드·인풋)
-		strongest: primitiveColors.gray400,  // #AAAAAA  최강조 보더
-		// --- semantic (유지) ---
-		accent: brandTokens.primary,
-		accentMuted: primitiveColors.blue300,
-		inverse: primitiveColors.gray600,
-		danger: primitiveColors.danger500,
-		errorAccent: primitiveColors.danger400,
+		// Group 1: Neutral — gray 기반 구분선. subtle(연함) → neutral(진함) 순.
+		// v0.4.4: 구 default/strong/strongest → subtle/default/muted/neutral 4단계 재정비.
+		subtle: primitiveColors.gray150,  // #EDEDED  가장 연한 hr·divider
+		default: primitiveColors.gray200,  // #E0E0E0  카드·모달·인풋 표준 보더
+		muted: primitiveColors.gray250,  // #D9D9D9  테이블 셀·파일업로드·강조 섹션 보더
+		neutral: primitiveColors.gray400,  // #AAAAAA  가장 진한 중립 보더 (Research 탭·아이템)
+		inverse: primitiveColors.gray600,  // #757575  어두운 배경 위 보더
+		// Group 2: Brand — 파랑 기반 보더
+		accent: brandTokens.primary,      // #3361BE  focus ring, 선택 상태 보더
+		accentMuted: primitiveColors.blue300,  // #A3BCE8  연한 파랑 보더
+		// Group 3: Status — 상태 표현 보더
+		danger: primitiveColors.danger500,  // #FF3232  오류 폼 보더
+		errorAccent: primitiveColors.danger400,  // #FD6051  오류 장식 보더 (dashed 포함)
 	},
 	icon: {
-		default: primitiveColors.gray800,
-		subtle: primitiveColors.gray600,
-		inverse: primitiveColors.white,
-		accent: brandTokens.primary,
-		danger: primitiveColors.danger500,
-		error: primitiveColors.danger600,
-		success: primitiveColors.success500,
+		// Group 1: Neutral — gray 기반 아이콘 색
+		default: primitiveColors.gray800,  // #424242  기본 아이콘
+		subtle:  primitiveColors.gray600,  // #757575  부가·보조 아이콘
+		inverse: primitiveColors.white,    // #FFFFFF  어두운 배경 위 아이콘
+		// Group 2: Brand — 파랑 기반 아이콘
+		accent:  brandTokens.primary,      // #3361BE  브랜드 강조 아이콘
+		// Group 3: Status — 상태 표현 아이콘
+		danger:  primitiveColors.danger500,  // #FF3232  오류·위험 아이콘
+		error:   primitiveColors.danger600,  // #EF4444  에러 아이콘 (icon.error 전용)
+		success: primitiveColors.success500, // #22C55E  성공 아이콘
 	},
 	action: {
-		info: primitiveColors.blue400,
-		selected: primitiveColors.blue600,
-		excel: primitiveColors.excelGreen,
-		danger: primitiveColors.danger450,
-		dangerOutline: primitiveColors.danger700,
-		dangerHover: primitiveColors.danger550,
+		// Group 1: Brand — 파랑 기반 인터랙션
+		info:     primitiveColors.blue400,   // #1976D2  타임라인·정보 액션
+		selected: primitiveColors.blue600,   // #2F55A3  선택 상태 액션
+		// Group 2: Utility — 특정 도구 전용
+		excel:    primitiveColors.excelGreen, // #6EB92C  Excel 내보내기 버튼 전용
+		// Group 3: Status — danger 계열 액션
+		danger:       primitiveColors.danger450,  // #F54848  Danger 버튼 fill
+		dangerHover:  primitiveColors.danger550,  // #E55648  Danger 버튼 hover
+		dangerOutline: primitiveColors.danger700, // #EF3535  Danger outline 버튼
 	},
 	metric: {
 		// 의견: high 시멘틱을 danger로 흡수하는 방안 제안.
