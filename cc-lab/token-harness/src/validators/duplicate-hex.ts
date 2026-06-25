@@ -1,5 +1,6 @@
 import type { Finding, NormalizedModel } from "../model.ts";
 import { normHex } from "../color.ts";
+import { parse } from "culori";
 
 /** primitive 레이어 내부에서 같은 hex가 여러 이름으로 존재하면 warn. */
 export function checkDuplicateHex(model: NormalizedModel): Finding[] {
@@ -8,6 +9,9 @@ export function checkDuplicateHex(model: NormalizedModel): Finding[] {
 	for (const leaf of model.leaves) {
 		if (leaf.type !== "color" || typeof leaf.value !== "string") continue;
 		if (!leaf.path.startsWith("color.primitive.")) continue;
+		// alpha < 1 인 rgba 값은 solid color와 별도 토큰이므로 중복 검사 제외
+		const parsed = parse(leaf.value as string);
+		if (parsed && (parsed.alpha ?? 1) < 1) continue;
 		const h = normHex(leaf.value);
 		(groups[h] ??= []).push(leaf.path);
 	}

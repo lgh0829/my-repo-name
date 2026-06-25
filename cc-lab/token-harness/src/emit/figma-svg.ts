@@ -35,13 +35,25 @@ export function emitFigmaSvg(): string {
 		y += 22;
 	};
 
+	const isAlphaColor = (v: string) => {
+		const m = v.match(/rgba\(\s*[\d.]+\s*,\s*[\d.]+\s*,\s*[\d.]+\s*,\s*([\d.]+)\s*\)/i);
+		return m ? parseFloat(m[1]) < 1 : false;
+	};
+
 	const colorGrid = (cards: Card[]) => {
 		cards.forEach((c, i) => {
 			const col = i % COLS, row = Math.floor(i / COLS);
 			const x = MX + col * (CARD_W + GAP_X);
 			const cy = y + row * (CARD_H + LABEL_H + GAP_Y);
 			const isLight = (luminance(c.value) || 0) > 0.85;
-			body.push(`<rect x="${x}" y="${cy}" width="${CARD_W}" height="${CARD_H}" rx="6" fill="${c.value}" ${isLight ? 'stroke="#EDEDED"' : ""}/>`);
+			const alpha = isAlphaColor(c.value);
+			if (alpha) {
+				// 체커보드 배경 + rgba 오버레이
+				body.push(`<rect x="${x}" y="${cy}" width="${CARD_W}" height="${CARD_H}" rx="6" fill="url(#checker)" stroke="#EDEDED"/>`);
+				body.push(`<rect x="${x}" y="${cy}" width="${CARD_W}" height="${CARD_H}" rx="6" fill="${c.value}"/>`);
+			} else {
+				body.push(`<rect x="${x}" y="${cy}" width="${CARD_W}" height="${CARD_H}" rx="6" fill="${c.value}" ${isLight ? 'stroke="#EDEDED"' : ""}/>`);
+			}
 			body.push(`<text x="${x}" y="${cy + CARD_H + 14}" font-size="11" font-weight="600" fill="#1E1E1E">${esc(c.label)}</text>`);
 			body.push(`<text x="${x}" y="${cy + CARD_H + 27}" font-size="10" fill="#888888" font-family="monospace">${esc(c.value)}</text>`);
 		});
@@ -50,7 +62,7 @@ export function emitFigmaSvg(): string {
 	};
 
 	// --- 색상 그룹 (정규화 모델에서 group별로) ---
-	const groupOrder = ["brand", "primitive", "text", "background", "border", "icon", "action", "metric", "chart", "topic", "status", "info", "highlight", "event", "overlay", "landing"];
+	const groupOrder = ["brand", "primitive", "text", "background", "border", "icon", "action", "metric", "chart", "topic", "highlight", "event", "overlay", "landing"];
 	const titles: Record<string, string> = {
 		brand: "Brand", primitive: "Primitive", text: "Text", background: "Background",
 		border: "Border", icon: "Icon", action: "Action", metric: "Metric", chart: "Chart",
@@ -118,8 +130,9 @@ export function emitFigmaSvg(): string {
 	y += Math.ceil(Object.keys(t.shadow).length / 4) * 110 + 40;
 
 	const H = y;
+	const checkerDef = `<pattern id="checker" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#E0E0E0"/><rect width="6" height="6" fill="#FFFFFF"/><rect x="6" y="6" width="6" height="6" fill="#FFFFFF"/></pattern>`;
 	return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" font-family="Pretendard, sans-serif">
-<defs>${shadowDefs.join("")}</defs>
+<defs>${checkerDef}${shadowDefs.join("")}</defs>
 <rect width="${W}" height="${H}" fill="#FFFFFF"/>
 <text x="${MX}" y="48" font-size="28" font-weight="800" fill="#1E1E1E">PatSol Design Tokens</text>
 <text x="${MX}" y="70" font-size="13" fill="#757575">designTokens-v0.2 · brand primary #3361BE · 생성: token-harness</text>

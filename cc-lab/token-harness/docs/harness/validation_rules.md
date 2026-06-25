@@ -27,7 +27,7 @@
 - 제안: 가장 가까운 primitive를 ΔE2000(`differenceCiede2000`)로 찾아 `ΔE < 2`면 "해당 primitive로 교체", 아니면 "primitive 신규 등록 후 참조" 권고. `data`에 후보·ΔE 기록.
 
 ## 5. naming (`validators/naming.ts`)
-- primitive 이름: `^[a-z]+[0-9]{2,3}$`(스케일) 또는 `config.namingAllowlist`(의미명: white/black/danger/grayWarm/infoText 등)에 포함 → 통과. 아니면 warn.
+- primitive 이름: `^[a-z]+[0-9]{2,3}$`(스케일) 또는 `config.namingAllowlist`(의미명: white/black/danger/grayWarm 등)에 포함 → 통과. 아니면 warn.
 - 자동 수정 불가(사람 판단) → 항상 warn.
 
 ## 6. brand-tone (`validators/brand-tone.ts`)

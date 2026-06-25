@@ -50,7 +50,7 @@ export const harnessConfig = {
 
 	/** primitive 네이밍 allowlist (스케일 패턴 외 허용 의미명). */
 	namingAllowlist: [
-		"white", "black", "infoText",
+		"white", "black", "blackA20", "blackA40", "whiteA50",
 		"eventBannerStart", "eventBannerEnd", "eventButtonHover",
 		"excelGreen", "metricLowGreen",
 	],

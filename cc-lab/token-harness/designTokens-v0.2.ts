@@ -2,8 +2,8 @@
  * @file 디자인 토큰 정의
  * @description MUI 테마와 Tailwind 설정에서 함께 참조할 스타일 기준값을 관리합니다.
  * @author yunjulee
- * @version 0.4.4
- * @lastModified 2026-06-24
+ * @version 0.4.5
+ * @lastModified 2026-06-25
  *
  * --- v0.2 변경 내역 ---
  * [제거] gray100, gray450 — 미참조
@@ -45,6 +45,14 @@
  *   · 매핑: errorAccent→400, dangerAction→450, danger→500,
  *           dangerActionHover→550, iconDanger→600, metricDanger→650, dangerOutline→700
  *
+ * --- v0.4.5 변경 내역 ---
+ * [topic → label 재정의] 도메인 중립 + status 분리 시맨틱으로 전환
+ *   · topic.objective/solution 제거 — 기능명 노출 + warning/success 오용 구조 제거
+ *   · label.purple / label.teal 으로 교체 (bg + text + border 세트)
+ *   · categorical primitive 신설 (purple50/800, teal50/800) — status 팔레트와 분리
+ * [warning 스케일 부분 확장] metric.medium 전용
+ *   · warning700 (#A36300) 추가 — metric.medium 텍스트 색 (H=36°, 4.84:1)
+ *
  * --- v0.4.4 변경 내역 ---
  * [border 시맨틱 재정비] 실사용 기준 이름·값 재배정 (PatSol-Front audit 결과 반영)
  *   · 구 3단계(default/strong/strongest) → 4단계(subtle/default/muted/neutral)
@@ -66,6 +74,7 @@ const primitiveColors = {
 	blue400: "#1976D2",  // action.info (was timelineAccent, MUI blue, L=56%)
 	blue500: "#3361BE",  // brand.primary
 	blue600: "#2F55A3",  // action.selected (was researchSelected, L=46%)
+	blue700: "#014361",  // text.info (정보 배너 텍스트, ΔL=11 from blue600, L=26.4)
 
 	// --- Chart Blue ---
 	chartBlue50: "#EBF0FA",
@@ -75,9 +84,6 @@ const primitiveColors = {
 	chartBlue400: "#527CD1",
 	chartBlue800: "#284C95",
 	chartBlue900: "#1D376D",
-
-	// --- Info ---
-	infoText: "#014361",
 
 	// --- Gray Scale (13 steps, ΔE-proportional numbering) ---
 	// v0.4.1: v0.4 번호 체계 유지 + gray300(#BDBDBD) 추가.
@@ -105,23 +111,48 @@ const primitiveColors = {
 	// --- Red / Danger (7 steps, ΔE-proportional numbering) ---
 	// v0.4.2: ΔE2000 기반 50단위 스케일. danger400(밝음) → danger700(어둠).
 	// 전 구간 ΔE 2.9~5.2, L=62~69% 범위. danger500 = 기준 main red.
+	danger50: "#FFF1F0",  // status.dangerBackground
 	danger400: "#FD6051",  // bg.errorAccent (coral)              L=69.1%
 	danger450: "#F54848",  // action.danger / bg.danger           +50  ΔE  5.1
 	danger500: "#FF3232",  // text.danger / border.danger (기준)   +50  ΔE  3.9
 	danger550: "#E55648",  // action.dangerHover / bg.dangerHover +50  ΔE  5.2
 	danger600: "#EF4444",  // icon.error                         +50  ΔE  3.3
-	danger650: "#FB2828",  // metric.danger / metric.high         +50  ΔE  4.9
+	danger650: "#FB2828",  // (미사용 슬롯 — 스케일 연속성 유지)   +50  ΔE  4.9
 	danger700: "#EF3535",  // action.dangerOutline (어둠)          +50  ΔE  2.9
+	danger800: "#B91C1C",  // metric.high text                    +100 6.47:1 on white
 
 	// --- Success / Warning ---
+	success50: "#F0FDF4",  // status.successBackground
 	success300: "#7DDE86",
 	success500: "#22C55E",
-	warning500: "#FFAB03",
+	success700: "#15803D",
 	warning100: "#FFE4B5",
+	warning500: "#FFAB03",
+	warning700: "#A36300",  // metric.medium text  H=36°  4.84:1 on white
+
+	// --- Categorical (label chip 전용 — status 의미 없음) ---
+	// Atlassian / Cloudscape 방식: status 팔레트와 분리된 decorative 색상.
+	// 6색 전부 WCAG AA(4.5:1+) on white.
+	purple50: "#F3EEFF",  // label.purple background
+	purple800: "#5B21B6",  // label.purple text / border   H=270°  8.98:1
+	teal50: "#CCFBF1",  // label.teal background
+	teal800: "#115E59",  // label.teal text / border     H=180°  7.58:1
+	indigo50: "#EEF2FF",  // label.indigo background
+	indigo800: "#3730A3",  // label.indigo text / border   H=240°  10.04:1
+	orange50: "#FFF7ED",  // label.orange background
+	orange800: "#9A3412",  // label.orange text / border   H=20°   7.30:1
+	pink50: "#FDF2F8",  // label.pink background
+	pink800: "#9D174D",  // label.pink text / border     H=330°  8.03:1
+	lime50: "#F7FEE7",  // label.lime background
+	lime800: "#3F6212",  // label.lime text / border     H=90°   7.19:1
+
+	// --- Black / White alpha (overlay scrim 전용) ---
+	blackA20: "rgba(0, 0, 0, 0.20)",   // overlay.loading
+	blackA40: "rgba(0, 0, 0, 0.40)",   // overlay.tutorial
+	whiteA50: "rgba(255, 255, 255, 0.50)", // overlay.disabled
 
 	// --- Action / Metric greens (semantic 직박힘 정리: primitive 경유) ---
 	excelGreen: "#6EB92C", // action.excel 전용 (Excel 내보내기 버튼)
-	metricLowGreen: "#22CC00", // metric.low 전용 (낮음 지표)
 
 	// --- Event / Marketing ---
 	eventBannerStart: "#6FC6F1",
@@ -129,13 +160,13 @@ const primitiveColors = {
 	eventButtonHover: "#F5FAFF",
 
 	// --- Chart: Trend ---
-	trendMint100: "#C6E3CB",
-	trendCyan200: "#83CACF",
-	trendSky300: "#47AED0",
-	trendBlue400: "#3984B6",
-	trendBlue500: "#2C5A9C",
-	trendIndigo600: "#1E3082",
-	trendNavy700: "#141C59",
+	trend100: "#C6E3CB",  // Mint
+	trend200: "#83CACF",  // Cyan
+	trend300: "#47AED0",   // Sky
+	trend400: "#3984B6",  // Blue
+	trend500: "#2C5A9C",  // Blue
+	trend600: "#1E3082", // Indigo
+	trend700: "#141C59",  // Navy
 } as const;
 
 const brandTokens = {
@@ -191,6 +222,7 @@ export const colorTokens = {
 		danger: primitiveColors.danger500,
 		success: primitiveColors.success500,
 		warning: primitiveColors.warning500,
+		info: primitiveColors.blue700,         // #014361  정보 배너 텍스트 / 구 info.text
 	},
 	background: {
 		// Group 1: Neutral
@@ -215,6 +247,10 @@ export const colorTokens = {
 		danger: primitiveColors.danger450,
 		dangerHover: primitiveColors.danger550,
 		errorAccent: primitiveColors.danger400,
+		successSubtle: primitiveColors.success50,  // #F0FDF4  배너·알림 연한 성공 배경 / 구 status.successBackground
+		dangerSubtle: primitiveColors.danger50,   // #FFF1F0  배너·알림 연한 위험 배경 / 구 status.dangerBackground
+		info: primitiveColors.blue100,            // #EBF0FA  정보 배너 배경 / 구 info.background
+		keywordHighlight: primitiveColors.warning100, // #FFE4B5  검색 키워드 배경 / 구 highlight.keywordBackground
 	},
 	border: {
 		// Group 1: Neutral — gray 기반 구분선. subtle(연함) → neutral(진함) 순.
@@ -234,36 +270,35 @@ export const colorTokens = {
 	icon: {
 		// Group 1: Neutral — gray 기반 아이콘 색
 		default: primitiveColors.gray800,  // #424242  기본 아이콘
-		subtle:  primitiveColors.gray600,  // #757575  부가·보조 아이콘
+		subtle: primitiveColors.gray600,  // #757575  부가·보조 아이콘
 		inverse: primitiveColors.white,    // #FFFFFF  어두운 배경 위 아이콘
 		// Group 2: Brand — 파랑 기반 아이콘
-		accent:  brandTokens.primary,      // #3361BE  브랜드 강조 아이콘
+		accent: brandTokens.primary,      // #3361BE  브랜드 강조 아이콘
 		// Group 3: Status — 상태 표현 아이콘
-		danger:  primitiveColors.danger500,  // #FF3232  오류·위험 아이콘
-		error:   primitiveColors.danger600,  // #EF4444  에러 아이콘 (icon.error 전용)
+		danger: primitiveColors.danger500,  // #FF3232  오류·위험 아이콘
+		error: primitiveColors.danger600,  // #EF4444  에러 아이콘 (icon.error 전용)
 		success: primitiveColors.success500, // #22C55E  성공 아이콘
 	},
 	action: {
 		// Group 1: Brand — 파랑 기반 인터랙션
-		info:     primitiveColors.blue400,   // #1976D2  타임라인·정보 액션
+		info: primitiveColors.blue400,   // #1976D2  타임라인·정보 액션
 		selected: primitiveColors.blue600,   // #2F55A3  선택 상태 액션
 		// Group 2: Utility — 특정 도구 전용
-		excel:    primitiveColors.excelGreen, // #6EB92C  Excel 내보내기 버튼 전용
+		excel: primitiveColors.excelGreen, // #6EB92C  Excel 내보내기 버튼 전용
 		// Group 3: Status — danger 계열 액션
-		danger:       primitiveColors.danger450,  // #F54848  Danger 버튼 fill
-		dangerHover:  primitiveColors.danger550,  // #E55648  Danger 버튼 hover
+		danger: primitiveColors.danger450,  // #F54848  Danger 버튼 fill
+		dangerHover: primitiveColors.danger550,  // #E55648  Danger 버튼 hover
 		dangerOutline: primitiveColors.danger700, // #EF3535  Danger outline 버튼
 	},
 	metric: {
-		// 의견: high 시멘틱을 danger로 흡수하는 방안 제안.
-		danger: primitiveColors.danger650,
-		high: primitiveColors.danger650,
-		medium: primitiveColors.warning500,
-		low: primitiveColors.metricLowGreen,
+		// 특허 유사도 점수 전용. danger 계열과 hue 분리, 모두 WCAG AA(4.5:1+) on white.
+		high: primitiveColors.danger800,   // #B91C1C  6.47:1  deep crimson
+		medium: primitiveColors.warning700,  // #A36300  4.84:1  dark amber
+		low: primitiveColors.success700,  // #15803D  5.02:1  dark green
 	},
 	chart: {
-		blueScale: chartBlueScale,
 		// 차트 색상은 진한색에서 연한색 순서로 렌더링합니다.
+		// blueScaleSequence: 900→800→500(→600·700 스킵)→400→… 은 의도된 순서.
 		blueScaleSequence: [
 			chartBlueScale[900],
 			chartBlueScale[800],
@@ -275,44 +310,73 @@ export const colorTokens = {
 			chartBlueScale[50],
 		],
 		trendSequence: [
-			primitiveColors.trendMint100,
-			primitiveColors.trendCyan200,
-			primitiveColors.trendSky300,
-			primitiveColors.trendBlue400,
-			primitiveColors.trendBlue500,
-			primitiveColors.trendIndigo600,
-			primitiveColors.trendNavy700,
+			primitiveColors.trend100,
+			primitiveColors.trend200,
+			primitiveColors.trend300,
+			primitiveColors.trend400,
+			primitiveColors.trend500,
+			primitiveColors.trend600,
+			primitiveColors.trend700,
 		],
 	},
-	topic: {
-		objective: {
-			background: "#FFF5DB",
-			text: "#66531D",
-			border: "#66531D",
+	// topic: {
+	// 	objective: {
+	// 		background: "#FFF5DB",
+	// 		text: "#66531D",
+	// 		border: "#66531D",
+	// 	},
+	// 	solution: {
+	// 		background: "#CDF3E2",
+	// 		text: "#024E2D",
+	// 		border: "#024E2D",
+	// 	},
+	// },
+	label: {
+		// 내용 유형 구분 태그·칩 전용 세트. property-first 구조: label.{property}.{color}.
+		// status 의미 없는 categorical 색상 — success/warning/danger와 무관.
+		// 6색 모두 WCAG AA(4.5:1+) on white.
+		background: {
+			purple: primitiveColors.purple50,   // #F3EEFF
+			teal: primitiveColors.teal50,     // #CCFBF1
+			indigo: primitiveColors.indigo50,   // #EEF2FF
+			orange: primitiveColors.orange50,   // #FFF7ED
+			pink: primitiveColors.pink50,     // #FDF2F8
+			lime: primitiveColors.lime50,     // #F7FEE7
 		},
-		solution: {
-			background: "#CDF3E2",
-			text: "#024E2D",
-			border: "#024E2D",
+		text: {
+			purple: primitiveColors.purple800,  // #5B21B6  H=270°  8.98:1
+			teal: primitiveColors.teal800,    // #115E59  H=180°  7.58:1
+			indigo: primitiveColors.indigo800,  // #3730A3  H=240°  10.04:1
+			orange: primitiveColors.orange800,  // #9A3412  H=20°   7.30:1
+			pink: primitiveColors.pink800,    // #9D174D  H=330°  8.03:1
+			lime: primitiveColors.lime800,    // #3F6212  H=90°   7.19:1
+		},
+		border: {
+			purple: primitiveColors.purple800,
+			teal: primitiveColors.teal800,
+			indigo: primitiveColors.indigo800,
+			orange: primitiveColors.orange800,
+			pink: primitiveColors.pink800,
+			lime: primitiveColors.lime800,
 		},
 	},
 	overlay: {
-		loading: "rgba(0, 0, 0, 0.20)",
-		tutorial: "rgba(0, 0, 0, 0.40)",
-		disabled: "rgba(255, 255, 255, 0.50)",
+		loading: primitiveColors.blackA20,   // rgba(0,0,0,0.20)  페이지 로딩 딤
+		tutorial: primitiveColors.blackA40,   // rgba(0,0,0,0.40)  튜토리얼 스크림
+		disabled: primitiveColors.whiteA50,   // rgba(255,255,255,0.50)  비활성 마스크
 	},
-	status: {
-		online: primitiveColors.success300,
-		successBackground: "#F0FDF4",
-		dangerBackground: "#FFF1F0",
-	},
-	info: {
-		background: primitiveColors.blue100,
-		text: primitiveColors.infoText,
-	},
-	highlight: {
-		keywordBackground: primitiveColors.warning100,
-	},
+	// status: {  // 이관 제안 — 각 property 네임스페이스로 흡수
+	// 	online:            primitiveColors.success300,  // → icon.success (success500, 온라인 인디케이터 점)
+	// 	successBackground: primitiveColors.success50,   // → background.successSubtle
+	// 	dangerBackground:  primitiveColors.danger50,    // → background.dangerSubtle
+	// },
+	// info: {  // 이관 제안 — property 네임스페이스로 흡수
+	// 	background: primitiveColors.blue100,  // → background.info
+	// 	text:       primitiveColors.infoText, // → text.info
+	// },
+	// highlight: {  // 이관 제안 — property 네임스페이스로 흡수
+	// 	keywordBackground: primitiveColors.warning100,  // → background.keywordHighlight
+	// },
 	event: {
 		bannerGradientStart: primitiveColors.eventBannerStart,
 		bannerGradientEnd: primitiveColors.eventBannerEnd,
