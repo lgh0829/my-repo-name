@@ -39,7 +39,7 @@ export const harnessConfig = {
 		{ fg: "color.text.primary", bg: "color.background.selected", label: "선택 행 본문" },
 		{ fg: "color.topic.objective.text", bg: "color.topic.objective.background", label: "objective 배지" },
 		{ fg: "color.topic.solution.text", bg: "color.topic.solution.background", label: "solution 배지" },
-		{ fg: "color.info.text", bg: "color.info.background", label: "info 배너" },
+		{ fg: "color.text.info", bg: "color.background.info", label: "info 배너" },
 	] as ContrastPair[],
 
 	/** 명도 역전 예외 — v0.3 ramp 정리로 역전 구간 제거됨. 예외 없음. */

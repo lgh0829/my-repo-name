@@ -2,8 +2,8 @@
  * @file 디자인 토큰 정의
  * @description MUI 테마와 Tailwind 설정에서 함께 참조할 스타일 기준값을 관리합니다.
  * @author yunjulee
- * @version 0.4.5
- * @lastModified 2026-06-25
+ * @version 0.4.6
+ * @lastModified 2026-06-26
  *
  * --- v0.2 변경 내역 ---
  * [제거] gray100, gray450 — 미참조
@@ -44,6 +44,13 @@
  *   · danger500(#FF3232) = 기준 main red
  *   · 매핑: errorAccent→400, dangerAction→450, danger→500,
  *           dangerActionHover→550, iconDanger→600, metricDanger→650, dangerOutline→700
+ *
+ * --- v0.4.6 변경 내역 ---
+ * [Typography 보정] Figma 실측(node 55-5242) 기반 textStyles·타입 스케일 정비
+ *   · fontSize: md(15px) 신설 — 청구항 카드 본문 전용
+ *   · letterSpacing 토큰 신설: base(-0.4px) · ui(-0.35px) · caption(-0.3px)
+ *   · textStyles 수정: itemTitle lh 1.5→1.4 / button lh 1.0→1.4 / label lh 1.4→1.5
+ *   · textStyles 추가: bodyMd(15px/400/24px) · letterSpacing 필드 일괄 추가
  *
  * --- v0.4.5 변경 내역 ---
  * [topic → label 재정의] 도메인 중립 + status 분리 시맨틱으로 전환
@@ -425,10 +432,12 @@ export const typographyTokens = {
 		bold: 700,
 		extrabold: 800,
 	},
-	// v0.2 신설: 타입 스케일 (SaaS 컴팩트, 7스텝)
+	// v0.2 신설: 타입 스케일 (SaaS 컴팩트, 8스텝)
+	// v0.4.6: md(15px) 추가 — 청구항 카드 본문 전용
 	fontSize: {
 		xs: "12px",
 		sm: "14px",
+		md: "15px",   // 청구항 카드 본문·요약 카운트 (Figma node 55-5242)
 		base: "16px",
 		lg: "18px",
 		xl: "20px",
@@ -440,23 +449,32 @@ export const typographyTokens = {
 		snug: 1.4, // 레이블/캡션
 		normal: 1.5, // 본문
 	},
+	// v0.4.6: Figma 실측 기반 letterSpacing 신설 (-2.5% 패턴 일관 적용)
+	letterSpacing: {
+		base: "-0.4px",    // 16px 본문 (-2.5%)
+		ui: "-0.35px",     // 14px UI(버튼·내비·보조 텍스트) (-2.5%)
+		caption: "-0.3px", // 12px 캡션·단락번호 (-2.5%)
+	},
 } as const;
 
 /**
- * 역할 기반 텍스트 스타일 (size + weight + lineHeight 묶음).
+ * 역할 기반 텍스트 스타일 (size + weight + lineHeight + letterSpacing 묶음).
  * 사용자 앵커: 섹션제목 18/semibold · item제목 16/semibold · 본문 16/regular
  *            · 버튼 14/semibold · 레이블 12/medium. 나머지는 표준 램프로 보강.
+ * v0.4.6: Figma node 55-5242 실측 반영 — letterSpacing 일괄 추가, lineHeight 보정,
+ *         bodyMd(15px) 신설.
  */
 export const textStyles = {
 	display: { fontSize: "30px", fontWeight: 700, lineHeight: 1.3 },
 	h1: { fontSize: "24px", fontWeight: 700, lineHeight: 1.3 },
 	h2: { fontSize: "18px", fontWeight: 600, lineHeight: 1.4 }, // 섹션 제목
-	itemTitle: { fontSize: "16px", fontWeight: 600, lineHeight: 1.5 },
-	body: { fontSize: "16px", fontWeight: 400, lineHeight: 1.5 },
-	bodySm: { fontSize: "14px", fontWeight: 400, lineHeight: 1.5 },
-	button: { fontSize: "14px", fontWeight: 600, lineHeight: 1.0 },
-	label: { fontSize: "12px", fontWeight: 500, lineHeight: 1.4 },
-	caption: { fontSize: "12px", fontWeight: 400, lineHeight: 1.4 },
+	itemTitle: { fontSize: "16px", fontWeight: 600, lineHeight: 1.4 }, // Figma 실측 1.4 (구 1.5)
+	body: { fontSize: "16px", fontWeight: 400, lineHeight: 1.5, letterSpacing: "-0.4px" },
+	bodyMd: { fontSize: "15px", fontWeight: 400, lineHeight: "24px" }, // 청구항 카드 본문 (Figma 실측)
+	bodySm: { fontSize: "14px", fontWeight: 400, lineHeight: 1.5, letterSpacing: "-0.35px" },
+	button: { fontSize: "14px", fontWeight: 600, lineHeight: 1.4, letterSpacing: "-0.35px" }, // Figma 실측 lh 1.4 (구 1.0)
+	label: { fontSize: "12px", fontWeight: 500, lineHeight: 1.5 }, // chip/badge (구 1.4)
+	caption: { fontSize: "12px", fontWeight: 400, lineHeight: 1.4, letterSpacing: "-0.3px" }, // [000x] 단락 번호
 } as const;
 
 export const spacingTokens = {
