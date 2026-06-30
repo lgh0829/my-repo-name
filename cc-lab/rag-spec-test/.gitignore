@@ -1,0 +1,8 @@
+.venv/
+chroma/
+data-all/
+data-all.zip
+data-sample/
+*.db
+__pycache__/
+*.pyc

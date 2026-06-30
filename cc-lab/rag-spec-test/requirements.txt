@@ -1,0 +1,6 @@
+chromadb==0.5.23
+openai>=1.0.0
+anthropic>=0.25.0
+elasticsearch>=8.0.0,<9.0.0
+fpdf2>=2.7.0
+python-dotenv>=1.0.0
